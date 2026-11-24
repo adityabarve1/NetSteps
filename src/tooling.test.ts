@@ -57,6 +57,32 @@ describe('tooling guard', () => {
     }
   });
 
+  it('keeps privileged Supabase keys out of src and scripts', () => {
+    // Built from parts so this test file does not trip its own scan.
+    const privilegedKey = new RegExp(['service', 'role'].join('[_-]?'), 'i');
+    const sourceFile = /\.(?:tsx?|jsx?|css|json|html|svg|md)$/;
+    const offenders: string[] = [];
+    const scan = (dir: string): void => {
+      if (!existsSync(dir)) {
+        return;
+      }
+      for (const entry of readdirSync(dir, { withFileTypes: true })) {
+        const path = join(dir, entry.name);
+        if (entry.isDirectory()) {
+          scan(path);
+        } else if (
+          sourceFile.test(entry.name) &&
+          privilegedKey.test(readFileSync(path, 'utf8'))
+        ) {
+          offenders.push(path);
+        }
+      }
+    };
+    scan(fromRoot('src'));
+    scan(fromRoot('scripts'));
+    expect(offenders).toEqual([]);
+  });
+
   it('denies npm, npx and yarn in both the Bash and PowerShell tools', () => {
     const settings = JSON.parse(readText('.claude', 'settings.json')) as {
       permissions?: { deny?: string[] };
