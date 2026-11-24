@@ -24,6 +24,7 @@
 
 .actions {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: var(--space-2);
   min-width: 0;
@@ -31,6 +32,7 @@
 
 .links {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: var(--space-1);
   margin: 0;
@@ -40,6 +42,7 @@
 
 .link,
 .cta,
+.signOut,
 .toggle {
   display: inline-flex;
   align-items: center;
@@ -53,12 +56,21 @@
   text-decoration: none;
 }
 
-.link {
+.link,
+.signOut {
   color: var(--text);
 }
 
-.link:hover {
+.link:hover,
+.signOut:hover {
   background: var(--surface-sunken);
+}
+
+/* Sign out is a button that looks like a link. */
+.signOut {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
 }
 
 .link[aria-current='page'] {
@@ -104,7 +116,8 @@
     padding: 0;
   }
 
-  .link {
+  .link,
+  .signOut {
     padding: 0 var(--space-2);
   }
 }

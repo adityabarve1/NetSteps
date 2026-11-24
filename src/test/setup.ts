@@ -5,6 +5,11 @@ import * as axeMatchers from 'vitest-axe/matchers';
 
 expect.extend(axeMatchers);
 
+// A developer's .env.local holds a real Supabase project. No test may reach it,
+// so the client always sees "not configured" unless a test injects a fake.
+vi.stubEnv('VITE_SUPABASE_URL', '');
+vi.stubEnv('VITE_SUPABASE_ANON_KEY', '');
+
 afterEach(() => {
   cleanup();
 });

@@ -1,4 +1,5 @@
-import { Link, NavLink } from 'react-router';
+import { Link, NavLink, useNavigate } from 'react-router';
+import { useAuth } from '@/auth/useAuth';
 import { siteConfig } from '@/config/site';
 import styles from '@/layout/Header.module.css';
 import { useTheme } from '@/theme/useTheme';
@@ -72,6 +73,50 @@ function ThemeToggle() {
   );
 }
 
+// Profile and Sign out when signed in, Sign in otherwise. Nothing while the
+// stored session is still being read, so a signed-in visitor never sees a
+// flash of "Sign in".
+function AccountLinks() {
+  const { status, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  if (status === 'loading') {
+    return null;
+  }
+  if (status !== 'signed-in') {
+    return (
+      <li>
+        <NavLink to="/login" className={styles.cta}>
+          Sign in
+        </NavLink>
+      </li>
+    );
+  }
+  return (
+    <>
+      <li>
+        <NavLink to="/profile" className={styles.link}>
+          Profile
+        </NavLink>
+      </li>
+      <li>
+        <button
+          type="button"
+          className={styles.signOut}
+          onClick={() => {
+            // Leave first, so a protected page does not bounce to the login
+            // page on the way out. signOut never rejects.
+            void navigate('/');
+            void signOut();
+          }}
+        >
+          Sign out
+        </button>
+      </li>
+    </>
+  );
+}
+
 export function Header() {
   return (
     <header className={styles.header}>
@@ -87,12 +132,7 @@ export function Header() {
                   Learn
                 </NavLink>
               </li>
-              <li>
-                {/* Task 4 swaps this for Profile when someone is signed in. */}
-                <NavLink to="/login" className={styles.cta}>
-                  Sign in
-                </NavLink>
-              </li>
+              <AccountLinks />
             </ul>
           </nav>
           <ThemeToggle />

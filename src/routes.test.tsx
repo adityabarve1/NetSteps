@@ -4,17 +4,24 @@ import { createMemoryRouter } from 'react-router';
 import { RouterProvider } from 'react-router/dom';
 import { afterEach, describe, expect, it } from 'vitest';
 import { axe } from 'vitest-axe';
+import { AuthProvider } from '@/auth/AuthProvider';
 import { siteConfig } from '@/config/site';
 import { routes } from '@/routes';
+import { createFakeSupabase, fakeSession } from '@/test/fakeSupabase';
+import type { FakeSupabase } from '@/test/fakeSupabase';
 import { ThemeProvider } from '@/theme/ThemeProvider';
 
-function renderAt(path: string) {
+// Signed out by default. Pass a fake with a session to render a signed-in visit.
+function renderAt(path: string, fake: FakeSupabase = createFakeSupabase()) {
   const router = createMemoryRouter(routes, { initialEntries: [path] });
-  return render(
+  const view = render(
     <ThemeProvider>
-      <RouterProvider router={router} />
+      <AuthProvider client={fake.client}>
+        <RouterProvider router={router} />
+      </AuthProvider>
     </ThemeProvider>,
   );
+  return { router, fake, ...view };
 }
 
 afterEach(() => {
@@ -27,7 +34,6 @@ const routeTable: [path: string, heading: string][] = [
   ['/', 'Learn computer networking'],
   ['/learn', 'Course map'],
   ['/learn/level-1/l1-what-is-a-network', 'Lesson'],
-  ['/profile', 'Profile'],
   ['/privacy', 'Privacy Policy'],
   ['/terms', 'Terms of Service'],
   ['/login', 'Sign in'],
@@ -44,6 +50,46 @@ describe('routes', () => {
     expect(
       await screen.findByRole('heading', { level: 1, name: heading }),
     ).toBeInTheDocument();
+  });
+
+  it('redirects a signed-out /profile to /login with the page to come back to', async () => {
+    const { router } = renderAt('/profile');
+
+    expect(
+      await screen.findByRole('heading', { level: 1, name: 'Sign in' }),
+    ).toBeInTheDocument();
+    expect(router.state.location.pathname).toBe('/login');
+    expect(router.state.location.search).toBe('?next=%2Fprofile');
+    expect(
+      screen.queryByRole('heading', { level: 1, name: 'Profile' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('shows /profile to a signed-in visitor, inside the shell', async () => {
+    const { router } = renderAt(
+      '/profile',
+      createFakeSupabase({ session: fakeSession() }),
+    );
+
+    expect(
+      await screen.findByRole('heading', { level: 1, name: 'Profile' }),
+    ).toBeInTheDocument();
+    expect(router.state.location.pathname).toBe('/profile');
+    expect(screen.getByRole('banner')).toBeInTheDocument();
+    expect(screen.getByRole('contentinfo')).toBeInTheDocument();
+  });
+
+  it('sends a signed-out visitor back to the page they wanted after signing in', async () => {
+    const user = userEvent.setup();
+    const { router } = renderAt('/profile');
+    await user.type(await screen.findByLabelText('Email'), 'ada@example.com');
+    await user.type(screen.getByLabelText('Password'), 'correct horse');
+    await user.click(screen.getByRole('button', { name: 'Sign in' }));
+
+    expect(
+      await screen.findByRole('heading', { level: 1, name: 'Profile' }),
+    ).toBeInTheDocument();
+    expect(router.state.location.pathname).toBe('/profile');
   });
 
   it('renders the not-found page with a link home for an unknown path', async () => {
@@ -100,7 +146,7 @@ describe('Layout', () => {
       '/learn',
     );
     expect(
-      within(header).getByRole('link', { name: 'Sign in' }),
+      await within(header).findByRole('link', { name: 'Sign in' }),
     ).toHaveAttribute('href', '/login');
   });
 
