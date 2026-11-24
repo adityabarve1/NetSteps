@@ -57,13 +57,19 @@ describe('tooling guard', () => {
     }
   });
 
-  it('denies npm, yarn and npx in Claude settings', () => {
+  it('denies npm, npx and yarn in both the Bash and PowerShell tools', () => {
     const settings = JSON.parse(readText('.claude', 'settings.json')) as {
       permissions?: { deny?: string[] };
     };
     const deny = settings.permissions?.deny ?? [];
-    expect(deny).toEqual(
-      expect.arrayContaining(['Bash(npm *)', 'Bash(yarn *)', 'Bash(npx *)']),
-    );
+    // Bash(...) and PowerShell(...) are separate rule namespaces, and an
+    // `npm *` rule does not cover `npx`, so every combination needs an entry.
+    for (const shell of ['Bash', 'PowerShell']) {
+      for (const tool of ['npm', 'npx', 'yarn']) {
+        expect(deny, `deny list must include ${shell}(${tool} *)`).toContain(
+          `${shell}(${tool} *)`,
+        );
+      }
+    }
   });
 });

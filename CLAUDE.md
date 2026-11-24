@@ -10,7 +10,7 @@ Read before working:
 
 ## Hard rules (from the plan's Global Constraints)
 
-- pnpm only. Never `npm`, `npx` or `yarn` (they are denied in `.claude/settings.json`). One lockfile: `pnpm-lock.yaml`. One-off tools: `pnpm dlx`.
+- pnpm only. Never `npm`, `npx` or `yarn`. One lockfile: `pnpm-lock.yaml`. One-off tools: `pnpm dlx`. `.claude/settings.json` has deny rules for both the Bash and PowerShell tools (`Bash(npm *)`, `PowerShell(npm *)`, and the same for `npx` and `yarn`; each needs its own entry). They follow the documented rule syntax but were not tested end to end, and they are guardrails, not a security boundary. The `only-allow pnpm` preinstall script and CI are the backstop.
 - Supabase is the only backend. The browser holds only `VITE_SUPABASE_ANON_KEY`. No service-role key anywhere, ever. RLS on every table.
 - Lesson content lives in code, not the database. A lesson id (`l1-what-is-a-network`) is never reused or renamed once progress could exist.
 - Env vars: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_SITE_URL`, `VITE_ENABLE_GOOGLE`, `VITE_CONTACT_EMAIL`. `.env.local` is git-ignored; only `.env.example` is committed.
