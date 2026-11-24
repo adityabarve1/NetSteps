@@ -2,6 +2,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { App } from '@/App';
 import { AuthProvider } from '@/auth/AuthProvider';
+import { ProgressProvider } from '@/progress/ProgressProvider';
 import '@/theme/tokens.css';
 import '@/theme/global.css';
 
@@ -13,7 +14,9 @@ if (!container) {
 createRoot(container).render(
   <StrictMode>
     <AuthProvider>
-      <App />
+      <ProgressProvider>
+        <App />
+      </ProgressProvider>
     </AuthProvider>
   </StrictMode>,
 );
