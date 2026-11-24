@@ -1,0 +1,6 @@
+docs
+.superpowers
+.claude
+dist
+coverage
+pnpm-lock.yaml
