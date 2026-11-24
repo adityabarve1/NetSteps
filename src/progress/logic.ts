@@ -5,9 +5,9 @@
 // same state object, so callers can compare references to skip a save.
 //
 // The functions guard VALUES that a hand-edited localStorage could break
-// (unreadable times, impossible quiz results). They assume the SHAPE is right:
-// the loader that reads storage or Supabase must hand over real
-// `ProgressState` objects.
+// (unreadable times, impossible quiz results). They REQUIRE the SHAPE to be
+// right: anything read from localStorage or Supabase must go through
+// `parseProgress` (parse.ts) first, which always returns a well-shaped state.
 import type {
   CurriculumLevel,
   LabRecord,
@@ -32,6 +32,11 @@ const ISO_TIMESTAMP =
 
 function instantOf(time: string): number {
   return ISO_TIMESTAMP.test(time) ? Date.parse(time) : Number.NaN;
+}
+
+// True for a readable time. Shared with parseProgress so both agree on it.
+export function isValidTimestamp(value: unknown): value is string {
+  return typeof value === 'string' && !Number.isNaN(instantOf(value));
 }
 
 // 1 when `a` is a later moment than `b`, -1 when earlier, 0 when the same
@@ -77,7 +82,7 @@ function earliestDefined(
 
 // A usable result: whole numbers, a positive total and 0 <= score <= total.
 // Anything else (hand-edited storage) is treated as "no result".
-function isValidQuiz(q: unknown): q is QuizBest {
+export function isValidQuiz(q: unknown): q is QuizBest {
   if (typeof q !== 'object' || q === null) return false;
   const { score, total } = q as { score?: unknown; total?: unknown };
   return (

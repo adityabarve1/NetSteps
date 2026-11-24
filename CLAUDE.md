@@ -19,7 +19,7 @@ Read before working:
 - Every lesson follows the 10-part recipe of spec §7: hook, analogy, learn (titled sections + "Go deeper" blocks), watch it, try it, practice lab, why it matters, 5-question quiz, recap with cheat sheet, next-lesson link.
 - Progress rules (spec §10): opening a lesson while signed in writes `in_progress` once; a lesson is `completed` when the primary simulation reached its last step AND the quiz was submitted (any score); labs never gate completion; "continue" = most recently opened incomplete lesson, else next in course order; progress % = completed / built lessons. Never write progress on every click.
 - Accessibility: keyboard operable, captions in an ARIA live region (`role="status"`), `prefers-reduced-motion` honored, light and dark themes, no horizontal scroll at phone width.
-- Pure TypeScript, no React imports (ESLint enforces this) in: `src/netcore/**`, `src/content/lessons/**/logic.ts`, `src/progress/logic.ts`, `src/sim/playerReducer.ts`, `src/quiz/scoreQuiz.ts`, `src/labs/practice.ts`, `src/labs/builderReducer.ts`.
+- Pure TypeScript, no React imports (ESLint enforces this) in: `src/netcore/**`, `src/content/lessons/**/logic.ts`, `src/progress/logic.ts`, `src/progress/parse.ts`, `src/sim/playerReducer.ts`, `src/quiz/scoreQuiz.ts`, `src/labs/practice.ts`, `src/labs/builderReducer.ts`.
 
 ## Commands
 

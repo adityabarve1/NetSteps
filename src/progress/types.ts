@@ -23,6 +23,10 @@ export type LabRecord = {
   completedAt?: string;
 };
 
+// Contract: the functions in logic.ts require a well-shaped state (both tables
+// present, every record valid). Anything loaded from localStorage or from
+// Supabase MUST go through `parseProgress` (parse.ts) first; it never throws and
+// always returns a state that satisfies this contract.
 export type ProgressState = {
   lessons: Record<LessonId, LessonRecord>;
   labs: Record<string, LabRecord>;

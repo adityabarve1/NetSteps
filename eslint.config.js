@@ -13,6 +13,7 @@ const pureLogicFiles = [
   'src/netcore/**',
   'src/content/lessons/**/logic.ts',
   'src/progress/logic.ts',
+  'src/progress/parse.ts',
   'src/sim/playerReducer.ts',
   'src/quiz/scoreQuiz.ts',
   'src/labs/practice.ts',
