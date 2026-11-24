@@ -12,16 +12,28 @@
 // (and `enqueue` says so, see EnqueueOutcome).
 //
 // TABS. Every write has its OWN localStorage key, `<key>.<seq>`, so two tabs of
-// one account never overwrite each other's writes: a tab only adds keys of its own,
-// and removes a key only after sending the write it holds, and only if the key
-// still holds what this tab last saw there (a tab that rewrote it meanwhile, by
-// folding a newer write into it, keeps its version). The queue is read from
-// storage ONCE, when it is created, so writes a closed tab left behind are replayed
-// by the next store; a tab never takes the writes of one that may still be open.
+// one account never overwrite each other's writes by saving whole queues. The queue
+// is read from storage when it is created, so writes a closed tab left behind are
+// replayed by the next store. A tab CANNOT tell whether the tab that made a key is
+// still open, so it may pick up the keys of live tabs, and two live tabs can then
+// both fold writes into one key. Hence the rules for touching a key that exists:
+//   * REWRITING (a fold) is a read-modify-write: re-read the stored value, check it
+//     is a valid write for the same row, JOIN it with this tab's copy (the join
+//     only ever adds: completed beats in progress and so on), write the join, and
+//     keep the join as this tab's copy. A value that is gone, corrupt, or for another
+//     row or kind is not joined: this tab's write becomes a NEW key instead.
+//   * ADDING a write never overwrites: a key that already exists gets a new seq.
+//   * REMOVING a key (after the write was sent, or given up on) happens only if
+//     the key still holds what this tab last saw there, or something the send fully
+//     covers. If another tab folded a newer write into it meanwhile, the key stays;
+//     it is that write's to send, on the next flush of the tab that holds it or the
+//     next store that reads it.
 // Replays are idempotent, so two tabs sending the same write do no harm.
 import {
   appendOp,
   bySeq,
+  covers,
+  joinOps,
   opKey,
   overlayOps,
   parseStoredOp,
@@ -131,15 +143,21 @@ export function createPendingQueue(options: PendingQueueOptions): PendingQueue {
     return false;
   };
 
-  // This tab is done with an op. Its key goes only if it still holds what this
-  // tab saw there; otherwise another tab changed it and it is theirs to remove.
-  const forget = (seq: string): void => {
+  // This tab is done with an op (it was sent, or given up on). Its key goes only
+  // if it still holds what this tab saw there, or something `sent` fully covers.
+  // If another tab changed it meanwhile, the key stays: that is their write to send.
+  const forget = (seq: string, sent?: PendingOp): void => {
     const expected = seen.get(seq);
     seen.delete(seq);
     unsaved.delete(seq);
-    if (expected !== undefined && readItem(opKey(key, seq)) === expected) {
-      removeItem(opKey(key, seq));
-    }
+    if (expected === undefined) return;
+    const now = readItem(opKey(key, seq));
+    if (now === null) return;
+    const stored = parseStoredOp(seq, now);
+    const unchanged = now === expected;
+    const covered =
+      sent !== undefined && stored !== undefined && covers(sent, stored);
+    if (unchanged || covered) removeItem(opKey(key, seq));
   };
 
   // The replay. `flushing` is cleared in the same synchronous step as the last
@@ -176,7 +194,7 @@ export function createPendingQueue(options: PendingQueueOptions): PendingQueue {
         }
         if (verdict === 'drop') dropped += 1;
         ops = ops.filter((op) => op.seq !== head.seq);
-        forget(head.seq);
+        forget(head.seq, head);
         notify();
       }
     } catch {
@@ -195,6 +213,36 @@ export function createPendingQueue(options: PendingQueueOptions): PendingQueue {
     return current;
   }
 
+  // Saves a write under a seq nobody is using: a key that exists is never
+  // overwritten (two tabs could, very rarely, make the same seq). Returns the write
+  // as it is now saved (with its seq changed if it had to be).
+  const addNew = (op: PendingOp): PendingOp => {
+    let added = op;
+    for (let tries = 0; tries < 10; tries += 1) {
+      if (readItem(opKey(key, added.seq)) === null) break;
+      added = { ...added, seq: newSeq() };
+    }
+    save(added);
+    return added;
+  };
+
+  // A write was folded into the earlier write `op` (same seq). Re-read what is
+  // stored under its key and join it with `op`; the join is what gets written, and
+  // it replaces this tab's copy. If nothing joinable is stored (the key is gone, or
+  // holds something corrupt, or a write for another row or kind), the write goes
+  // to a NEW key instead and the old key is left as it is.
+  const rewrite = (op: PendingOp): PendingOp => {
+    if (!seen.has(op.seq)) return addNew(op); // never saved: nothing to join
+    const stored = parseStoredOp(op.seq, readItem(opKey(key, op.seq)));
+    const joined = stored === undefined ? undefined : joinOps(stored, op);
+    if (joined === undefined) {
+      forget(op.seq);
+      return addNew({ ...op, seq: newSeq() });
+    }
+    save(joined);
+    return joined;
+  };
+
   // Makes storage match the change `appendOp` made to the queue. Returns the seq
   // of the write that now carries the new one.
   function store(before: readonly PendingOp[], held: string): string {
@@ -206,21 +254,15 @@ export function createPendingQueue(options: PendingQueueOptions): PendingQueue {
     for (const op of [...ops]) {
       if (was.has(op)) continue;
       const foldedIntoEarlier = before.some((old) => old.seq === op.seq);
-      // The key this write was folded into is gone: another tab sent that write
-      // and removed it. Save this one as a NEW write instead of resurrecting it.
-      if (
-        foldedIntoEarlier &&
-        seen.has(op.seq) &&
-        readItem(opKey(key, op.seq)) === null
-      ) {
-        const fresh: PendingOp = { ...op, seq: newSeq() };
-        ops = [...ops.filter((entry) => entry !== op), fresh];
-        forget(op.seq);
-        if (held === op.seq) held = fresh.seq;
-        save(fresh);
-      } else {
-        save(op);
-      }
+      const saved = foldedIntoEarlier ? rewrite(op) : addNew(op);
+      if (saved === op) continue;
+      // The copy this tab holds becomes what was actually saved. A write moved to a
+      // new key goes to the end of the queue (writes for other rows do not care).
+      ops =
+        saved.seq === op.seq
+          ? ops.map((entry) => (entry === op ? saved : entry))
+          : [...ops.filter((entry) => entry !== op), saved];
+      if (held === op.seq) held = saved.seq;
     }
     return held;
   }

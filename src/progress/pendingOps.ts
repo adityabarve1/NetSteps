@@ -104,6 +104,52 @@ function joinLabs(a: LabRecord, b: LabRecord, id: string): LabRecord {
   return ownRecord(merged.labs, id) ?? b;
 }
 
+/**
+ * Joins two writes for the SAME row of the SAME kind into one that carries both
+ * (completed beats in progress, the latest open time, the earliest completion, the
+ * best quiz score; the join never loses anything and gives the same answer in
+ * either order). `stored` is the one that is already in storage, and the result
+ * keeps its seq. Writes of a different kind or for a different row are never
+ * joined into each other, and a quiz attempt or a whole-state write is never
+ * rewritten at all: both give undefined.
+ */
+export function joinOps(
+  stored: PendingOp,
+  mine: PendingOp,
+): PendingOp | undefined {
+  if (
+    stored.kind === 'lesson' &&
+    mine.kind === 'lesson' &&
+    stored.id === mine.id
+  ) {
+    return {
+      ...stored,
+      record: joinLessons(stored.record, mine.record, stored.id),
+    };
+  }
+  if (stored.kind === 'lab' && mine.kind === 'lab' && stored.id === mine.id) {
+    return {
+      ...stored,
+      record: joinLabs(stored.record, mine.record, stored.id),
+    };
+  }
+  return undefined;
+}
+
+// The same write written in a different field order is still the same write.
+const canonical = (op: PendingOp): string =>
+  JSON.stringify(parseStoredOp(op.seq, serializeOp(op)) ?? null);
+
+/**
+ * True when `sent` already carries everything `stored` holds (same row, and
+ * joining them changes nothing). After `sent` was delivered, the key holding
+ * `stored` is then safe to remove.
+ */
+export function covers(sent: PendingOp, stored: PendingOp): boolean {
+  const joined = joinOps(sent, stored);
+  return joined !== undefined && canonical(joined) === canonical(sent);
+}
+
 // The earlier write for the same row that the new one may absorb: the nearest
 // one behind it, but never across a whole-state write and never the write that
 // is already on its way to the server (it cannot be taken back).
