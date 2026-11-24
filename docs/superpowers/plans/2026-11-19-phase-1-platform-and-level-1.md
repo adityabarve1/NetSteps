@@ -82,7 +82,7 @@ src/sim/     src/quiz/        src/netcore/    src/labs/    src/pages/    src/tes
 
 **Interfaces:**
 - Produces: `type ThemeMode = 'light' | 'dark' | 'system'`; `useTheme(): { mode: ThemeMode; resolved: 'light' | 'dark'; setMode(m: ThemeMode): void }`; `siteConfig: { name: 'NetSteps'; url: string; contactEmail: string | undefined; googleEnabled: boolean }`; route table from §9 using `/learn/:levelId/:lessonId`; all pages lazy-loaded.
-- Visual: warm cream light theme (`--bg: #f4ebe0`) with a matching dark theme, rounded cards, CSS variables only.
+- Visual: fresh teal and sky-blue light theme (`--bg: #f2f9f8`, accent `#0f766e`) with a matching dark theme (changed in Task 7b), rounded cards, CSS variables only.
 
 - [ ] **Step 1: Write failing tests.** ThemeProvider: default mode is `system`; `setMode('dark')` sets `document.documentElement.dataset.theme === 'dark'` and stores `netsteps.theme`; `system` follows a mocked `matchMedia('(prefers-color-scheme: dark)')`; **RF2:** when `localStorage.getItem`/`setItem` throw, the provider still renders and switching works. Routes: each path in the §9 table renders its page heading; unknown path renders "Page not found" with a link to `/`; Layout has no axe violations (`toHaveNoViolations`).
 - [ ] **Step 2: Run** `pnpm test src/theme src/routes.test.tsx` → FAIL.

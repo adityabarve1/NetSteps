@@ -1,6 +1,7 @@
 import { Link, NavLink, useNavigate } from 'react-router';
 import { useAuth } from '@/auth/useAuth';
 import { siteConfig } from '@/config/site';
+import { cx } from '@/lib/cx';
 import styles from '@/layout/Header.module.css';
 import { useTheme } from '@/theme/useTheme';
 import type { ThemeMode } from '@/theme/useTheme';
@@ -117,9 +118,10 @@ function AccountLinks() {
   );
 }
 
-export function Header() {
+// `overlay` lets the header float, transparent, over the top of the landing hero.
+export function Header({ overlay = false }: { overlay?: boolean }) {
   return (
-    <header className={styles.header}>
+    <header className={cx(styles.header, overlay && styles.overlay)}>
       <div className={styles.inner}>
         <Link to="/" className={styles.brand}>
           {siteConfig.name}

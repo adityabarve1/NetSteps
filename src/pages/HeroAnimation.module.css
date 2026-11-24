@@ -1,0 +1,114 @@
+/* The hero picture. It scales with its box, so 320px phones never scroll sideways. */
+.art {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.cable {
+  fill: none;
+  stroke: var(--text-muted);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-dasharray: 2 9;
+}
+
+.device rect {
+  fill: var(--surface);
+  stroke: var(--accent);
+  stroke-width: 3;
+}
+
+.device path {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.screen {
+  fill: var(--surface-sunken);
+}
+
+.ports circle {
+  fill: var(--accent-2);
+}
+
+.label {
+  fill: var(--text);
+  font-family: var(--font-body);
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.packetOut,
+.packetBack {
+  stroke: var(--surface);
+  stroke-width: 3;
+}
+
+.packetOut {
+  fill: var(--accent);
+}
+
+.packetBack {
+  fill: var(--accent-2);
+}
+
+/* One round trip every 6 seconds: out to the server, a pause, then the answer
+   comes back. The global reduced-motion rule in global.css stops it too, and
+   the component draws a parked packet instead when motion is reduced. */
+@media (prefers-reduced-motion: no-preference) {
+  [data-animated='true'] .packetOut {
+    opacity: 0;
+    animation: travelOut 6s ease-in-out infinite;
+  }
+
+  [data-animated='true'] .packetBack {
+    opacity: 0;
+    animation: travelBack 6s ease-in-out infinite;
+  }
+}
+
+@keyframes travelOut {
+  0% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  40% {
+    opacity: 1;
+    transform: translateX(280px);
+  }
+
+  41%,
+  100% {
+    opacity: 0;
+    transform: translateX(280px);
+  }
+}
+
+@keyframes travelBack {
+  0%,
+  50% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+
+  51% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  90% {
+    opacity: 1;
+    transform: translateX(-280px);
+  }
+
+  91%,
+  100% {
+    opacity: 0;
+    transform: translateX(-280px);
+  }
+}

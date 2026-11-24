@@ -1,4 +1,4 @@
-import { render, screen, within } from '@testing-library/react';
+import { act, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createMemoryRouter } from 'react-router';
 import { RouterProvider } from 'react-router/dom';
@@ -30,8 +30,8 @@ afterEach(() => {
 });
 
 // The route table of spec section 9, with the lesson route as /learn/:levelId/:lessonId.
-const routeTable: [path: string, heading: string][] = [
-  ['/', 'Learn computer networking'],
+const routeTable: [path: string, heading: string | RegExp][] = [
+  ['/', /Learn how computers talk to each other/],
   ['/learn', 'Course map'],
   ['/learn/level-1/l1-what-is-a-network', 'Lesson'],
   ['/privacy', 'Privacy Policy'],
@@ -113,6 +113,16 @@ describe('routes', () => {
 });
 
 describe('Layout', () => {
+  it('puts the header over the hero on the landing page only', async () => {
+    const { container, router } = renderAt('/');
+    await screen.findByRole('heading', { level: 1 });
+    expect(container.querySelector('[data-landing]')).not.toBeNull();
+
+    await act(() => router.navigate('/learn'));
+    await screen.findByRole('heading', { level: 1, name: 'Course map' });
+    expect(container.querySelector('[data-landing]')).toBeNull();
+  });
+
   it('has no axe violations', async () => {
     const { container } = renderAt('/');
     await screen.findByRole('heading', { level: 1 });

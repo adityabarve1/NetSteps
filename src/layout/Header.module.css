@@ -1,6 +1,23 @@
 .header {
   background: var(--surface);
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--border-soft);
+}
+
+/* Landing page: the header floats over the hero, so header and hero together
+   are one screen. The hero's own gradient shows through. */
+.overlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 5;
+  border-bottom: 0;
+  background: transparent;
+}
+
+.overlay .inner {
+  max-width: calc(var(--hero-width) + 2 * var(--hero-gutter));
+  padding-inline: var(--hero-gutter);
 }
 
 /* Wraps instead of overflowing, so a 320px phone never scrolls sideways. */
@@ -120,4 +137,9 @@
   .signOut {
     padding: 0 var(--space-2);
   }
+}
+
+/* On a big screen the floating header's name grows with the hero. */
+.overlay .brand {
+  font-size: clamp(1.25rem, 0.9rem + 0.5vw, 1.875rem);
 }

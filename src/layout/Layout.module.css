@@ -1,7 +1,9 @@
 .shell {
+  position: relative;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  min-height: 100svh;
 }
 
 .main {
@@ -13,7 +15,15 @@
   overflow-wrap: anywhere;
 }
 
-.main:focus {
+/* Landing: no column and no padding, the page lays itself out. */
+.mainFull {
+  flex: 1;
+  width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.main:focus,
+.mainFull:focus {
   outline: none;
 }
 

@@ -1,0 +1,389 @@
+/* Landing page. Colors come from tokens.css only. */
+
+/* ---- Hero: header + hero fill exactly one screen ---- */
+
+/* The header floats on top of the hero (see Header's overlay), so the top
+   padding leaves room for it and the content is centred in what is left.
+   min-height, never height: on a short phone the content can grow past the
+   screen instead of being cut off. Type and picture scale with the screen
+   (clamp), and the inner box is wide, so a 2560px monitor is filled too. */
+.hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 100vh;
+  min-height: 100svh;
+  padding: 6.5rem var(--hero-gutter) 2rem;
+  overflow: hidden;
+  background:
+    radial-gradient(50vw 50vw at 92% 6%, var(--hero-glow-b), transparent 70%),
+    radial-gradient(45vw 45vw at 4% 96%, var(--hero-glow-a), transparent 70%),
+    radial-gradient(30vw 30vw at 50% 100%, var(--hero-glow-b), transparent 70%),
+    linear-gradient(
+      160deg,
+      var(--hero-from),
+      var(--hero-via) 55%,
+      var(--hero-to)
+    );
+}
+
+/* Rings spreading from two corners, like a signal. Decoration only: thin
+   lines that fade out, so the sides are not empty on a wide screen. */
+.hero::before,
+.hero::after {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  width: min(70vw, 70rem);
+  aspect-ratio: 1;
+  background: repeating-radial-gradient(
+    circle,
+    transparent 0 3.5rem,
+    var(--border-soft) 3.5rem calc(3.5rem + 2px)
+  );
+  mask-image: radial-gradient(circle, var(--text) 0%, transparent 68%);
+  pointer-events: none;
+}
+
+.hero::before {
+  bottom: 0;
+  left: 0;
+  transform: translate(-35%, 35%);
+}
+
+.hero::after {
+  top: 0;
+  right: 0;
+  transform: translate(35%, -35%);
+}
+
+.heroInner {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: var(--space-6);
+  align-items: center;
+  width: min(100%, var(--hero-width));
+  margin: 0 auto;
+}
+
+.heroText {
+  min-width: 0;
+}
+
+.eyebrow {
+  display: inline-block;
+  margin: 0 0 1.25em;
+  padding: 0.25em 0.9em;
+  border: 1px solid var(--border-soft);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--accent);
+  font-size: clamp(0.9375rem, 0.6rem + 0.45vw, 1.625rem);
+  font-weight: 600;
+}
+
+.title {
+  margin: 0 0 0.35em;
+  font-size: clamp(2rem, 0.5rem + 3.6vw, 6.75rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+/* A gradient from one accent to the other. The plain color comes first for
+   browsers that cannot clip a background to text; both accents pass 4.5:1. */
+.highlight {
+  color: var(--accent);
+}
+
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+  .highlight {
+    background: var(--gradient-accent);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+}
+
+.lead {
+  max-width: 32em;
+  margin: 0 0 1.5em;
+  color: var(--text-muted);
+  font-size: clamp(1.0625rem, 0.65rem + 0.85vw, 2.25rem);
+  text-wrap: pretty;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75em;
+  font-size: clamp(1.0625rem, 0.75rem + 0.5vw, 1.75rem);
+}
+
+.primary,
+.secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3.1em;
+  padding: 0 1.5em;
+  border: 2px solid transparent;
+  border-radius: 999px;
+  font-size: 1em;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+}
+
+.primary {
+  background: var(--accent);
+  color: var(--accent-contrast);
+  box-shadow: var(--shadow);
+}
+
+.secondary {
+  border-color: var(--border);
+  background: var(--surface);
+  color: var(--text);
+}
+
+.primary:hover {
+  filter: brightness(1.1);
+  box-shadow: var(--shadow-lift);
+}
+
+.secondary:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .primary,
+  .secondary {
+    transition:
+      transform var(--transition),
+      box-shadow var(--transition),
+      filter var(--transition),
+      border-color var(--transition);
+  }
+
+  .primary:hover,
+  .secondary:hover {
+    transform: translateY(-2px);
+  }
+}
+
+/* Phones: the two buttons are full width, one above the other. A signed-in
+   visitor's header wraps onto two rows, so the hero leaves more room above. */
+@media (max-width: 30rem) {
+  .hero {
+    padding-top: 8rem;
+  }
+
+  .actions > * {
+    flex: 1 1 100%;
+  }
+}
+
+.heroArt {
+  min-width: 0;
+  padding: clamp(1rem, 2.2vw, 3rem);
+  border: 1px solid var(--border-soft);
+  border-radius: clamp(1.25rem, 2vw, 2.5rem);
+  background: var(--surface);
+  box-shadow: var(--shadow-lift);
+}
+
+@media (min-width: 56rem) {
+  .heroInner {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    gap: clamp(2rem, 5vw, 7rem);
+  }
+}
+
+/* ---- Sections below the hero ---- */
+
+.section {
+  padding: 4.5rem var(--page-gutter);
+}
+
+.sectionTint {
+  background: var(--surface-sunken);
+}
+
+.container {
+  max-width: var(--content-width);
+  margin: 0 auto;
+}
+
+.sectionTitle {
+  margin: 0 0 var(--space-3);
+  font-size: clamp(1.625rem, 4.5vw, 2.25rem);
+  letter-spacing: -0.01em;
+}
+
+.sectionLead {
+  max-width: 40rem;
+  margin: 0 0 var(--space-6);
+  color: var(--text-muted);
+  font-size: 1.125rem;
+}
+
+/* Rows of cards that wrap and stay centred, so a last row with fewer cards
+   (7 levels) does not leave a lopsided gap. --cols is how many fit per row. */
+.levels,
+.steps {
+  --cols: 1;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.levels > li,
+.steps > li {
+  flex: 0 0 calc((100% - (var(--cols) - 1) * var(--space-4)) / var(--cols));
+}
+
+@media (min-width: 40rem) {
+  .levels,
+  .steps {
+    --cols: 2;
+  }
+}
+
+@media (min-width: 64rem) {
+  .levels,
+  .steps {
+    --cols: 4;
+  }
+}
+
+.card,
+.step {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: var(--space-5);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .card,
+  .step {
+    transition:
+      transform var(--transition),
+      box-shadow var(--transition),
+      border-color var(--transition);
+  }
+}
+
+.card:hover,
+.card:focus-within,
+.step:hover {
+  border-color: var(--accent);
+  box-shadow: var(--shadow-lift);
+  transform: translateY(-3px);
+}
+
+.cardTop {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.levelNumber {
+  color: var(--accent-2);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.soon {
+  padding: 0 var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.cardTitle {
+  margin: 0 0 var(--space-2);
+  font-size: 1.25rem;
+}
+
+.cardText {
+  flex: 1;
+  margin: 0;
+  color: var(--text-muted);
+}
+
+.cardLink {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  min-height: 44px;
+  margin-top: var(--space-3);
+  font-weight: 700;
+}
+
+.stepBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-start;
+  width: 3.25rem;
+  height: 3.25rem;
+  margin-bottom: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--surface-sunken);
+  color: var(--accent);
+}
+
+.stepNumber {
+  margin: 0 0 var(--space-1);
+  color: var(--accent-2);
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.note {
+  text-align: center;
+}
+
+.noteText {
+  max-width: 38rem;
+  margin: 0 auto var(--space-5);
+  color: var(--text-muted);
+  font-size: 1.125rem;
+}
+
+/* The closing call to action sits on the same gradient as the hero. */
+.final {
+  padding: 4.5rem var(--page-gutter);
+  background: linear-gradient(
+    160deg,
+    var(--hero-from),
+    var(--hero-via) 55%,
+    var(--hero-to)
+  );
+}
+
+.final .noteText {
+  margin-bottom: var(--space-5);
+}

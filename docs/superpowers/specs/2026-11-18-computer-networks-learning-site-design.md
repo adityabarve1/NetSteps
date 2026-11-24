@@ -133,7 +133,7 @@ Every lesson has at least one practical activity, chosen from these kinds:
 | `/privacy`, `/terms` | Legal | Plain-language Privacy Policy and Terms, linked from the footer and the sign-up form. Written as a template and flagged for the owner to review before launch. |
 | `*` | Not found | Friendly 404 with link home. |
 
-**Look:** follows the reference's style — warm cream background with a dark mode, rounded cards, calm colors, generous spacing. Design tokens are CSS variables so light/dark is a single switch. Respects the system theme by default with a manual toggle.
+**Look:** fresh and modern — a teal and sky-blue palette (pale mint-white background, deep teal accent, sky-blue highlights and soft gradients) with a matching dark theme, rounded cards, generous spacing; every text and control color passes WCAG contrast. The landing page hero fills the whole first screen. Design tokens are CSS variables so light/dark is a single switch. Respects the system theme by default with a manual toggle.
 
 ## 10. Accounts and progress
 
