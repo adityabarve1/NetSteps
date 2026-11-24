@@ -1,0 +1,110 @@
+.header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+/* Wraps instead of overflowing, so a 320px phone never scrolls sideways. */
+.inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-4);
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: var(--space-3) var(--space-4);
+}
+
+.brand {
+  color: var(--text);
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.links {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.link,
+.cta,
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 44px;
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-size: 1rem;
+  text-decoration: none;
+}
+
+.link {
+  color: var(--text);
+}
+
+.link:hover {
+  background: var(--surface-sunken);
+}
+
+.link[aria-current='page'] {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.cta,
+.cta:hover,
+.cta[aria-current='page'] {
+  background: var(--accent);
+  color: var(--accent-contrast);
+  font-weight: 600;
+}
+
+.cta:hover {
+  filter: brightness(1.08);
+}
+
+.toggle {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.toggle:hover {
+  background: var(--surface-sunken);
+}
+
+.icon {
+  flex: none;
+}
+
+/* Phones: show the icon only. The button keeps its full accessible name. */
+@media (max-width: 30rem) {
+  .toggleText {
+    display: none;
+  }
+
+  .toggle {
+    min-width: 44px;
+    padding: 0;
+  }
+
+  .link {
+    padding: 0 var(--space-2);
+  }
+}

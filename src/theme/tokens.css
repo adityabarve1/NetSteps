@@ -1,0 +1,50 @@
+/* Design tokens. Components use these variables and never hard-coded colors.
+   The theme is a single switch: ThemeProvider sets data-theme on <html>. */
+
+:root {
+  /* Shape, space and type (the same in both themes) */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2.5rem;
+  --content-width: 72rem;
+  --font-body:
+    ui-rounded, 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial,
+    sans-serif;
+  --font-mono:
+    ui-monospace, 'Cascadia Code', 'SF Mono', Consolas, 'Liberation Mono',
+    monospace;
+  --transition: 180ms ease;
+
+  /* Light theme: warm cream */
+  color-scheme: light;
+  --bg: #f4ebe0;
+  --surface: #fffaf2;
+  --surface-sunken: #ece0d0;
+  --text: #2b2118;
+  --text-muted: #6a5a49;
+  --border: #dccbb6;
+  --accent: #a8431c;
+  --accent-contrast: #ffffff;
+  --focus: #1d5fa8;
+  --shadow: 0 2px 10px rgb(60 40 20 / 10%);
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #1c1712;
+  --surface: #262019;
+  --surface-sunken: #14100c;
+  --text: #f3e9dc;
+  --text-muted: #b9a995;
+  --border: #40372c;
+  --accent: #f0a37a;
+  --accent-contrast: #1c1712;
+  --focus: #7ab8f5;
+  --shadow: 0 2px 10px rgb(0 0 0 / 40%);
+}

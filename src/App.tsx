@@ -1,4 +1,14 @@
-// Placeholder shell. Task 2 replaces this with the router and layout.
+import { createBrowserRouter } from 'react-router';
+import { RouterProvider } from 'react-router/dom';
+import { routes } from '@/routes';
+import { ThemeProvider } from '@/theme/ThemeProvider';
+
+const router = createBrowserRouter(routes);
+
 export function App() {
-  return <h1>NetPath</h1>;
+  return (
+    <ThemeProvider>
+      <RouterProvider router={router} />
+    </ThemeProvider>
+  );
 }
