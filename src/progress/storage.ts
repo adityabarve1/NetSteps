@@ -40,3 +40,19 @@ export function removeItem(key: string): boolean {
     return false;
   }
 }
+
+/** Every key in localStorage; empty when storage cannot be reached. */
+export function listKeys(): string[] {
+  try {
+    const storage = area();
+    if (storage === null) return [];
+    const keys: string[] = [];
+    for (let i = 0; i < storage.length; i += 1) {
+      const key = storage.key(i);
+      if (key !== null) keys.push(key);
+    }
+    return keys;
+  } catch {
+    return [];
+  }
+}

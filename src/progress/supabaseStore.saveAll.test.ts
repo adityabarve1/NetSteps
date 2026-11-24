@@ -1,7 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { mergeAttemptId } from '@/progress/attemptId';
 import { createSupabaseStore, pendingKey } from '@/progress/supabaseStore';
 import type { ProgressState } from '@/progress/types';
 import { createFakeDb, NETWORK_DOWN, SERVER_NOW } from '@/test/fakeDb';
+import { storedOps } from '@/test/pendingStorage';
 import {
   done,
   opened,
@@ -39,10 +41,7 @@ const attemptsOf = (db: ReturnType<typeof createFakeDb>) =>
     );
 const writesTo = (db: ReturnType<typeof createFakeDb>, table: string) =>
   db.writes().filter((call) => call.table === table);
-const queued = () => {
-  const raw = window.localStorage.getItem(pendingKey(U));
-  return raw === null ? [] : (JSON.parse(raw) as { ops: unknown[] }).ops;
-};
+const queued = () => storedOps(pendingKey(U)).map((entry) => entry.op);
 
 const guest: ProgressState = {
   lessons: {
@@ -261,23 +260,20 @@ describe('saveAll: a guest quiz score reaches the account exactly once', () => {
     expect(store.syncError()).toBe(false);
   });
 
-  it('reuses the attempt ids it made when the write was queued', async () => {
+  it('gives each attempt the id made from the score, the same on every try and every replay', async () => {
     const { db, store } = setup();
     db.setOffline(true);
     await store.saveAll(guest);
-    const op = queued()[0] as {
-      kind: string;
-      attemptIds: Record<string, string>;
-    };
-    expect(op.kind).toBe('all');
-    expect(Object.keys(op.attemptIds).sort()).toEqual(['l1-a', 'l1-c']);
+    expect(queued()[0]).toMatchObject({ kind: 'all' });
 
     db.setOffline(false);
     await store.flush();
     const sent = writesTo(db, 'quiz_attempts')[0]
       ?.rows.map((r) => r.id)
       .sort();
-    expect(sent).toEqual(Object.values(op.attemptIds).sort());
+    expect(sent).toEqual(
+      [mergeAttemptId(U, 'l1-a', 4, 5), mergeAttemptId(U, 'l1-c', 2, 5)].sort(),
+    );
   });
 });
 

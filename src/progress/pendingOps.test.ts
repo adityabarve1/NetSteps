@@ -1,11 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import {
-  appendOp,
-  MAX_PENDING_OPS,
-  overlayOps,
-  parsePending,
-} from '@/progress/pendingOps';
+import { appendOp, MAX_PENDING_OPS, overlayOps } from '@/progress/pendingOps';
 import type { PendingOp, WriteOp } from '@/progress/pendingOps';
+import { seqAt } from '@/test/pendingStorage';
 import {
   done,
   opened,
@@ -16,6 +12,8 @@ import {
   withQuiz,
 } from '@/test/progressFixtures';
 
+// The seq of the nth write: they sort in the order they were made.
+const S = (n: number) => seqAt(1000 + n);
 const UUID = (n: number) =>
   `00000000-0000-4000-8000-${String(n).padStart(12, '0')}`;
 const lesson = (id: string, record = opened(T1)): WriteOp => ({
@@ -44,30 +42,41 @@ const quiz = (
 const all = (): WriteOp => ({
   kind: 'all',
   state: stateOf({ x: done(T1) }),
-  attemptIds: {},
 });
 
-function build(ops: WriteOp[], inFlight: number | null = null): PendingOp[] {
+function build(ops: WriteOp[], inFlight: string | null = null): PendingOp[] {
   let queue: PendingOp[] = [];
   ops.forEach((op, i) => {
-    queue = appendOp(queue, op, i + 1, inFlight).queue;
+    queue = appendOp(queue, op, S(i + 1), inFlight).queue;
   });
   return queue;
 }
 
 describe('appendOp: coalescing', () => {
-  it('replaces an earlier upsert for the same lesson with the joined latest', () => {
+  it('folds an earlier upsert for the same lesson in place, joined with the latest', () => {
     const queue = build([
       lesson('a', opened(T1)),
       lab('lab-1'),
       lesson('a', done(T2)),
     ]);
-    expect(queue.map((op) => op.kind)).toEqual(['lab', 'lesson']);
-    expect(queue[1]).toMatchObject({
+    // The lesson keeps its place (and its seq): its key is rewritten in storage.
+    expect(queue.map((op) => op.kind)).toEqual(['lesson', 'lab']);
+    expect(queue.map((op) => op.seq)).toEqual([S(1), S(2)]);
+    expect(queue[0]).toMatchObject({
       kind: 'lesson',
       id: 'a',
       record: done(T2),
     });
+  });
+
+  it('says which write now carries the new one', () => {
+    const first = appendOp([], lesson('a'), S(1), null);
+    expect(first.held).toBe(S(1));
+    const second = appendOp(first.queue, lesson('a', done(T2)), S(2), null);
+    expect(second.held).toBe(S(1));
+    expect(second.queue).toHaveLength(1);
+    const third = appendOp(second.queue, lesson('b'), S(3), null);
+    expect(third.held).toBe(S(3));
   });
 
   it('never lets a coalesced record lose a completion', () => {
@@ -80,7 +89,7 @@ describe('appendOp: coalescing', () => {
     });
   });
 
-  it('replaces an earlier upsert for the same lab', () => {
+  it('folds an earlier upsert for the same lab', () => {
     const queue = build([
       lab('lab-1'),
       {
@@ -105,9 +114,10 @@ describe('appendOp: coalescing', () => {
   });
 
   it('does not touch the operation that is being sent right now', () => {
-    const first = appendOp([], lesson('a'), 1, null).queue;
-    const next = appendOp(first, lesson('a', done(T2)), 2, 1).queue;
-    expect(next.map((op) => op.seq)).toEqual([1, 2]);
+    const first = appendOp([], lesson('a'), S(1), null).queue;
+    const next = appendOp(first, lesson('a', done(T2)), S(2), S(1));
+    expect(next.queue.map((op) => op.seq)).toEqual([S(1), S(2)]);
+    expect(next.held).toBe(S(2));
   });
 
   it('never coalesces quiz attempts: each submit is its own row', () => {
@@ -121,7 +131,7 @@ describe('appendOp: the length cap', () => {
   });
 
   it('under the cap, drops nothing', () => {
-    const result = appendOp([], quiz(1, 'a', 3), 1, null, 3);
+    const result = appendOp([], quiz(1, 'a', 3), S(1), null, 3);
     expect(result.dropped).toBe(0);
   });
 
@@ -136,7 +146,7 @@ describe('appendOp: the length cap', () => {
       quiz(4, 'b', 1),
       quiz(5, 'b', 2), // over the cap: something has to go
     ].forEach((op, i) => {
-      const step = appendOp(queue, op, i + 1, null, cap);
+      const step = appendOp(queue, op, S(i + 1), null, cap);
       queue = step.queue;
       dropped += step.dropped;
     });
@@ -152,7 +162,7 @@ describe('appendOp: the length cap', () => {
   it('keeps the best score for every lesson even under pressure', () => {
     let queue: PendingOp[] = [];
     for (let i = 1; i <= 30; i += 1) {
-      queue = appendOp(queue, quiz(i, 'a', i % 6), i, null, 5).queue;
+      queue = appendOp(queue, quiz(i, 'a', i % 6), S(i), null, 5).queue;
     }
     const best = queue.flatMap((op) => (op.kind === 'quiz' ? [op.score] : []));
     expect(Math.max(...best)).toBe(5);
@@ -166,15 +176,15 @@ describe('appendOp: the length cap', () => {
       const step = appendOp(
         queue,
         lesson(`l${String(i)}`, done(T1)),
-        i,
+        S(i),
         null,
         3,
       );
       queue = step.queue;
       dropped += step.dropped;
     }
-    queue = appendOp(queue, lab('lab-1'), 7, null, 3).queue;
-    queue = appendOp(queue, all(), 8, null, 3).queue;
+    queue = appendOp(queue, lab('lab-1'), S(7), null, 3).queue;
+    queue = appendOp(queue, all(), S(8), null, 3).queue;
     expect(dropped).toBe(0);
     expect(queue.filter((op) => op.kind === 'lesson')).toHaveLength(6);
     expect(queue.some((op) => op.kind === 'all')).toBe(true);
@@ -182,10 +192,10 @@ describe('appendOp: the length cap', () => {
   });
 
   it('never drops the operation that is being sent', () => {
-    const first = appendOp([], quiz(1, 'a', 1), 1, null, 2).queue;
-    const second = appendOp(first, quiz(2, 'a', 2), 2, null, 2).queue;
-    const third = appendOp(second, quiz(3, 'a', 3), 3, 1, 2).queue;
-    expect(third.map((op) => op.seq)).toContain(1);
+    const first = appendOp([], quiz(1, 'a', 1), S(1), null, 2).queue;
+    const second = appendOp(first, quiz(2, 'a', 2), S(2), null, 2).queue;
+    const third = appendOp(second, quiz(3, 'a', 3), S(3), S(1), 2).queue;
+    expect(third.map((op) => op.seq)).toContain(S(1));
   });
 });
 
@@ -199,7 +209,7 @@ describe('overlayOps: what the queued writes would add to a loaded state', () =>
         lesson('b', opened(T1)),
         lab('lab-1'),
         quiz(1, 'b', 4),
-        { kind: 'all', state: stateOf({ c: done(T3) }), attemptIds: {} },
+        { kind: 'all', state: stateOf({ c: done(T3) }) },
       ]),
     );
     expect(result.lessons.a).toEqual(done(T2));
@@ -211,99 +221,5 @@ describe('overlayOps: what the queued writes would add to a loaded state', () =>
   it('returns the same state when nothing is queued', () => {
     const base = stateOf({ a: opened(T1) });
     expect(overlayOps(base, [])).toBe(base);
-  });
-});
-
-describe('parsePending: what comes back from localStorage is validated', () => {
-  const stored = (ops: unknown) => JSON.stringify({ v: 1, ops });
-
-  it('reads back what was written', () => {
-    const queue = build([
-      lesson('a', done(T1)),
-      lab('lab-1'),
-      quiz(1, 'a', 4),
-      all(),
-    ]);
-    expect(parsePending(stored(queue))).toEqual(queue);
-  });
-
-  it.each([
-    ['nothing', null],
-    ['corrupt JSON', '{nope'],
-    ['an array', '[]'],
-    ['an unknown version', JSON.stringify({ v: 2, ops: [] })],
-    ['ops that are not a list', JSON.stringify({ v: 1, ops: 'x' })],
-  ])('is empty for %s', (_name, raw) => {
-    expect(parsePending(raw)).toEqual([]);
-  });
-
-  it('drops only the damaged operations and keeps the rest', () => {
-    const good = build([lesson('a', done(T1))])[0];
-    const parsed = parsePending(
-      stored([
-        null,
-        7,
-        { seq: 1, kind: 'mystery' },
-        { seq: 2, kind: 'lesson', id: '', record: opened(T1) },
-        { seq: 3, kind: 'lesson', id: 'a', record: { status: 'bogus' } },
-        {
-          seq: 4,
-          kind: 'lesson',
-          id: 'constructor',
-          record: { status: 'bogus' },
-        },
-        { seq: -1, kind: 'lab', id: 'x', record: { status: 'started' } },
-        {
-          seq: 5,
-          kind: 'quiz',
-          attemptId: 'not-a-uuid',
-          lessonId: 'a',
-          score: 1,
-          total: 5,
-          at: T1,
-        },
-        {
-          seq: 6,
-          kind: 'quiz',
-          attemptId: UUID(1),
-          lessonId: 'a',
-          score: 9,
-          total: 5,
-          at: T1,
-        },
-        {
-          seq: 7,
-          kind: 'quiz',
-          attemptId: UUID(1),
-          lessonId: 'a',
-          score: 1,
-          total: 5,
-          at: 'later',
-        },
-        good,
-      ]),
-    );
-    expect(parsed).toEqual([good]);
-  });
-
-  it('cleans the state inside a whole-state write and its attempt ids', () => {
-    const parsed = parsePending(
-      stored([
-        {
-          seq: 1,
-          kind: 'all',
-          state: { lessons: { ok: opened(T1), bad: 3 }, labs: 9 },
-          attemptIds: { ok: UUID(2), bad: 'no', other: 5 },
-        },
-      ]),
-    );
-    expect(parsed).toEqual([
-      {
-        seq: 1,
-        kind: 'all',
-        state: { lessons: { ok: opened(T1) }, labs: {} },
-        attemptIds: { ok: UUID(2) },
-      },
-    ]);
   });
 });

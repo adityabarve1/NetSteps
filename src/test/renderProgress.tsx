@@ -45,6 +45,15 @@ export function renderProgress(initial: AuthSnapshot, options: Options = {}) {
   let tick = 0;
   const now = () => new Date(Date.UTC(2026, 5, 1, 0, 0, tick++)).toISOString();
   const created: { userId: string; fake: FakeAccount }[] = [];
+  // The before-sign-out handlers, as AuthProvider keeps them. One stable function,
+  // like the real one, so it does not make effects run again.
+  const handlers = new Set<() => Promise<void>>();
+  const registerBeforeSignOut = (handler: () => Promise<void>) => {
+    handlers.add(handler);
+    return () => {
+      handlers.delete(handler);
+    };
+  };
   const guest = options.guest ?? createLocalStore();
   const factory: StoreFactory = {
     guest: () => guest,
@@ -89,6 +98,7 @@ export function renderProgress(initial: AuthSnapshot, options: Options = {}) {
       resetPassword: vi.fn(),
       updatePassword: vi.fn(),
       deleteAccount: vi.fn(),
+      registerBeforeSignOut,
     };
     return (
       <AuthContext value={value}>
@@ -112,6 +122,13 @@ export function renderProgress(initial: AuthSnapshot, options: Options = {}) {
   return {
     result,
     unmount: view.unmount,
+    /** The handlers currently registered to run before sign-out. */
+    handlers,
+    /** What AuthProvider.signOut does before it signs out (without the timeout). */
+    runBeforeSignOut: () =>
+      act(async () => {
+        await Promise.allSettled([...handlers].map((handler) => handler()));
+      }),
     guest,
     created,
     storesFor: (userId: string) =>

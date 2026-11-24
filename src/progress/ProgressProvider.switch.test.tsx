@@ -126,4 +126,63 @@ describe('account A to account B with no sign-out in between (RF5)', () => {
     expect(ids(view.result.current.state)).toEqual(['l1-early']);
     expect(bob.store.saveLesson).toHaveBeenCalledTimes(1);
   });
+
+  // The reconnect read (`refresh`) is not tied to an effect, so its own guard is
+  // the only thing stopping a slow answer for A from being merged into B.
+  it('a reconnect read for A that finishes after the switch to B is never merged into B', async () => {
+    let reachable = false;
+    const held = deferred<ProgressState>();
+    const alice = createFakeAccountStore({
+      load: () =>
+        reachable ? held.promise : Promise.reject(new Error('offline')),
+    });
+    const bob = createFakeAccountStore({
+      remote: stateOf({ 'l1-bob': done(T2) }),
+    });
+    const view = renderProgress(authSignedIn('alice'), {
+      account: accounts({ alice, bob }),
+    });
+    await ready(view.result); // A could not be read: shown as incomplete
+    expect(view.result.current.syncError).toBe(true);
+
+    reachable = true;
+    view.online(); // the reconnect read for A starts, and is held
+    expect(alice.store.load).toHaveBeenCalledTimes(2);
+
+    view.setAuth(authSignedIn('bob'));
+    await ready(view.result);
+    expect(ids(view.result.current.state)).toEqual(['l1-bob']);
+
+    await act(async () => {
+      held.resolve(stateOf({ 'l1-alice': done(T1) }));
+      await held.promise;
+    });
+
+    expect(ids(view.result.current.state)).toEqual(['l1-bob']);
+    expect(view.result.current.ready).toBe(true);
+    expect(view.result.current.syncError).toBe(false);
+  });
+
+  it('a second reconnect while the first read is still running does not start another', async () => {
+    let reachable = false;
+    const held = deferred<ProgressState>();
+    const alice = createFakeAccountStore({
+      load: () =>
+        reachable ? held.promise : Promise.reject(new Error('offline')),
+    });
+    const view = renderProgress(authSignedIn('alice'), {
+      account: accounts({ alice }),
+    });
+    await ready(view.result);
+    reachable = true;
+    view.online();
+    view.online();
+    expect(alice.store.load).toHaveBeenCalledTimes(2); // the first, and one retry
+    await act(async () => {
+      held.resolve(stateOf({ 'l1-alice': done(T1) }));
+      await held.promise;
+    });
+    expect(ids(view.result.current.state)).toEqual(['l1-alice']);
+    expect(view.result.current.syncError).toBe(false);
+  });
 });

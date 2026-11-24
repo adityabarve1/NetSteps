@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { PendingOp, WriteOp } from '@/progress/pendingOps';
 import { createPendingQueue } from '@/progress/pendingQueue';
 import { RemoteFailure } from '@/progress/remoteFailure';
+import { pendingKeys, seedOp, seqAt, storedOps } from '@/test/pendingStorage';
 import { done, opened, T1, T2 } from '@/test/progressFixtures';
 import { deferred } from '@/test/fakeSupabase';
 
@@ -14,10 +15,9 @@ const lesson = (id: string, record = opened(T1)): WriteOp => ({
 const down = () => new RemoteFailure('Failed to fetch', 0, '');
 const label = (op: PendingOp) =>
   op.kind === 'lesson' || op.kind === 'lab' ? op.id : op.kind;
-const persisted = (): { ops: PendingOp[] } | null => {
-  const raw = window.localStorage.getItem(KEY);
-  return raw === null ? null : (JSON.parse(raw) as { ops: PendingOp[] });
-};
+// What is waiting in storage, one key per write, in the order they were made.
+const persisted = (): string[] =>
+  storedOps(KEY).map((entry) => String(entry.op.id ?? entry.op.kind));
 
 type Run = (op: PendingOp) => Promise<void>;
 
@@ -45,7 +45,7 @@ describe('writing through the queue', () => {
   it('saves the operation to storage BEFORE sending it, and removes it once sent', async () => {
     let seenWhileSending: string[] = [];
     const { queue, sent } = setup(() => {
-      seenWhileSending = (persisted()?.ops ?? []).map(label);
+      seenWhileSending = persisted();
       return Promise.resolve();
     });
 
@@ -53,7 +53,7 @@ describe('writing through the queue', () => {
 
     expect(seenWhileSending).toEqual(['a']);
     expect(sent).toEqual(['a']);
-    expect(window.localStorage.getItem(KEY)).toBeNull();
+    expect(pendingKeys(KEY)).toEqual([]);
     expect(queue.size()).toBe(0);
     expect(queue.syncError()).toBe(false);
   });
@@ -65,7 +65,7 @@ describe('writing through the queue', () => {
 
     expect(queue.size()).toBe(1);
     expect(queue.syncError()).toBe(true);
-    expect(persisted()?.ops.map(label)).toEqual(['a']);
+    expect(persisted()).toEqual(['a']);
   });
 
   it('copes with a thrown non-error and a synchronous throw', async () => {
@@ -93,14 +93,14 @@ describe('writing through the queue', () => {
 
     // a went out, b failed, c was never tried: the failure keeps the rest.
     expect(sent).toEqual(['a']);
-    expect(persisted()?.ops.map(label)).toEqual(['b', 'c']);
+    expect(persisted()).toEqual(['b', 'c']);
     expect(queue.syncError()).toBe(true);
 
     failing = false;
     await queue.flush();
 
     expect(sent).toEqual(['a', 'b', 'c']);
-    expect(window.localStorage.getItem(KEY)).toBeNull();
+    expect(pendingKeys(KEY)).toEqual([]);
     expect(queue.syncError()).toBe(false);
   });
 
@@ -193,7 +193,7 @@ describe('RF3: persistence of the queue itself', () => {
     expect(second.queue.pending().map(label)).toEqual(['a']);
     await second.queue.flush();
     expect(second.sent).toEqual(['a']);
-    expect(window.localStorage.getItem(KEY)).toBeNull();
+    expect(pendingKeys(KEY)).toEqual([]);
   });
 
   it('numbers new operations after the ones it picked up', async () => {
@@ -207,30 +207,20 @@ describe('RF3: persistence of the queue itself', () => {
     expect(new Set(seqs).size).toBe(3);
   });
 
-  it('ignores a damaged stored queue and keeps the good operations', async () => {
-    window.localStorage.setItem(
-      KEY,
-      JSON.stringify({
-        v: 1,
-        ops: [
-          { seq: 1, kind: 'nonsense' },
-          { seq: 2, kind: 'lesson', id: 'ok', record: opened(T1) },
-        ],
-      }),
-    );
+  it('ignores a damaged stored write and keeps the good ones', async () => {
+    seedOp(KEY, seqAt(1000), { kind: 'nonsense' });
+    seedOp(KEY, seqAt(2000), { kind: 'lesson', id: 'ok', record: opened(T1) });
     const { queue, sent } = setup();
     await queue.flush();
     expect(sent).toEqual(['ok']);
   });
 
   it("never reads another account's queue", async () => {
-    window.localStorage.setItem(
-      'netsteps.pending.someone-else',
-      JSON.stringify({
-        v: 1,
-        ops: [{ seq: 1, kind: 'lesson', id: 'theirs', record: opened(T1) }],
-      }),
-    );
+    seedOp('netsteps.pending.someone-else', seqAt(1000), {
+      kind: 'lesson',
+      id: 'theirs',
+      record: opened(T1),
+    });
     const { queue, execute } = setup();
     await queue.flush();
     expect(execute).not.toHaveBeenCalled();

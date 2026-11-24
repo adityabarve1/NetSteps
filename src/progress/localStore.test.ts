@@ -64,11 +64,14 @@ describe('round trip', () => {
     expect(stored()).toBeNull();
   });
 
-  it('saveAll replaces the whole state', async () => {
+  it('saveAll joins the state with what is stored (see localStore.tabs.test.ts for why)', async () => {
     const store = createLocalStore();
     await store.saveLesson('l1-old', opened(T1));
     await store.saveAll(stateOf({ 'l1-new': done(T2) }));
-    expect(Object.keys((await store.load()).lessons)).toEqual(['l1-new']);
+    expect(Object.keys((await store.load()).lessons).sort()).toEqual([
+      'l1-new',
+      'l1-old',
+    ]);
   });
 
   it('keeps separate keys apart', async () => {

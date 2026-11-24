@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { PendingOp, WriteOp } from '@/progress/pendingOps';
 import { createPendingQueue } from '@/progress/pendingQueue';
 import { RemoteFailure } from '@/progress/remoteFailure';
+import { seedOp, seqAt } from '@/test/pendingStorage';
 import {
   done,
   opened,
@@ -245,13 +246,7 @@ describe('overlay and subscriptions', () => {
   });
 
   it('does not report an error for work picked up from a past session until a retry has failed', () => {
-    window.localStorage.setItem(
-      KEY,
-      JSON.stringify({
-        v: 1,
-        ops: [{ seq: 1, kind: 'lesson', id: 'a', record: opened(T1) }],
-      }),
-    );
+    seedOp(KEY, seqAt(1000), { kind: 'lesson', id: 'a', record: opened(T1) });
     const { queue } = setup();
     expect(queue.size()).toBe(1);
     expect(queue.syncError()).toBe(false);

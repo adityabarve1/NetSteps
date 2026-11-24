@@ -55,6 +55,7 @@ export function ProgressProvider({
   now = isoNow,
 }: ProgressProviderProps) {
   const auth = useAuth();
+  const registerBeforeSignOut = auth.registerBeforeSignOut;
   const supabase = client === undefined ? getSupabase() : client;
   const factory = useMemo<StoreFactory>(
     () =>
@@ -117,6 +118,11 @@ export function ProgressProvider({
     let active = true;
 
     const store = session.store;
+    // Signing out drops the session, and with it the ability to send queued
+    // writes. So while this account is shown, sign-out first gives the store a
+    // bounded chance to send them (the flush shares any replay already running).
+    const unregister =
+      store === null ? undefined : registerBeforeSignOut(() => store.flush());
     const stopWatching = store?.subscribe(() => {
       if (active) {
         setSync({
@@ -134,10 +140,11 @@ export function ProgressProvider({
 
     return () => {
       active = false;
+      unregister?.();
       stopWatching?.();
       release(rt, key);
     };
-  }, [key, publish]);
+  }, [key, publish, registerBeforeSignOut]);
 
   // Back online: send what is waiting, and read the account again if it could
   // not be read. No timers: the browser says when the network is back.

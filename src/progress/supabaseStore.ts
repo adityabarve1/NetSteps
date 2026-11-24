@@ -8,11 +8,15 @@
 //   * saveAll first reads the account's own best (paged, all attempts) and inserts
 //     an attempt only where the guest's score is STRICTLY better. Merging the same
 //     guest data again finds the score already there and adds nothing;
-//   * the attempt ids are made when the write is queued and reused on every
-//     replay, and the insert is ON CONFLICT (id) DO NOTHING, so even a replay of a
-//     merge whose first try really reached the server cannot add a second row.
+//   * the id of that attempt is made FROM the score (attemptId.ts: account,
+//     lesson, score, total), and the insert is ON CONFLICT (id) DO NOTHING. Two tabs
+//     merging at the same moment, a replay of a merge whose first try really reached
+//     the server, and a merge months later all make the same id, so they can never
+//     add a second row. (An ordinary quiz submit keeps a random id: each submit is
+//     its own attempt.)
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { isValidQuiz, isValidTimestamp, submitQuiz } from '@/progress/logic';
+import { mergeAttemptId } from '@/progress/attemptId';
 import { parseProgress } from '@/progress/parse';
 import type { PendingOp, WriteOp } from '@/progress/pendingOps';
 import { createPendingQueue } from '@/progress/pendingQueue';
@@ -39,6 +43,10 @@ const CHUNK_SIZE = 200;
 /** A request that has not answered by now counts as a network failure, so one stuck request cannot stall every replay. */
 const REQUEST_TIMEOUT_MS = 20_000;
 
+/**
+ * The key prefix of an account's queued writes. Each write is stored under its own
+ * key, `<prefix>.<seq>` (see pendingQueue.ts), so tabs never overwrite each other.
+ */
 export const pendingKey = (userId: string): string =>
   `netsteps.pending.${userId}`;
 
@@ -210,11 +218,10 @@ export function createSupabaseStore(
       ) {
         continue;
       }
-      const id = Object.hasOwn(op.attemptIds, lessonId)
-        ? op.attemptIds[lessonId]
-        : undefined;
       attempts.push({
-        id: id ?? newId(),
+        // The same score always gets the same id (attemptId.ts), so two tabs
+        // merging the same guest progress insert one row between them.
+        id: mergeAttemptId(userId, lessonId, best.score, best.total),
         user_id: userId,
         lesson_id: lessonId,
         score: best.score,
@@ -301,16 +308,9 @@ export function createSupabaseStore(
     },
 
     async saveAll(state) {
-      const clean = parseProgress(state);
-      const attemptIds = Object.fromEntries(
-        Object.entries(clean.lessons).flatMap(([id, record]) =>
-          record.quizBest === undefined ? [] : [[id, newId()] as const],
-        ),
-      );
       const outcome = await queue.enqueue({
         kind: 'all',
-        state: clean,
-        attemptIds,
+        state: parseProgress(state),
       });
       if (outcome === 'unsaved') {
         throw new Error(

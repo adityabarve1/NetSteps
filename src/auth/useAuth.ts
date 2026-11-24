@@ -35,8 +35,20 @@ export interface AuthContextValue {
   signIn: (email: string, password: string) => Promise<AuthResult>;
   /** Leaves the site for Google, then returns to /auth/callback. */
   signInWithGoogle: () => Promise<AuthResult>;
-  /** Signs out of this device only, and works with no network. Never throws. */
+  /**
+   * Signs out of this device only, and works with no network. Never throws.
+   * Handlers added with `registerBeforeSignOut` run first (see below), so this can
+   * take up to the timeout before the sign-out happens; it always completes.
+   */
   signOut: () => Promise<void>;
+  /**
+   * Adds work to finish before this device signs out, while the session is still
+   * valid (the progress provider uses it to send queued writes). `signOut()`
+   * starts every handler, waits for them for at most about three seconds, and then
+   * signs out whether they finished, failed or hung. Returns the function that
+   * removes the handler. The function itself never changes between renders.
+   */
+  registerBeforeSignOut: (handler: () => Promise<void>) => () => void;
   /**
    * Succeeds for any address, known or not, so the answer never reveals which
    * addresses have accounts. Only failures that do not depend on the address

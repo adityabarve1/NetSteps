@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createSupabaseStore, pendingKey } from '@/progress/supabaseStore';
 import { createFakeDb, NETWORK_DOWN } from '@/test/fakeDb';
+import { pendingKeys, storedOps } from '@/test/pendingStorage';
 import { done, opened, T1, T2, T3 } from '@/test/progressFixtures';
 
 const U = 'user-1';
@@ -15,12 +16,9 @@ function setup(userId = U) {
 }
 const upsertsTo = (db: ReturnType<typeof createFakeDb>, table: string) =>
   db.writes().filter((call) => call.table === table);
-const queued = (userId = U) => {
-  const raw = window.localStorage.getItem(pendingKey(userId));
-  return raw === null
-    ? []
-    : (JSON.parse(raw) as { ops: { kind: string }[] }).ops;
-};
+// The writes waiting in storage (one key each), without their seq.
+const queued = (userId = U) =>
+  storedOps(pendingKey(userId)).map((entry) => entry.op);
 
 beforeEach(() => {
   window.localStorage.clear();
@@ -31,7 +29,7 @@ afterEach(() => {
 });
 
 describe('RF3: failed writes are queued, never lost, never thrown', () => {
-  it('queues a write the network refused, under netsteps.pending.<userId>', async () => {
+  it('queues a write the network refused, under its own netsteps.pending.<userId>.<seq> key', async () => {
     const { db, store } = setup();
     db.setOffline(true);
 
@@ -39,9 +37,10 @@ describe('RF3: failed writes are queued, never lost, never thrown', () => {
 
     expect(store.syncError()).toBe(true);
     expect(queued()).toHaveLength(1);
-    expect(
-      window.localStorage.getItem('netsteps.pending.user-1'),
-    ).not.toBeNull();
+    expect(pendingKeys('netsteps.pending.user-1')).toHaveLength(1);
+    expect(pendingKeys('netsteps.pending.user-1')[0]).toMatch(
+      /^netsteps\.pending\.user-1\.\d{15}-\d{6}-[0-9a-z]{4}$/,
+    );
   });
 
   it('flush replays the queue in order and clears it', async () => {
@@ -70,7 +69,7 @@ describe('RF3: failed writes are queued, never lost, never thrown', () => {
       'lesson_progress:l1-b',
     ]);
     expect(queued()).toEqual([]);
-    expect(window.localStorage.getItem(pendingKey(U))).toBeNull();
+    expect(pendingKeys(pendingKey(U))).toEqual([]);
     expect(store.syncError()).toBe(false);
     expect(db.table('lesson_progress')).toHaveLength(2);
   });
@@ -140,7 +139,7 @@ describe('RF3: failed writes are queued, never lost, never thrown', () => {
 
     expect(b.db.calls).toHaveLength(0);
     expect((await b.store.load()).lessons).toEqual({});
-    expect(window.localStorage.getItem(pendingKey('user-a'))).not.toBeNull();
+    expect(pendingKeys(pendingKey('user-a'))).toHaveLength(1);
   });
 
   it('folds repeated offline writes for one lesson into one queued write', async () => {

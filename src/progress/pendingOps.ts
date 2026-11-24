@@ -4,6 +4,11 @@
 // A queued write is a snapshot of one change. Replaying any of them is safe:
 // lesson and lab upserts overwrite the same row with the same values, and a quiz
 // attempt carries the id it was given, so the database ignores a second copy.
+//
+// In localStorage every write has its OWN key, `<base>.<seq>`, so two tabs of one
+// account can add and remove writes without ever overwriting each other's. The
+// `seq` is a sortable string (see `SEQ_PATTERN`) and sorting by it is the replay
+// order.
 import {
   isValidQuiz,
   isValidTimestamp,
@@ -37,12 +42,39 @@ export type WriteOp =
       total: number;
       at: string;
     }
-  // The guest-to-account merge. `attemptIds` holds one pre-made id per lesson
-  // that has a quiz score, so a replay inserts the same attempt, never a new one.
-  | { kind: 'all'; state: ProgressState; attemptIds: Record<LessonId, string> };
+  // The guest-to-account merge.
+  | { kind: 'all'; state: ProgressState };
 
-export type PendingOp = WriteOp & { seq: number };
+export type PendingOp = WriteOp & { seq: string };
 type QuizOp = Extract<PendingOp, { kind: 'quiz' }>;
+
+// ---------------------------------------------------------------------------
+// Names in storage
+// ---------------------------------------------------------------------------
+
+/**
+ * A `seq` is zero-padded milliseconds, a counter and a short random suffix, so it
+ * sorts as text in the order the writes were made, even across tabs:
+ * `000001780000000-000003-k3f9`.
+ */
+export const SEQ_PATTERN = /^\d{15}-\d{6}-[0-9a-z]{4}$/;
+
+export const opKey = (base: string, seq: string): string => `${base}.${seq}`;
+
+/**
+ * The seq in a localStorage key, if the key is one of this queue's writes. The
+ * old single key (`<base>` with nothing after it), another account's keys and
+ * anything else give null.
+ */
+export function seqOfKey(base: string, storageKey: string): string | null {
+  const head = `${base}.`;
+  if (!storageKey.startsWith(head)) return null;
+  const seq = storageKey.slice(head.length);
+  return SEQ_PATTERN.test(seq) ? seq : null;
+}
+
+export const bySeq = (a: { seq: string }, b: { seq: string }): number =>
+  a.seq < b.seq ? -1 : Number(a.seq > b.seq);
 
 // ---------------------------------------------------------------------------
 // Adding a write: fold, then cap
@@ -78,7 +110,7 @@ function joinLabs(a: LabRecord, b: LabRecord, id: string): LabRecord {
 function foldableIndex(
   queue: readonly PendingOp[],
   op: WriteOp,
-  inFlight: number | null,
+  inFlight: string | null,
 ): number {
   for (let i = queue.length - 1; i >= 0; i -= 1) {
     const earlier = queue[i];
@@ -123,7 +155,7 @@ function notBetter(candidate: QuizOp, than: QuizOp): boolean {
 // that is not enough do the best ones go, oldest first.
 function quizVictims(
   queue: readonly PendingOp[],
-  inFlight: number | null,
+  inFlight: string | null,
 ): QuizOp[] {
   const quizzes = queue.filter(
     (op): op is QuizOp => op.kind === 'quiz' && op.seq !== inFlight,
@@ -142,49 +174,52 @@ function quizVictims(
   ];
 }
 
+/**
+ * Adds a write. A lesson or lab write is folded INTO the earlier write for the same
+ * row, which keeps its place and its `seq` (so, in storage, its key is rewritten in
+ * place); `held` is the seq of the write that now carries this one. Past the cap the
+ * quiz attempts that matter least are dropped.
+ */
 export function appendOp(
   queue: readonly PendingOp[],
   op: WriteOp,
-  seq: number,
-  inFlight: number | null,
+  seq: string,
+  inFlight: string | null,
   max: number = MAX_PENDING_OPS,
-): { queue: PendingOp[]; dropped: number } {
+): { queue: PendingOp[]; dropped: number; held: string } {
   let next: PendingOp[] = [...queue];
-  let added: PendingOp = { ...op, seq };
+  let held = seq;
 
-  if (op.kind === 'lesson' || op.kind === 'lab') {
-    const at = foldableIndex(next, op, inFlight);
-    const earlier = at < 0 ? undefined : next[at];
-    if (earlier !== undefined) {
-      next = next.filter((entry) => entry.seq !== earlier.seq);
-      if (op.kind === 'lesson' && earlier.kind === 'lesson') {
-        added = {
-          ...op,
-          seq,
-          record: joinLessons(earlier.record, op.record, op.id),
-        };
-      } else if (op.kind === 'lab' && earlier.kind === 'lab') {
-        added = {
-          ...op,
-          seq,
-          record: joinLabs(earlier.record, op.record, op.id),
-        };
-      }
-    }
+  const at =
+    op.kind === 'lesson' || op.kind === 'lab'
+      ? foldableIndex(next, op, inFlight)
+      : -1;
+  const earlier = at < 0 ? undefined : next[at];
+  if (op.kind === 'lesson' && earlier?.kind === 'lesson') {
+    next[at] = {
+      ...earlier,
+      record: joinLessons(earlier.record, op.record, op.id),
+    };
+    held = earlier.seq;
+  } else if (op.kind === 'lab' && earlier?.kind === 'lab') {
+    next[at] = {
+      ...earlier,
+      record: joinLabs(earlier.record, op.record, op.id),
+    };
+    held = earlier.seq;
+  } else {
+    next.push({ ...op, seq });
   }
-  next.push(added);
 
   const excess = next.length - max;
-  if (excess <= 0) return { queue: next, dropped: 0 };
+  if (excess <= 0) return { queue: next, dropped: 0, held };
   const gone = new Set(
     quizVictims(next, inFlight)
       .slice(0, excess)
       .map((o) => o.seq),
   );
-  return {
-    queue: next.filter((entry) => !gone.has(entry.seq)),
-    dropped: gone.size,
-  };
+  next = next.filter((entry) => !gone.has(entry.seq));
+  return { queue: next, dropped: gone.size, held };
 }
 
 // ---------------------------------------------------------------------------
@@ -220,8 +255,8 @@ export function overlayOps(
 }
 
 // ---------------------------------------------------------------------------
-// Reading the queue back from storage. Like everything else that comes from
-// storage it is checked: a damaged write is skipped, the rest are kept.
+// One write in storage. Like everything else that comes from storage it is
+// checked: a damaged write is skipped (and left where it is), the rest are kept.
 // ---------------------------------------------------------------------------
 
 const FORMAT_VERSION = 1;
@@ -236,12 +271,8 @@ function idOf(raw: Record<string, unknown>, field: string): string | undefined {
   return typeof id === 'string' && id !== '' ? id : undefined;
 }
 
-function parseOp(raw: unknown): PendingOp | undefined {
+function parseOp(seq: string, raw: unknown): PendingOp | undefined {
   if (!isObject(raw)) return undefined;
-  const { seq } = raw;
-  if (typeof seq !== 'number' || !Number.isSafeInteger(seq) || seq < 0) {
-    return undefined;
-  }
   switch (raw.kind) {
     case 'lesson': {
       const id = idOf(raw, 'id');
@@ -288,44 +319,32 @@ function parseOp(raw: unknown): PendingOp | undefined {
       };
     }
     case 'all': {
-      const ids = isObject(raw.attemptIds) ? raw.attemptIds : {};
-      return {
-        kind: 'all',
-        seq,
-        state: parseProgress(raw.state),
-        attemptIds: Object.fromEntries(
-          Object.entries(ids).filter(
-            (entry): entry is [string, string] =>
-              typeof entry[1] === 'string' && UUID.test(entry[1]),
-          ),
-        ),
-      };
+      return { kind: 'all', seq, state: parseProgress(raw.state) };
     }
     default:
       return undefined;
   }
 }
 
-export function parsePending(raw: string | null): PendingOp[] {
-  if (raw === null) return [];
+/** The write stored under `seq`, or undefined if what is stored is not a valid write. */
+export function parseStoredOp(
+  seq: string,
+  raw: string | null,
+): PendingOp | undefined {
+  if (raw === null) return undefined;
   try {
     const envelope: unknown = JSON.parse(raw);
-    if (
-      !isObject(envelope) ||
-      envelope.v !== FORMAT_VERSION ||
-      !Array.isArray(envelope.ops)
-    ) {
-      return [];
-    }
-    return envelope.ops.flatMap((entry: unknown) => {
-      const op = parseOp(entry);
-      return op === undefined ? [] : [op];
-    });
+    if (!isObject(envelope) || envelope.v !== FORMAT_VERSION) return undefined;
+    return parseOp(seq, envelope.op);
   } catch {
-    return [];
+    return undefined;
   }
 }
 
-export function serializePending(ops: readonly PendingOp[]): string {
-  return JSON.stringify({ v: FORMAT_VERSION, ops });
+export function serializeOp(op: PendingOp): string {
+  // The seq lives in the key, not in the value.
+  const write = Object.fromEntries(
+    Object.entries(op).filter(([field]) => field !== 'seq'),
+  );
+  return JSON.stringify({ v: FORMAT_VERSION, op: write });
 }

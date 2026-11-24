@@ -1,8 +1,13 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import type { Session, SupabaseClient } from '@supabase/supabase-js';
 import { sameUser, toAppUser } from '@/auth/appUser';
 import { createAuthActions } from '@/auth/authActions';
+import {
+  BEFORE_SIGN_OUT_TIMEOUT_MS,
+  runBeforeSignOut,
+} from '@/auth/beforeSignOut';
+import type { BeforeSignOutHandler } from '@/auth/beforeSignOut';
 import { AuthContext } from '@/auth/useAuth';
 import type { AppUser, AuthContextValue, AuthStatus } from '@/auth/useAuth';
 import { getSupabase } from '@/lib/supabase';
@@ -48,9 +53,15 @@ interface AuthProviderProps {
    * app behaves as if no Supabase project is configured (guest-only mode).
    */
   client?: SupabaseClient | null;
+  /** For tests: how long sign-out waits for before-sign-out handlers. */
+  beforeSignOutTimeoutMs?: number;
 }
 
-export function AuthProvider({ children, client }: AuthProviderProps) {
+export function AuthProvider({
+  children,
+  client,
+  beforeSignOutTimeoutMs = BEFORE_SIGN_OUT_TIMEOUT_MS,
+}: AuthProviderProps) {
   const [passwordRecovery, setPasswordRecovery] = useState(
     addressIsRecoveryLink,
   );
@@ -119,12 +130,26 @@ export function AuthProvider({ children, client }: AuthProviderProps) {
 
   const actions = useMemo(() => createAuthActions(supabase), [supabase]);
 
+  // Work other providers want finished before the session goes (see beforeSignOut.ts).
+  const beforeSignOut = useRef<Set<BeforeSignOutHandler> | null>(null);
+  const registerBeforeSignOut = useCallback((handler: BeforeSignOutHandler) => {
+    const handlers = (beforeSignOut.current ??= new Set());
+    handlers.add(handler);
+    return () => {
+      handlers.delete(handler);
+    };
+  }, []);
+
   const signOut = useCallback(async () => {
+    // Bounded, and never throws: whatever happens here, sign-out goes ahead.
+    if (beforeSignOut.current !== null && beforeSignOut.current.size > 0) {
+      await runBeforeSignOut(beforeSignOut.current, beforeSignOutTimeoutMs);
+    }
     await actions.signOut();
     // Whatever the server said, this device is signed out now.
     setState({ loaded: true, user: null });
     setPasswordRecovery(false);
-  }, [actions]);
+  }, [actions, beforeSignOutTimeoutMs]);
 
   const updatePassword = useCallback(
     async (password: string) => {
@@ -155,6 +180,7 @@ export function AuthProvider({ children, client }: AuthProviderProps) {
       signIn: actions.signIn,
       signInWithGoogle: actions.signInWithGoogle,
       signOut,
+      registerBeforeSignOut,
       resetPassword: actions.resetPassword,
       updatePassword,
       deleteAccount,
@@ -165,6 +191,7 @@ export function AuthProvider({ children, client }: AuthProviderProps) {
       passwordRecovery,
       actions,
       signOut,
+      registerBeforeSignOut,
       updatePassword,
       deleteAccount,
     ],

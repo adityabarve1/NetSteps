@@ -5,6 +5,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createLocalStore, GUEST_STORAGE_KEY } from '@/progress/localStore';
 import { createSupabaseStore, pendingKey } from '@/progress/supabaseStore';
 import { createFakeDb } from '@/test/fakeDb';
+import { pendingKeys } from '@/test/pendingStorage';
 import { done, stateOf, T1, withQuiz } from '@/test/progressFixtures';
 import {
   authSignedIn,
@@ -48,7 +49,7 @@ describe('offline writes through the real store (RF3)', () => {
       expect(view.result.current.syncError).toBe(true);
     });
     expect(view.result.current.state.lessons['l1-a']?.status).toBe('completed');
-    expect(window.localStorage.getItem(pendingKey('alice'))).not.toBeNull();
+    expect(pendingKeys(pendingKey('alice'))).not.toEqual([]);
 
     db.setOffline(false);
     view.online();
@@ -61,7 +62,7 @@ describe('offline writes through the real store (RF3)', () => {
       lesson_id: 'l1-a',
       status: 'completed',
     });
-    expect(window.localStorage.getItem(pendingKey('alice'))).toBeNull();
+    expect(pendingKeys(pendingKey('alice'))).toEqual([]);
   });
 
   it('a quiz submit made offline is saved once, however often it is retried', async () => {
@@ -208,8 +209,8 @@ describe('two accounts on one browser (RF5)', () => {
       'l1-alices',
     );
     // Alice's waiting write is still hers, under her own key, for her return.
-    expect(window.localStorage.getItem(pendingKey('alice'))).not.toBeNull();
-    expect(window.localStorage.getItem(pendingKey('bob'))).toBeNull();
+    expect(pendingKeys(pendingKey('alice'))).toHaveLength(1);
+    expect(pendingKeys(pendingKey('bob'))).toEqual([]);
   });
 
   it('delivers Alice waiting write when Alice comes back', async () => {
