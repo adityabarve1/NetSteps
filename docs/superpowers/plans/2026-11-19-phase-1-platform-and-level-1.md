@@ -170,6 +170,23 @@ src/sim/     src/quiz/        src/netcore/    src/labs/    src/pages/    src/tes
 - [ ] **Step 4: Run** `pnpm check` → PASS.
 - [ ] **Step 5: Commit** `feat: content model, curriculum and glossary`.
 
+### Task 7b: Fresh theme and full-viewport landing page
+
+(Added by owner decision on 2026-11-24: the warm cream/brown look is replaced by a fresh teal and sky-blue look, and the landing page is built early so there is something good-looking to see.)
+
+**Files:**
+- Modify: `src/theme/tokens.css` and any CSS that hard-codes a colour; the spec's "Look" line in §7 and this plan's Task 2 "Visual" line (replace "warm cream" wording; report the edits)
+- Create/replace: `src/pages/Landing.tsx`, `src/pages/HeroAnimation.tsx`, `src/pages/Landing.module.css`
+- Test: `src/theme/tokens.test.ts` (contrast), `src/pages/Landing.test.tsx`
+
+**Interfaces:**
+- Consumes: `curriculum`, `useAuth`, `useProgress` (for "Continue learning"), `siteConfig`.
+- Palette (CSS variables only; keep every existing variable name): light `--bg #f2f9f8`, `--surface #ffffff`, `--text #10272b`, `--accent #0f766e`; dark `--bg #0b1a1e`, `--surface #12262b`, `--text #e6f4f2`, `--accent #2dd4bf`; add a second accent (sky blue) for highlights, and derive the remaining tokens (`--text-muted`, `--border`, `--surface-sunken`, `--danger`, `--focus`, `--shadow`) so every pairing passes.
+
+- [ ] **Step 1: Write failing tests.** Tokens: parse `tokens.css` and assert WCAG contrast for both themes: body text, muted text, accent text and link colour on `--bg`, `--surface` and `--surface-sunken` are at least 4.5:1; `--accent-contrast` on `--accent` at least 4.5:1; focus ring and `--border` for form controls at least 3:1 against their background. Landing: one `h1`; "Start learning free" links to `/learn` and "Sign in" to `/login`; a signed-in user sees "Continue learning" instead of "Sign in"; the seven levels are listed with their titles; the hero animation is `aria-hidden` and static when reduced motion is set; no axe violations; the hero section has `min-height: 100svh` (with a `100vh` fallback) so it fills the whole viewport.
+- [ ] **Step 2: Run** `pnpm test src/theme src/pages` → FAIL. **Step 3: Implement.** Landing sections: a hero that fills the whole viewport (the header sits on top of it, headline, one-line promise, the two calls to action, a small looping PC → switch → server packet animation drawn in SVG), what you will learn (the 7 levels, with the "Coming soon" ones marked), how a lesson works (the recipe in 4 icons), a free-and-public message, a final call to action, footer. Fresh, modern look with a soft gradient from the two accents, rounded cards, generous spacing, no horizontal scroll at 320px. Do not copy any text or assets from the reference site.
+- [ ] **Step 4: Run** `pnpm check` → PASS; `pnpm build` → PASS; look at `pnpm dev` at 1100px and 320px in both themes. **Step 5: Commit** `feat: fresh theme and full-viewport landing page`.
+
 ### Task 8: Step player (simulation engine)
 
 **Files:**
@@ -353,19 +370,21 @@ Every lesson task has the same shape. Files live in `src/content/lessons/level1/
 - [ ] **Step 2: Run** the logic tests → FAIL. **Step 3: Implement the logic, then the lesson** (sections: why we need a switching method; circuit switching and the old phone network; packets; store-and-forward; why packets share links efficiently; comparing the two; real examples). Primary sim: packets split and take different routes, a link breaks mid-message and packets reroute while a circuit call drops.
 - [ ] **Step 4: Run** `pnpm check` → PASS. **Step 5: Commit.**
 
-### Task 22: Landing page and SEO files
+### Task 22: SEO files, metadata and launch polish
+
+(The landing page itself moved to Task 7b by owner decision on 2026-11-24. This task keeps the SEO files, `index.html` metadata and the launch-polish items carried forward from earlier reviews: an inline theme script in `index.html` that sets `data-theme` from `localStorage('netsteps.theme')` / `matchMedia` before first paint, a favicon, a shell-preserving error boundary for failed lazy chunk loads with Reload and Go home, `<ScrollRestoration />` if Task 15 did not add it, and a vendor chunk for supabase-js.)
 
 **Files:**
-- Create/replace: `src/pages/Landing.tsx`, `src/pages/HeroAnimation.tsx`, CSS module, `scripts/make-seo.ts`, `scripts/make-og.ts`, `public/og-source.svg`, `public/favicon.svg`; modify `index.html`
-- Test: `src/pages/Landing.test.tsx`, `scripts/make-seo.test.ts`
+- Create/replace: `scripts/make-seo.ts`, `scripts/make-og.ts`, `public/og-source.svg`, `public/favicon.svg`; modify `index.html`
+- Test: `scripts/make-seo.test.ts`
 
 **Interfaces:**
-- Consumes: `curriculum`, `useAuth`, `siteConfig`.
+- Consumes: `curriculum`, `siteConfig`.
 - Produces: `buildSitemap(siteUrl: string, levels: LevelMeta[]): string` and `buildRobots(siteUrl: string): string` in `scripts/make-seo.ts` (the script writes `public/sitemap.xml` and `public/robots.txt`; wired as `prebuild`); `public/og.png` (1200×630) generated from `og-source.svg` with `sharp`.
 
-- [ ] **Step 1: Write failing tests.** Landing: one `h1`; "Start learning free" links to `/learn` and "Sign in" to `/login`; a signed-in user sees "Continue learning" instead of "Sign in"; the seven levels are listed with their titles; hero animation is `aria-hidden` and static when reduced motion is set; no axe violations. SEO: `buildSitemap` includes `/`, `/learn`, `/privacy`, `/terms` and every **built** lesson URL, none for unbuilt lessons, uses the given site URL without a double slash; `buildRobots` allows all and points to `<siteUrl>/sitemap.xml`.
-- [ ] **Step 2: Run** `pnpm test src/pages/Landing.test.tsx scripts` → FAIL. **Step 3: Implement.** Add the `seo` script (`tsx scripts/make-seo.ts`) and wire it as `prebuild` in `package.json`; `make-seo.ts` imports the curriculum with relative paths and type-only imports because `tsx` does not resolve the `@/` alias. `scripts/make-og.ts` is run once by hand and `public/og.png` is committed (not part of `prebuild`). Landing sections: hero with a small looping PC → switch → server packet animation, what you will learn (7 levels), how a lesson works (the recipe in 4 icons), free-and-public message, final call to action, footer. `index.html`: title, description, canonical, Open Graph and Twitter tags using `VITE_SITE_URL` at build time, theme-color. Do not copy any text or assets from the reference site.
-- [ ] **Step 4: Run** `pnpm check` → PASS; `pnpm build` → PASS and `dist/sitemap.xml` exists. **Step 5: Commit** `feat: landing page and seo files`.
+- [ ] **Step 1: Write failing tests.** SEO: `buildSitemap` includes `/`, `/learn`, `/privacy`, `/terms` and every **built** lesson URL, none for unbuilt lessons, uses the given site URL without a double slash; `buildRobots` allows all and points to `<siteUrl>/sitemap.xml`.
+- [ ] **Step 2: Run** `pnpm test scripts` → FAIL. **Step 3: Implement.** Add the `seo` script (`tsx scripts/make-seo.ts`) and wire it as `prebuild` in `package.json`; `make-seo.ts` imports the curriculum with relative paths and type-only imports because `tsx` does not resolve the `@/` alias. `scripts/make-og.ts` is run once by hand and `public/og.png` is committed (not part of `prebuild`). `index.html`: title, description, canonical, Open Graph and Twitter tags using `VITE_SITE_URL` at build time, theme-color. Do not copy any text or assets from the reference site.
+- [ ] **Step 4: Run** `pnpm check` → PASS; `pnpm build` → PASS and `dist/sitemap.xml` exists. **Step 5: Commit** `feat: seo files and launch polish`.
 
 ### Task 23: Profile, Privacy, Terms and account deletion
 
