@@ -1,0 +1,10 @@
+.section {
+  margin: 0 0 var(--space-6);
+  /* A link to #id scrolls here; leave room so a sticky header cannot cover
+     the heading. */
+  scroll-margin-top: 6rem;
+}
+
+.title {
+  font-size: clamp(1.35rem, 3.5vw, 1.75rem);
+}

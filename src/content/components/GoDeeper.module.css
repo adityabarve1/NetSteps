@@ -1,0 +1,65 @@
+/* A dashed accent frame marks this as optional, advanced material. */
+.block {
+  margin: var(--space-4) 0;
+  border: 1px dashed var(--accent);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+
+.heading {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  min-height: 44px;
+  padding: var(--space-2) var(--space-4);
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+
+.toggle:hover {
+  background: var(--surface-sunken);
+}
+
+.label {
+  color: var(--accent);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.title {
+  flex: 1;
+  min-width: 0;
+  font-weight: 600;
+}
+
+.chevron {
+  flex: none;
+  width: 0.55rem;
+  height: 0.55rem;
+  margin-inline-start: auto;
+  border-right: 2px solid var(--accent);
+  border-bottom: 2px solid var(--accent);
+  transform: rotate(45deg);
+  transition: transform var(--transition);
+}
+
+.toggle[aria-expanded='true'] .chevron {
+  transform: rotate(-135deg);
+}
+
+.body {
+  padding: 0 var(--space-4) var(--space-4);
+}
