@@ -35,7 +35,7 @@
   --text-muted: #44595d;
   /* --border is for form controls and buttons (3:1 or more). Cards and
      dividers use the softer --border-soft, which is decoration only. */
-  --border: #6f8f93;
+  --border: #688a8e;
   --border-soft: #cfe3e1;
   --accent: #0f766e;
   --accent-contrast: #ffffff;
@@ -61,7 +61,7 @@
   --surface-sunken: #07110f;
   --text: #e6f4f2;
   --text-muted: #a3bfc2;
-  --border: #5b7f84;
+  --border: #6a9096;
   --border-soft: #25424a;
   --accent: #2dd4bf;
   --accent-contrast: #04201d;
