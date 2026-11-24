@@ -1,12 +1,12 @@
-# NetPath: agent rules
+# NetSteps: agent rules
 
-NetPath is a public site that teaches computer networking from zero to advanced. Every lesson pairs plain-English theory with a step-through simulation, a quiz and a hands-on lab. Stack: React + Vite + TypeScript (strict), React Router, CSS Modules + CSS variables, Supabase (Auth + Postgres + RLS) as the only backend, Vitest + Testing Library + vitest-axe, ESLint 9 flat config, Prettier, pnpm.
+NetSteps is a public site that teaches computer networking from zero to advanced. Every lesson pairs plain-English theory with a step-through simulation, a quiz and a hands-on lab. Stack: React + Vite + TypeScript (strict), React Router, CSS Modules + CSS variables, Supabase (Auth + Postgres + RLS) as the only backend, Vitest + Testing Library + vitest-axe, ESLint 9 flat config, Prettier, pnpm.
 
 Read before working:
 
 - Spec (read-only): `docs/superpowers/specs/2026-11-18-computer-networks-learning-site-design.md` (section numbers like §7 refer to it)
 - Phase 1 plan: `docs/superpowers/plans/2026-11-19-phase-1-platform-and-level-1.md` (24 tasks; "Global Constraints" and "Review Focus" at the top)
-- Skills in `.claude/skills/`: `netpath-coding` (recipes for lessons, sims, labs, glossary, migrations, pages) and `netpath-lesson-writing` (lesson text, quizzes, accuracy checklist). Use them for those jobs.
+- Skills in `.claude/skills/`: `netsteps-coding` (recipes for lessons, sims, labs, glossary, migrations, pages) and `netsteps-lesson-writing` (lesson text, quizzes, accuracy checklist). Use them for those jobs.
 
 ## Hard rules (from the plan's Global Constraints)
 
@@ -14,7 +14,7 @@ Read before working:
 - Supabase is the only backend. The browser holds only `VITE_SUPABASE_ANON_KEY`. No service-role key anywhere, ever. RLS on every table.
 - Lesson content lives in code, not the database. A lesson id (`l1-what-is-a-network`) is never reused or renamed once progress could exist.
 - Env vars: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_SITE_URL`, `VITE_ENABLE_GOOGLE`, `VITE_CONTACT_EMAIL`. `.env.local` is git-ignored; only `.env.example` is committed.
-- The product name "NetPath" is defined once, in `src/config/site.ts`. Never hard-code it elsewhere.
+- The product name "NetSteps" is defined once, in `src/config/site.ts`. Never hard-code it elsewhere.
 - English only. No leaderboard, notes, forum or admin CMS.
 - Every lesson follows the 10-part recipe of spec §7: hook, analogy, learn (titled sections + "Go deeper" blocks), watch it, try it, practice lab, why it matters, 5-question quiz, recap with cheat sheet, next-lesson link.
 - Progress rules (spec §10): opening a lesson while signed in writes `in_progress` once; a lesson is `completed` when the primary simulation reached its last step AND the quiz was submitted (any score); labs never gate completion; "continue" = most recently opened incomplete lesson, else next in course order; progress % = completed / built lessons. Never write progress on every click.

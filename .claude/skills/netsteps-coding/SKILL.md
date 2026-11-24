@@ -1,9 +1,9 @@
 ---
-name: netpath-coding
-description: Use when adding or changing NetPath code - a lesson, simulation, lab or lab task, glossary term, Supabase migration, or page. Gives the file locations, interfaces and test patterns for each recipe.
+name: netsteps-coding
+description: Use when adding or changing NetSteps code - a lesson, simulation, lab or lab task, glossary term, Supabase migration, or page. Gives the file locations, interfaces and test patterns for each recipe.
 ---
 
-# NetPath coding recipes
+# NetSteps coding recipes
 
 Read `CLAUDE.md` first for the hard rules. Every recipe ends the same way: `pnpm check` must pass, then look at the result in `pnpm dev`. Write the failing test before the code, and run the focused test while iterating (`pnpm test <path>`).
 
@@ -19,7 +19,7 @@ Lessons live in `src/content/lessons/level1/<slug>/` (use the slug named in the 
    - `lab.tsx`: the lab(s) (see "Add a lab").
    - `quiz.ts`: exactly 5 `QuizQuestion`s.
    - `index.tsx`: `export default lesson` of type `Lesson` (`@/content/types`): `hook`, `analogy`, `sections` (at least 5, each with a title, and at least one section with a `deeper` block), `primarySimulationId`, `tryIt`, `labs`, optional `realComputer`, `whyItMatters`, `quiz`, `recap` (3 to 5 takeaways + cheat sheet), `glossary` (term ids).
-4. Write the text with the `netpath-lesson-writing` skill.
+4. Write the text with the `netsteps-lesson-writing` skill.
 5. Register it: add an entry to `src/content/loaders.ts` mapping the lesson id to `() => import('./lessons/level1/<slug>')`; in `src/content/curriculum.ts` set `built: true`, `minutes` (8 to 30) and `labIds` (must equal the ids in `lesson.labs`); append every new term to `src/content/glossary/level1.ts`.
 6. Keep `src/content/validate.test.ts` and `src/content/curriculum.test.ts` green: built ids must equal ids with a loader, every glossary id must exist, the quiz must have 5 valid questions, `primarySimulationId` must be non-empty.
 7. Run `pnpm check`, then walk the lesson in `pnpm dev`: sim to the last step, submit the quiz, confirm it shows completed and the course map ring updates.

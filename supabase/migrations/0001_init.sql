@@ -1,4 +1,4 @@
--- NetPath 0001: tables, row level security, triggers and delete_my_account().
+-- NetSteps 0001: tables, row level security, triggers and delete_my_account().
 --
 -- Run top to bottom, once, on a fresh Supabase project (SQL editor or `supabase db push`).
 -- Never edit this file after it has been applied; add 0002_*.sql instead.

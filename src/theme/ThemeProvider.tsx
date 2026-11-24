@@ -9,7 +9,7 @@ import type { ReactNode } from 'react';
 import { ThemeContext } from '@/theme/useTheme';
 import type { ThemeContextValue, ThemeMode } from '@/theme/useTheme';
 
-const STORAGE_KEY = 'netpath.theme';
+const STORAGE_KEY = 'netsteps.theme';
 const DARK_QUERY = '(prefers-color-scheme: dark)';
 
 function isThemeMode(value: unknown): value is ThemeMode {

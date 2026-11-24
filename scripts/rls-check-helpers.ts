@@ -100,14 +100,14 @@ export function loadEnv(): Env {
   }
   // Supabase rejects made-up domains such as example.com, and with "Confirm email" on
   // it would mail whatever address it is given. So test users are plus-addressed
-  // variants of a mailbox the owner controls (you+netpath-rls-a-1f2e3d@gmail.com).
+  // variants of a mailbox the owner controls (you+netsteps-rls-a-1f2e3d@gmail.com).
   const email = process.env.RLS_CHECK_EMAIL?.trim() ?? '';
   const at = email.lastIndexOf('@');
   if (at < 1 || at === email.length - 1) {
     throw new SetupError(
       'Cannot run the RLS check: RLS_CHECK_EMAIL is not set.\n' +
         'Add a line like RLS_CHECK_EMAIL=you@gmail.com to .env.local, using an address you own.\n' +
-        'The script signs up two throwaway users such as you+netpath-rls-a-1f2e3d@gmail.com\n' +
+        'The script signs up two throwaway users such as you+netsteps-rls-a-1f2e3d@gmail.com\n' +
         '(Supabase rejects fake domains like example.com). Nothing is emailed while "Confirm email" is off.',
     );
   }
@@ -206,7 +206,7 @@ export async function signUpTestUser(
 ): Promise<TestUser> {
   const db = makeClient(env);
   const { local, domain } = env.testEmail;
-  const email = `${local}+netpath-rls-${label}-${randomBytes(6).toString('hex')}@${domain}`;
+  const email = `${local}+netsteps-rls-${label}-${randomBytes(6).toString('hex')}@${domain}`;
   const password = randomBytes(18).toString('base64url');
   const { data, error } = await db.auth.signUp({ email, password });
   if (error) {

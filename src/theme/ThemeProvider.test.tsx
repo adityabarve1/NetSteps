@@ -4,7 +4,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { ThemeProvider } from '@/theme/ThemeProvider';
 import { useTheme } from '@/theme/useTheme';
 
-const STORAGE_KEY = 'netpath.theme';
+const STORAGE_KEY = 'netsteps.theme';
 const DARK_QUERY = '(prefers-color-scheme: dark)';
 
 function Probe() {

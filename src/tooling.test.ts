@@ -16,7 +16,7 @@ const envNames = [
   'VITE_ENABLE_GOOGLE',
   'VITE_CONTACT_EMAIL',
 ];
-const skillNames = ['netpath-coding', 'netpath-lesson-writing'];
+const skillNames = ['netsteps-coding', 'netsteps-lesson-writing'];
 
 describe('tooling guard', () => {
   it('uses pnpm as the only package manager', () => {

@@ -193,13 +193,13 @@ Each phase must end with: typecheck clean, lint clean, logic tests passing, prod
 - Guests can read and run everything; sign-in is only needed to save progress.
 - Email + password and Google sign-in. Supabase's built-in email is rate-limited, so a custom SMTP provider should be set up before a large public launch.
 - Lesson content lives in code, not the database.
-- Tables: `profiles`, `lesson_progress`, `quiz_attempts` only.
+- Tables: `profiles`, `lesson_progress`, `quiz_attempts` and `lab_progress` only.
 - Static-site hosting with an SPA rewrite; Vercel is the suggested host (the reference uses it), Netlify or Cloudflare Pages also work.
 - English only, no leaderboard/notes/forum in v1.
 - Vitest for logic tests; unit tests required for networking logic.
 - Progress rules in §10 (a lesson is complete after the last simulation step plus a submitted quiz, any score).
 - Privacy, Terms and Delete-my-account are included from Phase 1 because the site stores emails and offers Google sign-in. The legal text is a plain-language template, not legal advice, and the owner should review it before launch.
-- Working product name **"NetPath"**, kept in one config file so it can be renamed in one place. The production domain is set later through `VITE_SITE_URL`.
+- Product name **"NetSteps"** (chosen by the owner on 2026-11-24; it replaces the working name "NetPath", which collides with an existing SolarWinds product), kept in one config file so it can still be changed in one place. The production domain is set later through `VITE_SITE_URL`.
 - Levels that are not built yet appear on the course map as "Coming soon".
 - The practical side (§8b): a network builder, a terminal simulator, auto-checked practice problems, troubleshooting challenges, and safe "on your own computer" guides, all running on one shared simulated-network engine that starts small in Phase 1.
 - Labs never block lesson completion; 5 quiz questions per lesson; "Go deeper" blocks hold the advanced detail.

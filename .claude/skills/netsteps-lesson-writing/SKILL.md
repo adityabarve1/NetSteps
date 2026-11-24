@@ -1,11 +1,11 @@
 ---
-name: netpath-lesson-writing
-description: Use when writing or editing NetPath lesson text, captions, quiz questions, glossary definitions or cheat sheets. Gives the 10-part lesson recipe, the plain-language rules, an analogy bank, quiz-writing rules and an accuracy checklist.
+name: netsteps-lesson-writing
+description: Use when writing or editing NetSteps lesson text, captions, quiz questions, glossary definitions or cheat sheets. Gives the 10-part lesson recipe, the plain-language rules, an analogy bank, quiz-writing rules and an accuracy checklist.
 ---
 
-# Writing NetPath lessons
+# Writing NetSteps lessons
 
-Audience: beginners and students with no networking background. Full theory with no length limit, but never a wall of text. Accuracy comes before simplicity: simplify the wording, never the truth. The code side (files, registration, tests) is in the `netpath-coding` skill.
+Audience: beginners and students with no networking background. Full theory with no length limit, but never a wall of text. Accuracy comes before simplicity: simplify the wording, never the truth. The code side (files, registration, tests) is in the `netsteps-coding` skill.
 
 ## The 10-part recipe (spec §7), in this order
 

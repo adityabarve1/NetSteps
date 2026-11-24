@@ -11,7 +11,7 @@ function trimmedOrUndefined(value: string | undefined): string | undefined {
 const configuredUrl = trimmedOrUndefined(env.VITE_SITE_URL);
 
 export interface SiteConfig {
-  name: 'NetPath';
+  name: 'NetSteps';
   /** Public site URL without a trailing slash. */
   url: string;
   contactEmail: string | undefined;
@@ -20,7 +20,7 @@ export interface SiteConfig {
 }
 
 export const siteConfig: SiteConfig = {
-  name: 'NetPath',
+  name: 'NetSteps',
   url: (configuredUrl ?? window.location.origin).replace(/\/+$/, ''),
   contactEmail: trimmedOrUndefined(env.VITE_CONTACT_EMAIL),
   googleEnabled: trimmedOrUndefined(env.VITE_ENABLE_GOOGLE) === 'true',
