@@ -91,6 +91,8 @@ function unixLines(target: string, outcome: Outcome): string[] {
   return lines;
 }
 
+const isLoopback = (ip: number): boolean => Math.floor(ip / 16777216) === 127;
+
 function outcomeOf(net: Network, host: Device, target: string): Outcome {
   const result = ping(net, host.id, target);
   if (result.ok) return { kind: 'ok', rttMs: result.rttMs };
@@ -132,7 +134,11 @@ export function pingLines(
       : [`ping: ${rawTarget}: Name or service not known`];
   }
   const target = formatIPv4(parsed);
-  const outcome = outcomeOf(net, host, target);
+  // 127.0.0.0/8 is loopback: every host can reach itself there, configured
+  // or not. `ping` (network.ts) knows nothing about it, so handle it here.
+  const outcome: Outcome = isLoopback(parsed)
+    ? { kind: 'ok', rttMs: 0 }
+    : outcomeOf(net, host, target);
   return os === 'windows'
     ? windowsLines(target, outcome)
     : unixLines(target, outcome);
