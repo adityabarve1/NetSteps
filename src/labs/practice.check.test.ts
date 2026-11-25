@@ -16,38 +16,62 @@ const make = (answer: number, tolerance = 0): Problem => ({
 });
 
 describe('checkAnswer truth table', () => {
-  const p = make(192);
-
-  it.each(['192', ' 192 ', '192.0', '192.000', '\t192\n', '0192'])(
-    'accepts %j',
-    (input) => {
-      expect(checkAnswer(p, input).correct).toBe(true);
-    },
-  );
-
+  // Each accepted form is checked against a problem whose answer is exactly
+  // the value the form means, so a pass cannot be an accident.
   it.each([
-    '',
-    '   ',
-    'abc',
-    '1e3',
-    '1E3',
-    '192 Mbps',
-    '1,000',
-    '+5',
-    '.5',
-    '5.',
-    '0x10',
-    '--5',
-    '1.2.3',
-    '1 92',
-    'NaN',
-    'Infinity',
-    '١٩٢',
-  ])('rejects %j', (input) => {
-    expect(checkAnswer(p, input).correct).toBe(false);
+    ['192', 192],
+    [' 192 ', 192],
+    ['192.0', 192],
+    ['192.000', 192],
+    ['\t192\n', 192],
+    ['0192', 192],
+    ['007', 7],
+    ['-3', -3],
+    ['-0', 0],
+    ['0', 0],
+    ['0.0', 0],
+    ['0.5', 0.5],
+    ['-2.25', -2.25],
+  ])('accepts %j for an answer of %s', (input, answer) => {
+    // `===` so that -0 equals 0.
+    expect(parseAnswer(input) === answer).toBe(true);
+    expect(checkAnswer(make(answer), input).correct).toBe(true);
+  });
+
+  // Each rejected form is checked against a problem whose answer is the value
+  // the form would have if a looser parser accepted it. The parser itself is
+  // pinned too: it must return null.
+  it.each([
+    ['empty', '', 0],
+    ['spaces only', '   ', 0],
+    ['letters', 'abc', 0],
+    ['exponent 1e3', '1e3', 1000],
+    ['exponent 1E3', '1E3', 1000],
+    ['exponent 5e0', '5e0', 5],
+    ['unit', '192 Mbps', 192],
+    ['thousands comma', '1,000', 1000],
+    ['leading plus', '+5', 5],
+    ['leading dot', '.5', 0.5],
+    ['trailing dot', '5.', 5],
+    ['hex', '0x10', 16],
+    ['binary prefix', '0b11', 3],
+    ['double minus', '--5', 5],
+    ['trailing minus', '5-', 5],
+    ['two dots', '1.2.3', 1.2],
+    ['inner space', '1 92', 192],
+    ['inner space, padded', ' 1 92 ', 192],
+    ['NaN', 'NaN', 0],
+    ['Infinity', 'Infinity', 0],
+    ['Arabic-Indic digits', '١٢٣', 123],
+  ])('rejects %s (%j) even when the answer matches', (_, input, answer) => {
+    expect(parseAnswer(input)).toBeNull();
+    const result = checkAnswer(make(answer), input);
+    expect(result.correct).toBe(false);
+    expect(result.message).toMatch(/just a number/i);
   });
 
   it('rejects a wrong number', () => {
+    const p = make(192);
     expect(checkAnswer(p, '191').correct).toBe(false);
     expect(checkAnswer(p, '-192').correct).toBe(false);
     expect(checkAnswer(p, '193').correct).toBe(false);
@@ -56,12 +80,6 @@ describe('checkAnswer truth table', () => {
   it('handles negative answers', () => {
     expect(checkAnswer(make(-3), '-3').correct).toBe(true);
     expect(checkAnswer(make(-3), '3').correct).toBe(false);
-  });
-
-  it('handles an answer of zero', () => {
-    expect(checkAnswer(make(0), '0').correct).toBe(true);
-    expect(checkAnswer(make(0), '-0').correct).toBe(true);
-    expect(checkAnswer(make(0), '0.0').correct).toBe(true);
   });
 });
 
