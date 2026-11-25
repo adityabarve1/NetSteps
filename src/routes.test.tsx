@@ -6,6 +6,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { axe } from 'vitest-axe';
 import { AuthProvider } from '@/auth/AuthProvider';
 import { siteConfig } from '@/config/site';
+import { ProgressProvider } from '@/progress/ProgressProvider';
 import { routes } from '@/routes';
 import { createFakeSupabase, fakeSession } from '@/test/fakeSupabase';
 import type { FakeSupabase } from '@/test/fakeSupabase';
@@ -17,7 +18,9 @@ function renderAt(path: string, fake: FakeSupabase = createFakeSupabase()) {
   const view = render(
     <ThemeProvider>
       <AuthProvider client={fake.client}>
-        <RouterProvider router={router} />
+        <ProgressProvider client={fake.client}>
+          <RouterProvider router={router} />
+        </ProgressProvider>
       </AuthProvider>
     </ThemeProvider>,
   );
