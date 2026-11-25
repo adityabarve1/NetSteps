@@ -35,7 +35,8 @@ function byName(net: Network, name: string): Device | undefined {
 
 /**
  * True when the device called `fromName` can ping the address of the device
- * called `toName`. Names are matched ignoring case. It uses `ping` itself, so
+ * called `toName`, over a real path between two different devices (a ping to
+ * its own address does not count). Names are matched ignoring case. It uses `ping`, so
  * subnets, switches and cables all count. Unknown names or a target with no
  * address give false.
  */
@@ -49,8 +50,14 @@ export function canPing(
   return from !== undefined && to !== undefined && pingDevice(net, from, to);
 }
 
+// A ping only counts when it crosses a real path between two DIFFERENT
+// devices. `ping` also succeeds for a device pinging its own address (path of
+// one), which is what happens when two devices share an IP, so that is not
+// accepted here. Two PCs with the same IP behind a switch therefore do not pass.
 function pingDevice(net: Network, from: Device, to: Device): boolean {
-  return to.ip !== undefined && ping(net, from.id, to.ip).ok;
+  if (from.id === to.id || to.ip === undefined) return false;
+  const result = ping(net, from.id, to.ip);
+  return result.ok && result.path.length >= 2;
 }
 
 /** Done when two different computers can each ping the other. */

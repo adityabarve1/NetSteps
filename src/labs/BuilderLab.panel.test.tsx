@@ -243,3 +243,35 @@ describe('limits and odd input', () => {
     expect(cables()).toHaveLength(0);
   });
 });
+
+describe('live regions and the right host', () => {
+  const statusWith = (text: string) =>
+    screen.getAllByRole('status').find((el) => el.textContent.includes(text));
+
+  it('announces connect mode in a polite status region', async () => {
+    const user = setup();
+    await addDevices(user, 'Add a computer');
+    await user.click(
+      screen.getByRole('button', { name: 'Connect PC1 to another device' }),
+    );
+    expect(statusWith('Now pick the device to connect to PC1.')).toBeDefined();
+  });
+
+  it('announces goal completion in a status region', () => {
+    setup(['pc'], simpleLan());
+    expect(statusWith('All goals done')).toBeDefined();
+  });
+
+  it('runs the terminal against the device it was opened on', async () => {
+    const user = setup(['pc'], simpleLan());
+    await user.click(node('PC2'));
+    await user.click(screen.getByRole('button', { name: 'Open terminal' }));
+    expect(
+      screen.getByRole('heading', { name: 'Terminal on PC2' }),
+    ).toBeVisible();
+    await run(user, 'ipconfig');
+    const log = screen.getByRole('log', { name: 'Terminal output' });
+    expect(log).toHaveTextContent('192.168.1.20');
+    expect(log).not.toHaveTextContent('192.168.1.10');
+  });
+});

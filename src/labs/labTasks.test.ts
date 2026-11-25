@@ -156,3 +156,58 @@ describe('twoPcsCanPingTask', () => {
     expect(task.check(serverOnly)).toBe(false);
   });
 });
+
+describe('twoPcsCanPingTask needs a real path between different devices', () => {
+  const task = twoPcsCanPingTask();
+  const link = (a: string, b: string): BuilderAction => ({
+    type: 'connect',
+    a,
+    b,
+  });
+
+  it('is false for two PCs with the same IP and no cables', () => {
+    const net = run(
+      devicesOnly(),
+      cfg('pc1', '10.0.0.1'),
+      cfg('pc2', '10.0.0.1'),
+    );
+    expect(task.check(net)).toBe(false);
+    expect(canPing(net, 'PC1', 'PC2')).toBe(false);
+  });
+
+  it('is false for two PCs with the same IP behind a switch (a duplicate address is the mistake, not a success)', () => {
+    const net = run(wired(), cfg('pc1', '10.0.0.1'), cfg('pc2', '10.0.0.1'));
+    expect(task.check(net)).toBe(false);
+  });
+
+  it('does not count a PC pinging its own address', () => {
+    const net = run(wired(), cfg('pc1', '10.0.0.1'));
+    expect(canPing(net, 'PC1', 'PC1')).toBe(false);
+  });
+
+  it('is false when only one direction works (different masks)', () => {
+    const net = run(
+      wired(),
+      cfg('pc1', '10.0.0.1', '255.0.0.0'),
+      cfg('pc2', '10.1.0.1', '255.255.0.0'),
+    );
+    expect(canPing(net, 'PC1', 'PC2')).toBe(true);
+    expect(canPing(net, 'PC2', 'PC1')).toBe(false);
+    expect(task.check(net)).toBe(false);
+  });
+
+  it('is true for two PCs through a switch on one subnet', () => {
+    const net = run(wired(), cfg('pc1', '10.0.0.1'), cfg('pc2', '10.0.0.2'));
+    expect(task.check(net)).toBe(true);
+  });
+
+  it('is true for two PCs on a direct cable, because ping allows it', () => {
+    const net = run(
+      devicesOnly(),
+      link('pc1', 'pc2'),
+      cfg('pc1', '10.0.0.1'),
+      cfg('pc2', '10.0.0.2'),
+    );
+    expect(task.check(net)).toBe(true);
+  });
+});
