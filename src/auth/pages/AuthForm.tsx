@@ -13,9 +13,11 @@ export function AuthShell({
   children: ReactNode;
 }) {
   return (
-    <div className={styles.card}>
-      <h1>{title}</h1>
-      {children}
+    <div className={styles.stage}>
+      <div className={styles.card}>
+        <h1>{title}</h1>
+        {children}
+      </div>
     </div>
   );
 }

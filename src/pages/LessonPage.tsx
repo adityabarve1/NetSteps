@@ -33,7 +33,9 @@ function LessonLoader({ meta }: { meta: LessonMeta }) {
     };
   }, [meta.id, attempt]);
 
-  if (result?.attempt !== attempt) return <LessonLoading />;
+  if (result?.attempt !== attempt) {
+    return <LessonLoading takeFocus={attempt > 0} />;
+  }
 
   // loadLesson answers undefined for a failed download. A lesson of another id
   // is treated the same way, so progress is never written for the wrong lesson.

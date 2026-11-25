@@ -1,4 +1,4 @@
-import { screen, within } from '@testing-library/react';
+import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
@@ -7,17 +7,17 @@ import {
   defaultLoad,
   fakeProgress,
   loadLessonMock,
-} from '@/pages/lessonTestKit';
-import { renderLessonPage } from '@/pages/renderLessonPage';
+} from '@/test/lessonTestKit';
+import { renderLessonPage } from '@/test/renderLessonPage';
 import type { ProgressState } from '@/progress/types';
 import { fiveQuestions } from '@/quiz/quizTestKit';
 
 vi.mock('@/content/curriculum', async () => {
-  const kit = await import('@/pages/lessonTestKit');
+  const kit = await import('@/test/lessonTestKit');
   return { curriculum: kit.testCurriculum, findLesson: kit.testFindLesson };
 });
 vi.mock('@/content/loaders', async () => {
-  const kit = await import('@/pages/lessonTestKit');
+  const kit = await import('@/test/lessonTestKit');
   return { loadLesson: kit.loadLessonMock };
 });
 
@@ -51,7 +51,10 @@ describe('opening a lesson', () => {
     const { progress } = renderLessonPage(path(A));
     await screen.findByRole('heading', { level: 1 });
 
-    expect(progress.openLesson).toHaveBeenCalledTimes(1);
+    // openLesson runs in an effect, so wait for it instead of racing it.
+    await waitFor(() => {
+      expect(progress.openLesson).toHaveBeenCalledTimes(1);
+    });
     expect(progress.openLesson).toHaveBeenCalledWith(A);
   });
 
@@ -59,6 +62,13 @@ describe('opening a lesson', () => {
     const { progress } = renderLessonPage(path(A), { strict: true });
     await screen.findByRole('heading', { level: 1 });
 
+    await waitFor(() => {
+      expect(progress.openLesson).toHaveBeenCalledTimes(1);
+    });
+    // Let any extra StrictMode effect run settle, then count again.
+    await act(async () => {
+      await Promise.resolve();
+    });
     expect(progress.openLesson).toHaveBeenCalledTimes(1);
   });
 
@@ -68,7 +78,9 @@ describe('opening a lesson', () => {
     await finishSim(user, 'sim-main');
     await user.click(screen.getByRole('button', { name: /Go deeper/ }));
 
-    expect(progress.openLesson).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      expect(progress.openLesson).toHaveBeenCalledTimes(1);
+    });
     expect(progress.completeLesson).not.toHaveBeenCalled();
   });
 
@@ -80,7 +92,9 @@ describe('opening a lesson', () => {
     );
     await screen.findByRole('heading', { level: 1, name: 'Lesson B' });
 
-    expect(vi.mocked(progress.openLesson).mock.calls).toEqual([[A], [B]]);
+    await waitFor(() => {
+      expect(vi.mocked(progress.openLesson).mock.calls).toEqual([[A], [B]]);
+    });
   });
 });
 
@@ -245,6 +259,24 @@ describe('labs', () => {
 
     await user.keyboard('{Enter}');
 
+    expect(progress.startLab).toHaveBeenCalledTimes(1);
+  });
+
+  it('ignores navigation and modifier keys when deciding the first interaction', async () => {
+    const user = userEvent.setup();
+    const { progress } = renderLessonPage(path(A));
+    await screen.findByRole('heading', { level: 1 });
+    screen.getByRole('button', { name: 'Lab action' }).focus();
+
+    await user.keyboard('{Tab}');
+    screen.getByRole('button', { name: 'Lab action' }).focus();
+    await user.keyboard('{Shift>}{Tab}{/Shift}');
+    screen.getByRole('button', { name: 'Lab action' }).focus();
+    await user.keyboard('{Alt}{Control}{Meta}');
+    expect(progress.startLab).not.toHaveBeenCalled();
+
+    screen.getByRole('button', { name: 'Lab action' }).focus();
+    await user.keyboard('a');
     expect(progress.startLab).toHaveBeenCalledTimes(1);
   });
 

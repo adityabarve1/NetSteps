@@ -1,4 +1,4 @@
-import { act, screen, within } from '@testing-library/react';
+import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { axe } from 'vitest-axe';
@@ -10,16 +10,16 @@ import {
   defaultLoad,
   loadLessonMock,
   makeLesson,
-} from '@/pages/lessonTestKit';
-import { noProgressCalls, renderLessonPage } from '@/pages/renderLessonPage';
+} from '@/test/lessonTestKit';
+import { noProgressCalls, renderLessonPage } from '@/test/renderLessonPage';
 import { deferred } from '@/test/fakeSupabase';
 
 vi.mock('@/content/curriculum', async () => {
-  const kit = await import('@/pages/lessonTestKit');
+  const kit = await import('@/test/lessonTestKit');
   return { curriculum: kit.testCurriculum, findLesson: kit.testFindLesson };
 });
 vi.mock('@/content/loaders', async () => {
-  const kit = await import('@/pages/lessonTestKit');
+  const kit = await import('@/test/lessonTestKit');
   return { loadLesson: kit.loadLessonMock };
 });
 
@@ -82,7 +82,9 @@ describe('a lesson that cannot load', () => {
       await screen.findByRole('heading', { level: 1, name: 'Lesson A' }),
     ).toBeVisible();
     expect(loadLessonMock).toHaveBeenCalledTimes(2);
-    expect(progress.openLesson).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      expect(progress.openLesson).toHaveBeenCalledTimes(1);
+    });
   });
 
   it('shows the loading state again while a retry is running', async () => {
@@ -143,7 +145,9 @@ describe('navigating while a lesson loads', () => {
     expect(
       screen.getAllByRole('heading', { level: 1 }).map((h) => h.textContent),
     ).toEqual(['Lesson B']);
-    expect(vi.mocked(progress.openLesson).mock.calls).toEqual([[B]]);
+    await waitFor(() => {
+      expect(vi.mocked(progress.openLesson).mock.calls).toEqual([[B]]);
+    });
   });
 
   it('starts a fresh run for the next lesson, so nothing carries over', async () => {
@@ -168,6 +172,36 @@ describe('navigating while a lesson loads', () => {
   });
 });
 
+describe('the loader key', () => {
+  it('shows the loading state, never the failure text, when B is slow after A', async () => {
+    const slowB = deferred<Lesson | undefined>();
+    loadLessonMock.mockImplementation((id) =>
+      id === B ? slowB.promise : defaultLoad(id),
+    );
+    const { navigateTo } = renderLessonPage(path(A));
+    await screen.findByRole('heading', { level: 1, name: 'Lesson A' });
+
+    navigateTo(path(B));
+
+    expect(await screen.findByRole('status')).toHaveTextContent(
+      'Loading the lesson...',
+    );
+    expect(
+      screen.queryByText(/We could not load this lesson/),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'Try again' }),
+    ).not.toBeInTheDocument();
+    await act(async () => {
+      slowB.resolve(makeLesson(B));
+      await slowB.promise;
+    });
+    expect(
+      await screen.findByRole('heading', { level: 1, name: 'Lesson B' }),
+    ).toBeVisible();
+  });
+});
+
 describe('a lesson that throws while rendering', () => {
   it('shows a friendly message with a link back and tracks nothing', async () => {
     const consoleError = vi
@@ -188,6 +222,24 @@ describe('a lesson that throws while rendering', () => {
     expect(progress.openLesson).not.toHaveBeenCalled();
     expect(await axe(container)).toHaveNoViolations();
     consoleError.mockRestore();
+  });
+});
+
+describe('routes that do not name a built lesson (fixture)', () => {
+  it.each([
+    ['an unknown level', '/learn/level-9/l1-fixture-a'],
+    ['a built lesson under the wrong level', '/learn/level-2/l1-fixture-a'],
+  ])('%s shows "Lesson not found" and touches nothing', async (_n, to) => {
+    const { progress } = renderLessonPage(to);
+
+    expect(
+      await screen.findByRole('heading', {
+        level: 1,
+        name: 'Lesson not found',
+      }),
+    ).toBeVisible();
+    expect(loadLessonMock).not.toHaveBeenCalled();
+    expect(noProgressCalls(progress)).toBe(true);
   });
 });
 

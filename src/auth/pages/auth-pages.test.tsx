@@ -258,3 +258,15 @@ describe('Login page', () => {
     expect(await axe(container)).toHaveNoViolations();
   });
 });
+
+describe('auth page layout hook', () => {
+  it('puts the card inside the full-height stage', async () => {
+    const { container } = renderAuthPage('/login');
+    await screen.findByLabelText('Email');
+
+    const stage = container.querySelector('.stage');
+    expect(stage?.querySelector('.card')).toContainElement(
+      screen.getByRole('heading', { level: 1, name: 'Sign in' }),
+    );
+  });
+});

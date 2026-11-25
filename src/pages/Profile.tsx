@@ -1,4 +1,10 @@
+import { ProsePage } from '@/pages/ProsePage';
+
 // Placeholder. A later task builds the real page.
 export default function Profile() {
-  return <h1>Profile</h1>;
+  return (
+    <ProsePage>
+      <h1>Profile</h1>
+    </ProsePage>
+  );
 }

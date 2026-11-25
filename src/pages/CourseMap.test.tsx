@@ -8,7 +8,7 @@ import {
   THIRD,
   level1Built,
   renderCourseMap,
-} from '@/pages/courseMapTestKit';
+} from '@/test/courseMapTestKit';
 import { done, opened, stateOf, T1, T2, T3 } from '@/test/progressFixtures';
 
 const lessonLinks = () =>
@@ -17,10 +17,12 @@ const lessonLinks = () =>
     .filter((a) => a.getAttribute('href')?.startsWith('/learn/'));
 
 describe('CourseMap: the main button', () => {
-  it('a new learner sees "Start Lesson 1" linking to the first lesson', () => {
+  it('a new learner sees "Start: <lesson title>" linking to the first lesson', () => {
     renderCourseMap();
 
-    const start = screen.getByRole('link', { name: /Start Lesson 1/ });
+    const start = screen.getByRole('link', {
+      name: /^Start: What is a network/,
+    });
     expect(start).toHaveAttribute('href', `/learn/level-1/${FIRST}`);
     expect(
       screen.queryByRole('link', { name: /Continue where you left off/ }),
@@ -40,7 +42,7 @@ describe('CourseMap: the main button', () => {
       name: /Continue where you left off/,
     });
     expect(go).toHaveAttribute('href', `/learn/level-1/${THIRD}`);
-    expect(screen.queryByRole('link', { name: /Start Lesson/ })).toBeNull();
+    expect(screen.queryByRole('link', { name: /^Start: / })).toBeNull();
   });
 
   it('when only finished lessons have records, offers the next lesson', () => {
@@ -54,7 +56,7 @@ describe('CourseMap: the main button', () => {
     renderCourseMap({ state: stateOf({ 'l9-ghost': opened(T1) }) });
 
     expect(
-      screen.getByRole('link', { name: /Start Lesson 1/ }),
+      screen.getByRole('link', { name: /^Start: What is a network/ }),
     ).toBeInTheDocument();
   });
 
@@ -226,5 +228,23 @@ describe('CourseMap: smoke and accessibility', () => {
     const { container } = renderCourseMap(options);
 
     expect(await axe(container)).toHaveNoViolations();
+  });
+});
+
+describe('CourseMap: wide layout hooks', () => {
+  it('puts the heading and the continue button above a grid holding every level', () => {
+    const { container } = renderCourseMap();
+
+    const grid = container.querySelector('.levels');
+    expect(grid).not.toBeNull();
+    expect(grid?.querySelectorAll('section')).toHaveLength(7);
+    const top = container.querySelector('.top');
+    expect(top).toContainElement(screen.getByRole('heading', { level: 1 }));
+    expect(top).toContainElement(
+      screen.getByRole('link', { name: /^Start: / }),
+    );
+    expect(grid).not.toContainElement(
+      screen.getByRole('heading', { level: 1 }),
+    );
   });
 });

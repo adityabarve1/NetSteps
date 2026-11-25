@@ -11,6 +11,25 @@ import { useProgress } from '@/progress/useProgress';
 //   - completeLab(labId): once, when the lab calls onDone, even if it calls it
 //     twice and even if the learner never pressed anything first. Completing
 //     implies it was started, so no separate startLab call is made.
+// Keys that only move around or modify other keys. Pressing one is not "using"
+// the lab, so tabbing through a lab never counts as starting it.
+const IGNORED_KEYS = new Set([
+  'Tab',
+  'Shift',
+  'Alt',
+  'AltGraph',
+  'Control',
+  'Meta',
+  'CapsLock',
+  'NumLock',
+  'ScrollLock',
+  'Fn',
+  'FnLock',
+  'OS',
+  'Dead',
+  'Unidentified',
+]);
+
 export function LabFrame({ lab }: { lab: LabDefinition }) {
   const progress = useProgress();
   const titleId = useId();
@@ -37,7 +56,9 @@ export function LabFrame({ lab }: { lab: LabDefinition }) {
       role="group"
       aria-labelledby={titleId}
       onPointerDownCapture={start}
-      onKeyDownCapture={start}
+      onKeyDownCapture={(event) => {
+        if (!IGNORED_KEYS.has(event.key)) start();
+      }}
     >
       <h3 id={titleId} className={styles.cardTitle}>
         {lab.title}

@@ -6,7 +6,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { AuthContext } from '@/auth/useAuth';
 import { Layout } from '@/layout/Layout';
 import { ProgressContext } from '@/progress/useProgress';
-import { fakeProgress } from '@/pages/lessonTestKit';
+import { fakeProgress } from '@/test/lessonTestKit';
 import { ThemeProvider } from '@/theme/ThemeProvider';
 import { deferred } from '@/test/fakeSupabase';
 

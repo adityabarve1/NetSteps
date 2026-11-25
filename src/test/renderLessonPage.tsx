@@ -2,9 +2,9 @@ import { act, render } from '@testing-library/react';
 import { StrictMode } from 'react';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import LessonPage from '@/pages/LessonPage';
-import { NavCapture } from '@/pages/NavCapture';
-import { fakeProgress } from '@/pages/lessonTestKit';
-import type { FakeProgress } from '@/pages/lessonTestKit';
+import { NavCapture } from '@/test/NavCapture';
+import { fakeProgress } from '@/test/lessonTestKit';
+import type { FakeProgress } from '@/test/lessonTestKit';
 import { ProgressContext } from '@/progress/useProgress';
 
 interface Options {

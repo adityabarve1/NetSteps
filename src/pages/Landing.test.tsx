@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { render, screen, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
 import { describe, expect, it, vi } from 'vitest';
@@ -247,7 +249,7 @@ describe('Landing page: levels and lesson steps', () => {
     renderLanding();
 
     for (const step of [
-      'Read it simply',
+      'Read it in plain words',
       'Watch it happen',
       'Try it yourself',
       'Check what you learned',
@@ -279,5 +281,53 @@ describe('Landing page: accessibility', () => {
     });
 
     expect(await axe(container)).toHaveNoViolations();
+  });
+});
+
+describe('Landing page: full-viewport hero', () => {
+  const css = readFileSync(
+    resolve(process.cwd(), 'src/pages/Landing.module.css'),
+    'utf8',
+  );
+  const heroRule = /\.hero\s*\{([^}]*)\}/.exec(css)?.[1] ?? '';
+
+  it('fills the viewport with a 100vh fallback before 100svh', () => {
+    expect(heroRule).toMatch(
+      /min-height:\s*100vh;[\s\S]*min-height:\s*100svh;/,
+    );
+  });
+
+  it('uses min-height only, so short screens never clip the content', () => {
+    expect(heroRule).not.toMatch(/(?<!min-)height:/);
+  });
+
+  it('uses a wide hero box, not the 72rem reading column', () => {
+    const inner = /\.heroInner\s*\{([^}]*)\}/.exec(css)?.[1] ?? '';
+    const tokens = readFileSync(
+      resolve(process.cwd(), 'src/theme/tokens.css'),
+      'utf8',
+    );
+    const heroWidth = /--hero-width:\s*(\d+)rem/.exec(tokens)?.[1] ?? '0';
+
+    expect(inner).toMatch(/width:\s*min\(100%,\s*var\(--hero-width\)\)/);
+    expect(inner).not.toMatch(/--content-width|72rem/);
+    expect(Number(heroWidth)).toBeGreaterThanOrEqual(100);
+  });
+
+  it('moves cards and buttons on hover only when motion is allowed', () => {
+    const outsideMotionBlocks = css.replace(
+      /@media \(prefers-reduced-motion: no-preference\) \{[\s\S]*?\n\}\n/g,
+      '',
+    );
+
+    expect(css).toMatch(/:hover[^{]*\{[^}]*transform/);
+    expect(outsideMotionBlocks).not.toMatch(/:hover[^{]*\{[^}]*transform/);
+  });
+
+  it('keeps every section container as wide as the hero, not 72rem', () => {
+    const container = /\.container\s*\{([^}]*)\}/.exec(css)?.[1] ?? '';
+
+    expect(container).toMatch(/width:\s*min\(100%,\s*var\(--hero-width\)\)/);
+    expect(css).not.toMatch(/--content-width|72rem/);
   });
 });

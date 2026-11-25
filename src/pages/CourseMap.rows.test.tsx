@@ -4,9 +4,10 @@ import {
   FIRST,
   SECOND,
   THIRD,
+  level1Built,
   partlyBuilt,
   renderCourseMap,
-} from '@/pages/courseMapTestKit';
+} from '@/test/courseMapTestKit';
 import type { ProgressState } from '@/progress/types';
 import { done, opened, stateOf, T1, T2 } from '@/test/progressFixtures';
 
@@ -112,5 +113,84 @@ describe('CourseMap lesson rows', () => {
       expect(within(li).queryByRole('link')).toBeNull();
       expect(li).not.toHaveTextContent(/Not started|Done|In progress/);
     }
+  });
+});
+
+describe('CourseMap edges', () => {
+  it('builds each lesson link from the level section it sits in', () => {
+    const levels = level1Built.map((level, i) =>
+      i === 0
+        ? {
+            ...level,
+            lessons: level.lessons.map((l) => ({ ...l, levelId: 'level-9' })),
+          }
+        : level,
+    );
+    renderCourseMap({ levels });
+
+    expect(within(row('What is a network')).getByRole('link')).toHaveAttribute(
+      'href',
+      `/learn/level-1/${FIRST}`,
+    );
+    expect(screen.getByRole('link', { name: /^Start: / })).toHaveAttribute(
+      'href',
+      `/learn/level-1/${FIRST}`,
+    );
+  });
+
+  it('hides the "N of M lessons done" summary until progress is ready', () => {
+    const { unmount } = renderCourseMap({ ready: false });
+    expect(screen.queryByText(/lessons? done/)).not.toBeInTheDocument();
+    unmount();
+
+    renderCourseMap({ ready: true });
+    expect(screen.getByText('0 of 6 lessons done')).toBeInTheDocument();
+  });
+
+  it('does not read a prototype property as the record of a lesson named "constructor"', () => {
+    const levels = level1Built.map((level, i) =>
+      i === 0
+        ? {
+            ...level,
+            lessons: level.lessons.map((l, n) =>
+              n === 0 ? { ...l, id: 'constructor' } : l,
+            ),
+          }
+        : level,
+    );
+    renderCourseMap({ levels });
+
+    expect(row('What is a network')).toHaveTextContent('Not started');
+    expect(screen.getByRole('link', { name: /^Start: / })).toHaveAttribute(
+      'href',
+      '/learn/level-1/constructor',
+    );
+  });
+
+  it('uses an own record named "constructor" like any other', () => {
+    const levels = level1Built.map((level, i) =>
+      i === 0
+        ? {
+            ...level,
+            lessons: level.lessons.map((l, n) =>
+              n === 0 ? { ...l, id: 'constructor' } : l,
+            ),
+          }
+        : level,
+    );
+    renderCourseMap({ levels, state: stateOf({ constructor: done(T1) }) });
+
+    expect(row('What is a network')).toHaveTextContent('Done');
+  });
+
+  it('ignores a completed lab that is not one of the lesson labs', () => {
+    renderCourseMap({
+      state: withLabs(stateOf({ [FIRST]: done(T1) }), {
+        'lab-a': { status: 'completed', completedAt: T1 },
+        'lab-stranger': { status: 'completed', completedAt: T1 },
+      }),
+    });
+
+    expect(row('What is a network')).not.toHaveTextContent('Lab done');
   });
 });

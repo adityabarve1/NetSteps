@@ -49,6 +49,7 @@ export function LevelSection({ level, state, ready }: Props) {
           {level.lessons.map((lesson) => (
             <LessonRow
               key={lesson.id}
+              levelId={level.id}
               lesson={lesson}
               record={recordOf(state, lesson.id)}
               labDone={allLabsDone(state, lesson.labIds)}

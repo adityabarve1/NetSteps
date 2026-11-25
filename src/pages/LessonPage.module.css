@@ -2,6 +2,7 @@
 
 .page {
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: var(--space-5);
   min-width: 0;
@@ -25,7 +26,6 @@
 /* Rounded cards: the analogy, the try-it area, labs and the cheat sheet. */
 .card,
 .analogy {
-  max-width: 70ch;
   margin: 0 0 var(--space-4);
   padding: var(--space-4) var(--space-5);
   border: 1px solid var(--border-soft);
@@ -36,6 +36,7 @@
 }
 
 .analogy {
+  max-width: 70ch;
   border-inline-start: 6px solid var(--accent-2);
 }
 
@@ -57,11 +58,43 @@
   min-width: 0;
 }
 
+/* The content column is as wide as the screen allows. Running text keeps a
+   readable line length (about 70 characters) and sits in the middle of it; blocks
+   that are not running text (simulations, labs, practice, the quiz, cards) use
+   the whole column, so a wide monitor shows more of them, not longer lines.
+
+   How a lesson block chooses:
+   - text elements (p, ul, ol, h2, h3, pre, blockquote) and the "Go deeper"
+     block that sit directly in a section are capped at the readable measure;
+   - anything else (a div, figure or component such as a simulation) is wide;
+   - data-prose on any element caps it at the readable measure, data-wide on any
+     element lifts the cap (for example a p that holds a very wide table). */
 .content {
+  /* About 70 characters at the body size. In rem on purpose: a ch measure
+     changes with each element's font size, and headings would not line up. */
+  --measure: 42rem;
   min-width: 0;
-  max-width: 70ch;
   font-size: 1.0625rem;
   line-height: 1.65;
+}
+
+.content section > :is(p, ul, ol, h2, h3, pre, blockquote),
+.content section > div:has(> h3 > button[aria-expanded]),
+.content [data-prose] {
+  max-width: var(--measure);
+  margin-inline: auto;
+}
+
+/* The quiz is a stack of questions: wide enough for its answers, not stretched
+   across a huge screen. */
+.quizWrap {
+  max-width: 56rem;
+  margin-inline: auto;
+}
+
+.content [data-wide] {
+  max-width: none;
+  margin-inline: 0;
 }
 
 /* Long code and preformatted text scroll inside their own box. */
@@ -144,7 +177,7 @@
   flex-direction: column;
   align-items: flex-start;
   gap: var(--space-3);
-  max-width: 40rem;
+  width: min(100%, 40rem);
   margin: var(--space-5) auto;
   padding: var(--space-5);
   border: 1px solid var(--border-soft);

@@ -103,7 +103,7 @@ describe('contrast of the colour tokens (WCAG)', () => {
       },
     );
 
-    it.each(['bg', 'surface', ...heroStops])(
+    it.each([...surfaces, ...heroStops])(
       'a control --border (also over the hero gradient) is at least 3:1 on --%s',
       (bg) => {
         expect(contrast(tokens, 'border', bg)).toBeGreaterThanOrEqual(3);

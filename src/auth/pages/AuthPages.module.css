@@ -1,5 +1,15 @@
 /* Shared by the sign-in, sign-up and password pages. */
 
+/* The card is centred on the page, both ways when the screen is tall. The
+   shell's background shows edge to edge behind it. */
+.stage {
+  display: grid;
+  flex: 1;
+  align-content: center;
+  justify-items: center;
+  width: 100%;
+}
+
 .card {
   width: 100%;
   max-width: 30rem;

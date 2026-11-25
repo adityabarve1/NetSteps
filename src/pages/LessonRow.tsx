@@ -32,6 +32,8 @@ function StatusIcon({ status }: { status: Status }) {
 }
 
 type Props = {
+  /** The id of the level section this row sits in; the link is built from it. */
+  levelId: string;
   lesson: LessonMeta;
   record: LessonRecord | undefined;
   /** True when every lab of the lesson is completed (and it has labs). */
@@ -40,7 +42,13 @@ type Props = {
   badgeUnbuilt: boolean;
 };
 
-export function LessonRow({ lesson, record, labDone, badgeUnbuilt }: Props) {
+export function LessonRow({
+  levelId,
+  lesson,
+  record,
+  labDone,
+  badgeUnbuilt,
+}: Props) {
   const minutes = `${String(lesson.minutes)} min`;
 
   if (!lesson.built) {
@@ -56,10 +64,7 @@ export function LessonRow({ lesson, record, labDone, badgeUnbuilt }: Props) {
   const status = statusOf(record);
   return (
     <li className={styles.row}>
-      <Link
-        className={styles.rowLink}
-        to={`/learn/${lesson.levelId}/${lesson.id}`}
-      >
+      <Link className={styles.rowLink} to={`/learn/${levelId}/${lesson.id}`}>
         {lesson.title}
       </Link>
       <span className={styles.meta}>{minutes}</span>

@@ -67,7 +67,7 @@ function StepIcon({ children }: { children: ReactNode }) {
 
 const steps: { title: string; text: string; icon: ReactNode }[] = [
   {
-    title: 'Read it simply',
+    title: 'Read it in plain words',
     text: 'Short sections explain one idea at a time, in plain words, with everyday comparisons.',
     icon: (
       <>
@@ -150,9 +150,8 @@ export function FreeNote() {
           Free and open to everyone
         </h2>
         <p className={styles.noteText}>
-          The whole course is free to read, and every simulation is free to run.
-          You do not need an account. Sign in only if you want your progress
-          saved on all your devices.
+          The whole course is free to read. You do not need an account. Sign in
+          only if you want your progress saved on all your devices.
         </p>
       </div>
     </section>
@@ -167,7 +166,7 @@ export function FinalCta() {
           Ready to start?
         </h2>
         <p className={styles.noteText}>
-          Pick the first level and see how a network really works.
+          Start with the course map and follow it one level at a time.
         </p>
         <Link to="/learn" className={styles.primary}>
           Start learning free

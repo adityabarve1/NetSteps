@@ -10,9 +10,8 @@ import { useProgress } from '@/progress/useProgress';
 
 function findLesson(levels: LevelMeta[], id: string) {
   for (const level of levels) {
-    const index = level.lessons.findIndex((l) => l.id === id);
-    const lesson = level.lessons[index];
-    if (lesson !== undefined) return { level, lesson, number: index + 1 };
+    const lesson = level.lessons.find((l) => l.id === id);
+    if (lesson !== undefined) return { level, lesson };
   }
   return null;
 }
@@ -47,8 +46,10 @@ function NextStep({ levels }: { levels: LevelMeta[] }) {
 
   const returning = hasAnyRecord(state, levels);
   const hasRecord = Object.hasOwn(state.lessons, target.lesson.id);
+  // A new learner sees the lesson's name in the button itself. (An index like
+  // "Lesson 1" would only be a place within its level, not a course number.)
   const label = !returning
-    ? `Start Lesson ${String(target.number)}`
+    ? `Start: ${target.lesson.title}`
     : hasRecord
       ? 'Continue where you left off'
       : 'Start next lesson';
@@ -59,7 +60,9 @@ function NextStep({ levels }: { levels: LevelMeta[] }) {
       to={`/learn/${target.level.id}/${target.lesson.id}`}
     >
       <span className={styles.ctaLabel}>{label}</span>
-      <span className={styles.ctaLesson}>{target.lesson.title}</span>
+      {returning && (
+        <span className={styles.ctaLesson}>{target.lesson.title}</span>
+      )}
     </Link>
   );
 }
@@ -87,34 +90,38 @@ export default function CourseMap({
 
   return (
     <div className={styles.page}>
-      <h1 className={styles.title}>Course map</h1>
-      <p className={styles.intro}>
-        Seven levels, from the very basics to advanced topics. Take them in
-        order, or jump to any lesson that is ready.
-      </p>
-      {ready && total > 0 && (
-        <p className={styles.summary}>
-          {`${String(done)} of ${String(total)} ${total === 1 ? 'lesson' : 'lessons'} done`}
+      <div className={styles.top}>
+        <h1 className={styles.title}>Course map</h1>
+        <p className={styles.intro}>
+          Seven levels, from the very basics to advanced topics. Take them in
+          order, or jump to any lesson that is ready.
         </p>
-      )}
-      {ready ? (
-        <NextStep levels={levels} />
-      ) : (
-        <p className={styles.note}>Loading your progress</p>
-      )}
-      <GuestNote />
-      <div role="status" className={styles.sync}>
-        {syncError &&
-          'We will finish saving your progress when you are back online.'}
+        {ready && total > 0 && (
+          <p className={styles.summary}>
+            {`${String(done)} of ${String(total)} ${total === 1 ? 'lesson' : 'lessons'} done`}
+          </p>
+        )}
+        {ready ? (
+          <NextStep levels={levels} />
+        ) : (
+          <p className={styles.note}>Loading your progress</p>
+        )}
+        <GuestNote />
+        <div role="status" className={styles.sync}>
+          {syncError &&
+            'We will finish saving your progress when you are back online.'}
+        </div>
       </div>
-      {levels.map((level) => (
-        <LevelSection
-          key={level.id}
-          level={level}
-          state={state}
-          ready={ready}
-        />
-      ))}
+      <div className={styles.levels}>
+        {levels.map((level) => (
+          <LevelSection
+            key={level.id}
+            level={level}
+            state={state}
+            ready={ready}
+          />
+        ))}
+      </div>
     </div>
   );
 }

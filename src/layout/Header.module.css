@@ -15,11 +15,6 @@
   background: transparent;
 }
 
-.overlay .inner {
-  max-width: calc(var(--hero-width) + 2 * var(--hero-gutter));
-  padding-inline: var(--hero-gutter);
-}
-
 /* Wraps instead of overflowing, so a 320px phone never scrolls sideways. */
 .inner {
   display: flex;
@@ -27,9 +22,9 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-2) var(--space-4);
-  max-width: var(--content-width);
+  max-width: calc(var(--hero-width) + 2 * var(--hero-gutter));
   margin: 0 auto;
-  padding: var(--space-3) var(--space-4);
+  padding: var(--space-3) var(--hero-gutter);
 }
 
 .brand {
@@ -142,4 +137,19 @@
 /* On a big screen the floating header's name grows with the hero. */
 .overlay .brand {
   font-size: clamp(1.25rem, 0.9rem + 0.5vw, 1.875rem);
+}
+
+/* On a very wide screen the header grows a little with the page, so it does
+   not look tiny next to the wide content. */
+@media (min-width: 100rem) {
+  .link,
+  .cta,
+  .signOut,
+  .toggle {
+    font-size: 1.125rem;
+  }
+
+  .brand {
+    font-size: 1.5rem;
+  }
 }

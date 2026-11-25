@@ -10,15 +10,15 @@ import {
   defaultLoad,
   loadLessonMock,
   makeLesson,
-} from '@/pages/lessonTestKit';
-import { renderLessonPage } from '@/pages/renderLessonPage';
+} from '@/test/lessonTestKit';
+import { renderLessonPage } from '@/test/renderLessonPage';
 
 vi.mock('@/content/curriculum', async () => {
-  const kit = await import('@/pages/lessonTestKit');
+  const kit = await import('@/test/lessonTestKit');
   return { curriculum: kit.testCurriculum, findLesson: kit.testFindLesson };
 });
 vi.mock('@/content/loaders', async () => {
-  const kit = await import('@/pages/lessonTestKit');
+  const kit = await import('@/test/lessonTestKit');
   return { loadLesson: kit.loadLessonMock };
 });
 
@@ -255,5 +255,25 @@ describe('next lesson link', () => {
     await waitFor(() => {
       expect(document.title).toBe(`Lesson B - ${siteConfig.name}`);
     });
+  });
+});
+
+describe('LessonPage: wide layout hooks', () => {
+  it('has a side column with the table of contents and a content column with the lesson', async () => {
+    const { container } = renderLessonPage(at('level-1', A));
+    const nav = await screen.findByRole('navigation', {
+      name: 'In this lesson',
+    });
+
+    const layout = container.querySelector('.layout');
+    expect(layout?.querySelector('.tocColumn')).toContainElement(nav);
+    const content = layout?.querySelector('.content');
+    expect(content).toContainElement(
+      screen.getByRole('group', { name: 'sim-main' }),
+    );
+    expect(content).toContainElement(
+      screen.getByRole('group', { name: 'Main lab' }),
+    );
+    expect(content).not.toContainElement(nav);
   });
 });

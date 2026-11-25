@@ -1,13 +1,9 @@
-import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
 import { render } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { HeroAnimation } from '@/pages/HeroAnimation';
 
-const originalMatchMedia = Object.getOwnPropertyDescriptor(
-  window,
-  'matchMedia',
-);
+// Whatever the global test setup installed; put back after every test.
+const originalMatchMedia = window.matchMedia.bind(window);
 function setMatchMedia(impl: typeof window.matchMedia | undefined) {
   Object.defineProperty(window, 'matchMedia', {
     writable: true,
@@ -26,9 +22,7 @@ function reducedMotion(matches: boolean): typeof window.matchMedia {
 }
 
 afterEach(() => {
-  if (originalMatchMedia) {
-    Object.defineProperty(window, 'matchMedia', originalMatchMedia);
-  }
+  setMatchMedia(originalMatchMedia);
 });
 
 describe('HeroAnimation', () => {
@@ -68,36 +62,5 @@ describe('HeroAnimation', () => {
       'data-animated',
       'true',
     );
-  });
-});
-
-describe('Landing page: full-viewport hero', () => {
-  const css = readFileSync(
-    resolve(process.cwd(), 'src/pages/Landing.module.css'),
-    'utf8',
-  );
-  const heroRule = /\.hero\s*\{([^}]*)\}/.exec(css)?.[1] ?? '';
-
-  it('fills the viewport with a 100vh fallback before 100svh', () => {
-    expect(heroRule).toMatch(
-      /min-height:\s*100vh;[\s\S]*min-height:\s*100svh;/,
-    );
-  });
-
-  it('uses min-height only, so short screens never clip the content', () => {
-    expect(heroRule).not.toMatch(/(?<!min-)height:/);
-  });
-
-  it('uses a wide hero box, not the 72rem reading column', () => {
-    const inner = /\.heroInner\s*\{([^}]*)\}/.exec(css)?.[1] ?? '';
-    const tokens = readFileSync(
-      resolve(process.cwd(), 'src/theme/tokens.css'),
-      'utf8',
-    );
-    const heroWidth = /--hero-width:\s*(\d+)rem/.exec(tokens)?.[1] ?? '0';
-
-    expect(inner).toMatch(/width:\s*min\(100%,\s*var\(--hero-width\)\)/);
-    expect(inner).not.toMatch(/--content-width|72rem/);
-    expect(Number(heroWidth)).toBeGreaterThanOrEqual(100);
   });
 });

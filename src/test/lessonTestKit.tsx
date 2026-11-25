@@ -5,7 +5,7 @@
 import { vi } from 'vitest';
 import type { Mock } from 'vitest';
 import type { Lesson, LessonMeta, LevelMeta } from '@/content/types';
-import { Sims } from '@/pages/LessonTestSims';
+import { Sims } from '@/test/LessonTestSims';
 import { emptyProgress } from '@/progress/logic';
 import type { ProgressState } from '@/progress/types';
 import type { ProgressContextValue } from '@/progress/useProgress';

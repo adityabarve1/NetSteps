@@ -1,28 +1,16 @@
-import { useEffect, useId, useMemo } from 'react';
+import { useId, useMemo } from 'react';
 import { GoDeeper } from '@/content/components/GoDeeper';
 import { LessonSection } from '@/content/components/LessonSection';
 import { TableOfContents } from '@/content/components/TableOfContents';
 import type { Lesson, LessonMeta } from '@/content/types';
-import { siteConfig } from '@/config/site';
 import { LabFrame } from '@/pages/LabFrame';
 import { LessonRunContext } from '@/pages/lessonRun';
 import styles from '@/pages/LessonPage.module.css';
 import { NextLesson } from '@/pages/NextLesson';
+import { useDocumentTitle } from '@/pages/useDocumentTitle';
 import { useActiveSection } from '@/pages/useActiveSection';
 import { useLessonTracking } from '@/pages/useLessonTracking';
 import { Quiz } from '@/quiz/Quiz';
-
-// Shows "<lesson title> - <site name>" in the browser tab while the lesson is
-// open, and puts the old title back when it closes.
-function useDocumentTitle(title: string) {
-  useEffect(() => {
-    const before = document.title;
-    document.title = `${title} - ${siteConfig.name}`;
-    return () => {
-      document.title = before;
-    };
-  }, [title]);
-}
 
 type Part = { id: string; title: string };
 
@@ -127,12 +115,14 @@ export function LessonView({
             </LessonSection>
 
             <LessonSection id="check-yourself" title="Check yourself">
-              <Quiz
-                key={lesson.id}
-                questions={lesson.quiz}
-                onSubmit={tracking.onQuizSubmit}
-                previousBest={tracking.previousBest}
-              />
+              <div className={styles.quizWrap}>
+                <Quiz
+                  key={lesson.id}
+                  questions={lesson.quiz}
+                  onSubmit={tracking.onQuizSubmit}
+                  previousBest={tracking.previousBest}
+                />
+              </div>
             </LessonSection>
 
             <LessonSection id="recap" title="Recap">

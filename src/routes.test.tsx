@@ -50,8 +50,13 @@ describe('routes', () => {
   it.each(routeTable)('%s renders its page heading', async (path, heading) => {
     renderAt(path);
 
+    // Each page is a lazy chunk, so the first render can take a moment.
     expect(
-      await screen.findByRole('heading', { level: 1, name: heading }),
+      await screen.findByRole(
+        'heading',
+        { level: 1, name: heading },
+        { timeout: 5000 },
+      ),
     ).toBeInTheDocument();
   });
 
