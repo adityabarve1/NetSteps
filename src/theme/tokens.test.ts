@@ -110,6 +110,20 @@ describe('contrast of the colour tokens (WCAG)', () => {
       },
     );
 
+    // The practice terminal paints its own background behind its text.
+    it.each(['terminal-text', 'terminal-prompt'])(
+      '--%s on --terminal-bg is at least 4.5:1',
+      (fg) => {
+        expect(contrast(tokens, fg, 'terminal-bg')).toBeGreaterThanOrEqual(4.5);
+      },
+    );
+
+    it('--terminal-focus is at least 3:1 on --terminal-bg', () => {
+      expect(
+        contrast(tokens, 'terminal-focus', 'terminal-bg'),
+      ).toBeGreaterThanOrEqual(3);
+    });
+
     it('keeps every token the components depend on', () => {
       for (const name of [
         'bg',
@@ -123,6 +137,9 @@ describe('contrast of the colour tokens (WCAG)', () => {
         'focus',
         'danger',
         'shadow',
+        'terminal-bg',
+        'terminal-text',
+        'terminal-prompt',
       ]) {
         expect(tokens[name], `--${name}`).toBeDefined();
       }

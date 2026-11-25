@@ -52,6 +52,11 @@
   --hero-to: #e1eefb;
   --hero-glow-a: #d8f2ed;
   --hero-glow-b: #dfecfb;
+  /* The practice terminal stays dark in both themes, like a real one. */
+  --terminal-bg: #0d2226;
+  --terminal-text: #e6f4f2;
+  --terminal-prompt: #5eead4;
+  --terminal-focus: #7dd3fc;
 }
 
 :root[data-theme='dark'] {
@@ -75,4 +80,8 @@
   --hero-to: #10253f;
   --hero-glow-a: #124040;
   --hero-glow-b: #12365a;
+  --terminal-bg: #050f11;
+  --terminal-text: #e6f4f2;
+  --terminal-prompt: #5eead4;
+  --terminal-focus: #7dd3fc;
 }

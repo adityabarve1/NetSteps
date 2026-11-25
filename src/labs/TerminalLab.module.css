@@ -1,0 +1,104 @@
+/* The practice terminal. Colors come from tokens.css only. The terminal stays
+   dark in both themes; its output scrolls sideways INSIDE the box, so a 320px
+   phone never gets a sideways-scrolling page. */
+
+.terminal {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+  max-width: 100%;
+}
+
+.note {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.9375rem;
+}
+
+.screen {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+  background: var(--terminal-bg);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow);
+  color: var(--terminal-text);
+  font-family: var(--font-mono);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+
+/* The ring sits outside the box, over the page, where --focus has contrast. */
+.screen:focus-within {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.scrollback {
+  height: clamp(11rem, 45vh, 22rem);
+  padding: var(--space-3) var(--space-3) var(--space-2);
+  overflow: auto;
+  overscroll-behavior: contain;
+  /* Output keeps its spacing (ipconfig lines are indented) and never wraps. */
+  white-space: pre;
+}
+
+/* The scrolling region is focusable for keyboard users; its ring is inside. */
+.scrollback:focus-visible {
+  outline: 3px solid var(--terminal-focus);
+  outline-offset: -3px;
+}
+
+.line {
+  /* An empty line (the blank row in ping output) still takes one row. */
+  min-height: 1.5em;
+}
+
+.promptText {
+  color: var(--terminal-prompt);
+  font-weight: 600;
+}
+
+.inputRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 2.75rem;
+  padding: 0 var(--space-3);
+  white-space: pre;
+}
+
+.input {
+  flex: 1;
+  min-width: 0;
+  min-height: 2.75rem;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  /* The box above shows the focus ring; the caret shows where you type. */
+  outline: none;
+  caret-color: var(--terminal-prompt);
+  color: inherit;
+  /* 16px or more stops phones zooming the page when the input is focused. */
+  font: inherit;
+  font-size: 1rem;
+}
+
+.screen ::selection {
+  background: var(--terminal-text);
+  color: var(--terminal-bg);
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
