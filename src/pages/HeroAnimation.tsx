@@ -1,32 +1,12 @@
-import { useSyncExternalStore } from 'react';
 import styles from '@/pages/HeroAnimation.module.css';
-
-const REDUCED_MOTION = '(prefers-reduced-motion: reduce)';
-
-// matchMedia can be missing (old browsers, some test setups). Treat that as "no
-// preference" instead of throwing.
-function subscribe(onChange: () => void): () => void {
-  if (typeof window.matchMedia !== 'function') return () => undefined;
-  const query = window.matchMedia(REDUCED_MOTION);
-  query.addEventListener('change', onChange);
-  return () => {
-    query.removeEventListener('change', onChange);
-  };
-}
-
-function prefersReducedMotion(): boolean {
-  return (
-    typeof window.matchMedia === 'function' &&
-    window.matchMedia(REDUCED_MOTION).matches
-  );
-}
+import { useReducedMotion } from '@/sim/useReducedMotion';
 
 // A picture of a computer, a switch and a server joined by one cable, with a
 // small packet of data travelling along it. It is decoration: the page says
 // everything it needs to in words, so assistive technology skips it.
 // With reduced motion the packet is parked on the first cable and nothing moves.
 export function HeroAnimation() {
-  const reduced = useSyncExternalStore(subscribe, prefersReducedMotion);
+  const reduced = useReducedMotion();
   const animated = !reduced;
 
   return (

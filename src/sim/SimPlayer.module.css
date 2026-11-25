@@ -1,0 +1,141 @@
+/* The step player. Colors come from tokens.css only. Everything wraps, so a
+   320px phone never scrolls sideways. */
+
+.player {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-width: 0;
+  padding: var(--space-4);
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  color: var(--text);
+}
+
+.stage {
+  min-width: 0;
+  padding: var(--space-3);
+  overflow-x: auto;
+  background: var(--surface-sunken);
+  border-radius: var(--radius-md);
+}
+
+/* Decoration: one slice per step, filled up to the current one. */
+.progress {
+  display: flex;
+  gap: 3px;
+  height: 6px;
+}
+
+.segment {
+  flex: 1 1 0;
+  min-width: 2px;
+  background: var(--border-soft);
+  border-radius: 3px;
+  transition: background-color var(--transition);
+}
+
+.done {
+  background: var(--accent);
+}
+
+.counter {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.caption {
+  margin: 0;
+  min-height: 3.2em;
+  color: var(--text);
+  font-size: 1.1875rem;
+  line-height: 1.55;
+}
+
+.empty {
+  margin: 0;
+  padding: var(--space-5) var(--space-3);
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3) var(--space-4);
+}
+
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.button {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 var(--space-4);
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color var(--transition),
+    border-color var(--transition);
+}
+
+.button:hover:not(:disabled) {
+  border-color: var(--accent);
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-contrast);
+}
+
+.scrubber {
+  flex: 1 1 10rem;
+  min-width: 0;
+  min-height: 44px;
+  margin: 0;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.scrubber:disabled {
+  cursor: not-allowed;
+}
+
+.speed {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--text);
+  font-weight: 600;
+}
+
+.select {
+  min-height: 44px;
+  padding: 0 var(--space-3);
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+}
