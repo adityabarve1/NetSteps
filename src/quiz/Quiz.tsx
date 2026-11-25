@@ -21,10 +21,26 @@ function resultMessage({ score, total }: QuizResult): string {
   return 'Read the explanations below, then try again whenever you like.';
 }
 
+// Question ids are only unique inside one lesson, so the key is made from the
+// whole content of the questions. One pass over the strings; a quiz is five
+// questions, so this is cheap on every render.
+function contentKey(questions: QuizQuestion[]): string {
+  return JSON.stringify(
+    questions.map((q) => [
+      q.id,
+      q.prompt,
+      q.options,
+      q.correctIndex,
+      q.explanation,
+    ]),
+  );
+}
+
 // The learner's answers live in QuizBody. Giving it a key made from the
-// question ids means a different lesson's questions start with a clean slate,
-// with no state to reset by hand. The same ids keep the answers, so a parent
-// that rebuilds the array on every render does not wipe what was picked.
+// question content means a different lesson's questions (even ones that reuse
+// the same ids) or an edited question start with a clean slate, with no state
+// to reset by hand. Identical content keeps the answers, so a parent that
+// rebuilds the array on every render does not wipe what was picked.
 export function Quiz({ questions, onSubmit, previousBest }: Props) {
   if (questions.length === 0) {
     return (
@@ -38,7 +54,7 @@ export function Quiz({ questions, onSubmit, previousBest }: Props) {
   }
   return (
     <QuizBody
-      key={JSON.stringify(questions.map((q) => q.id))}
+      key={contentKey(questions)}
       questions={questions}
       onSubmit={onSubmit}
       previousBest={previousBest}
