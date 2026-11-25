@@ -195,6 +195,10 @@ describe('Quiz calls onSubmit exactly once per attempt', () => {
     expect(onSubmit).toHaveBeenCalledTimes(1);
   });
 
+  // The next two tests cannot reach the submittedRef guard: the first accepted
+  // submit swaps the Submit button for the result, so the second click or Enter
+  // lands on nothing. They still pin what a learner sees. The fireEvent.submit
+  // tests above and below exercise the guard itself.
   it('survives a double click', async () => {
     const onSubmit = vi.fn();
     const { user } = await ready(onSubmit);

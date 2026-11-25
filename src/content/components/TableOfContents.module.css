@@ -18,7 +18,8 @@
   display: flex;
   gap: var(--space-2);
   margin: 0;
-  padding: 0 0 var(--space-2);
+  /* 0.375rem = the 3px focus outline + its 2px offset + 1px, so overflow does not clip the ring. */
+  padding: 0.375rem 0.375rem var(--space-2);
   overflow-x: auto;
   list-style: none;
 }

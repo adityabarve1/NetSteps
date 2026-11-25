@@ -70,6 +70,8 @@ export function TerminalLab({ net, hostId, os, prompt }: TerminalLabProps) {
   }
 
   function onKeyDown(event: KeyboardEvent<HTMLInputElement>) {
+    // While an IME is composing, the arrows pick a candidate: leave them alone.
+    if (event.nativeEvent.isComposing) return;
     if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
       event.preventDefault();
       dispatch({ type: event.key === 'ArrowUp' ? 'previous' : 'next' });

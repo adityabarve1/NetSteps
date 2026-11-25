@@ -36,9 +36,11 @@ function byName(net: Network, name: string): Device | undefined {
 /**
  * True when the device called `fromName` can ping the address of the device
  * called `toName`, over a real path between two different devices (a ping to
- * its own address does not count). Names are matched ignoring case. It uses `ping`, so
- * subnets, switches and cables all count. Unknown names or a target with no
- * address give false.
+ * its own address does not count). Names are matched ignoring case.
+ *
+ * It uses `ping`, so subnets, switches and cables all count. A direct cable
+ * between two endpoints (no switch) counts too, under `ping`'s own rules for
+ * addresses and masks. Unknown names or a target with no address give false.
  */
 export function canPing(
   net: Network,

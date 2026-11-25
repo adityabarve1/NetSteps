@@ -22,6 +22,8 @@
   min-width: 0;
   overflow: hidden;
   background: var(--terminal-bg);
+  /* Separates the always-dark box from the dark page background. */
+  border: 1px solid var(--border-soft);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow);
   color: var(--terminal-text);

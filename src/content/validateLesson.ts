@@ -15,6 +15,17 @@ const MAX_TAKEAWAYS = 5;
 const MIN_MINUTES = 8;
 const MAX_MINUTES = 30;
 
+// Ids the lesson page itself puts on its fixed sections. A lesson section with
+// one of these would make two elements share an id and break the contents list.
+const RESERVED_SECTION_IDS: readonly string[] = [
+  'try-it',
+  'practice-lab',
+  'on-your-computer',
+  'why-it-matters',
+  'check-yourself',
+  'recap',
+];
+
 const blank = (text: string) => text.trim() === '';
 
 function sectionProblems(lesson: Lesson): string[] {
@@ -32,6 +43,11 @@ function sectionProblems(lesson: Lesson): string[] {
     } else {
       if (!isKebabCase(section.id)) {
         problems.push(`${label}: id "${section.id}" is not kebab-case`);
+      }
+      if (RESERVED_SECTION_IDS.includes(section.id)) {
+        problems.push(
+          `${label}: id "${section.id}" is reserved by the lesson page`,
+        );
       }
       if (seen.has(section.id)) {
         problems.push(`section id "${section.id}" is used twice`);
@@ -93,8 +109,14 @@ function quizProblems(lesson: Lesson): string[] {
 function labProblems(lesson: Lesson, meta: LessonMeta): string[] {
   const problems: string[] = [];
   if (lesson.labs.length < 1) problems.push('needs at least one lab');
+  const seen = new Set<string>();
   for (const lab of lesson.labs) {
     if (blank(lab.title)) problems.push(`lab "${lab.id}" needs a title`);
+    if (seen.has(lab.id)) {
+      problems.push(`lab id "${lab.id}" is used twice`);
+      continue;
+    }
+    seen.add(lab.id);
   }
   const labIds = lesson.labs.map((lab) => lab.id);
   const sorted = (ids: string[]) =>

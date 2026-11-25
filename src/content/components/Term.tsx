@@ -25,6 +25,7 @@ function DefinedTerm({ definition, children }: DefinedTermProps) {
   const [open, setOpen] = useState(false);
   const popoverId = useId();
   const wrapperRef = useRef<HTMLSpanElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   // While open, listen on the whole document for Escape and for a press outside
   // this term. Both can happen while focus is not on the button, for example
@@ -32,7 +33,13 @@ function DefinedTerm({ definition, children }: DefinedTermProps) {
   useEffect(() => {
     if (!open) return;
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setOpen(false);
+      // Something else (an outer dialog) already used this Escape: leave it.
+      if (event.key !== 'Escape' || event.defaultPrevented) return;
+      // Mark it handled so an outer dialog does not also close on this key.
+      event.preventDefault();
+      setOpen(false);
+      // Focus that already fell to the page goes back to the word.
+      if (document.activeElement === document.body) buttonRef.current?.focus();
     };
     const onPointerDown = (event: PointerEvent) => {
       const target = event.target;
@@ -51,6 +58,7 @@ function DefinedTerm({ definition, children }: DefinedTermProps) {
   return (
     <span ref={wrapperRef} className={styles.term}>
       <button
+        ref={buttonRef}
         type="button"
         className={styles.button}
         aria-expanded={open}

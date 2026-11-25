@@ -62,7 +62,9 @@ describe('loadLesson with the real registry', () => {
     expect(await loadLesson('l2-switches')).toBeUndefined();
   });
 
-  it('lists the ids it can load', () => {
-    expect(Array.isArray(registeredLessonIds())).toBe(true);
+  it('lists the ids it can load, each without repeats and each loadable', async () => {
+    const ids = registeredLessonIds();
+    expect(new Set(ids).size).toBe(ids.length);
+    for (const id of ids) expect(await loadLesson(id)).toBeDefined();
   });
 });

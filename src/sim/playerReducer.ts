@@ -94,6 +94,8 @@ export function playerReducer(
   if (n === 0) return s;
 
   const last = n - 1;
+  // The Math.min in 'next' and Math.max in 'back' are deliberate belt and
+  // braces: normalizePlayerState also clamps, but each case stays correct alone.
   switch (action.type) {
     case 'next':
       return normalizePlayerState(

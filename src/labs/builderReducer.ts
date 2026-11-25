@@ -9,7 +9,8 @@
 //   network before the builder starts with it.
 // - `setConfig` stores the typed strings untouched (no trimming; `ping` does
 //   the validating). An EMPTY string means "not set" and removes the field.
-//   Switches have no address, so `setConfig` on a switch is ignored.
+//   Switches have no address, so `setConfig` on a switch is ignored. A value
+//   that is not a string (possible only at runtime) ignores the whole action.
 
 import type { Device, DeviceKind, Link, Network } from '@/netcore/network';
 
@@ -174,6 +175,10 @@ function setConfig(
 ): Network {
   const device = findDevice(net, action.id);
   if (device === undefined || device.kind === 'switch') return net;
+  // Typed as strings, but a lab author or a stale caller can still hand over
+  // anything at runtime. Ignore the whole change rather than store it.
+  const values: unknown[] = [action.ip, action.mask, action.gateway];
+  if (values.some((v) => v !== undefined && typeof v !== 'string')) return net;
   const ip = action.ip === '' ? undefined : action.ip;
   const mask = action.mask === '' ? undefined : action.mask;
   const gateway = action.gateway === '' ? undefined : action.gateway;

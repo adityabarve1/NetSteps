@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useLayoutEffect, useRef } from 'react';
 import { cx } from '@/lib/cx';
 import { SPEEDS, type Speed } from '@/sim/playerReducer';
 import styles from '@/sim/SimPlayer.module.css';
@@ -36,18 +36,29 @@ export function PlayerControls({
   const playRef = useRef<HTMLButtonElement>(null);
   const nextRef = useRef<HTMLButtonElement>(null);
 
-  // A button that turns itself off while it has focus drops the focus to the
-  // page. Hand it to a neighbour that stays on instead.
-  function next() {
-    onNext();
-    if (index + 1 >= last) playRef.current?.focus();
-  }
-  function back() {
-    onBack();
-    if (index - 1 <= 0) nextRef.current?.focus();
-  }
+  const backRef = useRef<HTMLButtonElement>(null);
 
-  const playLabel = playing ? 'Pause' : index >= last ? 'Play again' : 'Play';
+  // A button that turns itself off while it has focus drops the focus to the
+  // page. This runs after every render, so it also covers the arrow keys and
+  // Home/End (handled by the group), not only clicks. Hand the focus to a
+  // neighbour that stays on.
+  useLayoutEffect(() => {
+    const active = document.activeElement;
+    const playable = count > 1;
+    if (active === nextRef.current && nextRef.current?.disabled) {
+      if (playable) playRef.current?.focus();
+    } else if (active === backRef.current && backRef.current?.disabled) {
+      if (!nextRef.current?.disabled) nextRef.current?.focus();
+      else if (playable) playRef.current?.focus();
+    }
+  });
+
+  const playable = count > 1;
+  const playLabel = playing
+    ? 'Pause'
+    : index >= last && playable
+      ? 'Play again'
+      : 'Play';
 
   return (
     <div className={styles.controls}>
@@ -57,13 +68,15 @@ export function PlayerControls({
           type="button"
           className={cx(styles.button, styles.primary)}
           onClick={onPlayPause}
+          disabled={!playable}
         >
           {playLabel}
         </button>
         <button
+          ref={backRef}
           type="button"
           className={styles.button}
-          onClick={back}
+          onClick={onBack}
           disabled={index <= 0}
         >
           Back
@@ -72,12 +85,17 @@ export function PlayerControls({
           ref={nextRef}
           type="button"
           className={styles.button}
-          onClick={next}
+          onClick={onNext}
           disabled={index >= last}
         >
           Next
         </button>
-        <button type="button" className={styles.button} onClick={onReset}>
+        <button
+          type="button"
+          className={styles.button}
+          onClick={onReset}
+          disabled={!playable}
+        >
           Reset
         </button>
       </div>

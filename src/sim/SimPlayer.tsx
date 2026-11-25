@@ -70,10 +70,13 @@ function Player<S>({
   caption,
   render,
   onFinished,
-  stepMs = 1800,
+  stepMs: stepMsProp = 1800,
   label = DEFAULT_LABEL,
 }: SimPlayerProps<S>) {
   const count = steps.length;
+  // NaN, 0, a negative or Infinity would make autoplay burst or never advance.
+  const stepMs =
+    Number.isFinite(stepMsProp) && stepMsProp > 0 ? stepMsProp : 1800;
   const reducedMotion = useReducedMotion();
   const [stored, dispatch] = useReducer(
     (s: PlayerState, a: PlayerAction) => playerReducer(s, a, count),
@@ -139,7 +142,9 @@ function Player<S>({
       return;
     if (
       event.target instanceof Element &&
-      event.target.closest('input, select')
+      event.target.closest(
+        'input, select, textarea, [contenteditable]:not([contenteditable="false"])',
+      )
     ) {
       return;
     }

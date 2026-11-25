@@ -151,6 +151,7 @@ export function BuilderCanvas({
             )}
             transform={`translate(${String(d.x)} ${String(d.y)})`}
             role="button"
+            data-device-id={d.id}
             tabIndex={0}
             aria-label={deviceLabel(d)}
             aria-pressed={d.id === selectedId}
@@ -174,6 +175,14 @@ export function BuilderCanvas({
               width={104}
               height={92}
               rx={12}
+            />
+            <rect
+              className={styles.ring}
+              x={-46}
+              y={-30}
+              width={92}
+              height={80}
+              rx={8}
             />
             <DeviceIcon kind={d.kind} />
             <text className={styles.name} y={22} textAnchor="middle">

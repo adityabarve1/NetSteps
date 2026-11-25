@@ -231,3 +231,32 @@ describe('nextFreePosition', () => {
     expect(() => nextFreePosition(full)).not.toThrow();
   });
 });
+
+describe('setConfig with values of the wrong type', () => {
+  const base = (): Network => run(empty(), add('pc'));
+  const bad = (field: 'ip' | 'mask' | 'gateway', value: unknown): Network =>
+    builderReducer(base(), {
+      type: 'setConfig',
+      id: 'pc1',
+      ip: '10.0.0.1',
+      mask: '/24',
+      ...{ [field]: value },
+    });
+
+  it.each(['ip', 'mask', 'gateway'] as const)(
+    'ignores a non-string %s and returns the same network',
+    (field) => {
+      const net = base();
+      expect(
+        builderReducer(net, {
+          type: 'setConfig',
+          id: 'pc1',
+          ip: '10.0.0.1',
+          mask: '/24',
+          ...{ [field]: 42 },
+        }),
+      ).toBe(net);
+      expect(bad(field, { a: 1 }).devices[0]?.ip).toBeUndefined();
+    },
+  );
+});

@@ -1,9 +1,11 @@
+import { useId } from 'react';
 import type { TaskResult } from '@/labs/labTasks';
 import { cx } from '@/lib/cx';
 import styles from './BuilderLab.module.css';
 
 /** The live goal list. Done is shown by an icon AND a word, never colour alone. */
 export function TaskChecklist({ results }: { results: TaskResult[] }) {
+  const titleId = useId();
   if (results.length === 0) return null;
   const doneCount = results.filter((r) => r.done).length;
   const summary =
@@ -11,8 +13,8 @@ export function TaskChecklist({ results }: { results: TaskResult[] }) {
       ? 'All goals done. Nice work!'
       : `${String(doneCount)} of ${String(results.length)} goals done`;
   return (
-    <section className={styles.card} aria-labelledby="builder-goals-title">
-      <h3 id="builder-goals-title" className={styles.cardTitle}>
+    <section className={styles.card} aria-labelledby={titleId}>
+      <h3 id={titleId} className={styles.cardTitle}>
         Goals
       </h3>
       <p role="status" className={styles.summary}>

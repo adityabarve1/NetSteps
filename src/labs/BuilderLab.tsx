@@ -1,4 +1,11 @@
-import { useEffect, useMemo, useReducer, useRef, useState } from 'react';
+import {
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useReducer,
+  useRef,
+  useState,
+} from 'react';
 import { BuilderCanvas } from '@/labs/BuilderCanvas';
 import {
   MAX_DEVICES,
@@ -65,6 +72,25 @@ export function BuilderLab({
   const nameOf = (id: string) =>
     net.devices.find((d) => d.id === id)?.name ?? id;
 
+  // Where focus should go after the next render: a device node, or (null) the
+  // first palette button. A removed device or cable takes the focused button
+  // with it, and focus would otherwise fall to the page.
+  const labRef = useRef<HTMLElement>(null);
+  const focusNext = useRef<{ deviceId: string | null } | null>(null);
+  useLayoutEffect(() => {
+    const target = focusNext.current;
+    const lab = labRef.current;
+    if (target === null || lab === null) return;
+    focusNext.current = null;
+    const node =
+      target.deviceId === null
+        ? null
+        : Array.from(lab.querySelectorAll<SVGElement>('[data-device-id]')).find(
+            (el) => el.getAttribute('data-device-id') === target.deviceId,
+          );
+    (node ?? lab.querySelector<HTMLElement>('[data-palette] button'))?.focus();
+  });
+
   // Callbacks are read through refs so a new function identity never re-fires them.
   const onAllDoneRef = useRef(onAllDone);
   const onChangeRef = useRef(onChange);
@@ -114,9 +140,8 @@ export function BuilderLab({
       return;
     }
     setSelectedId(id);
-    setStatus(
-      `Selected ${nameOf(id)}. You can change its settings in the panel.`,
-    );
+    // The helpful hint lives in the side panel, so the live region stays short.
+    setStatus(`Selected ${nameOf(id)}.`);
   }
 
   function cancelConnecting() {
@@ -127,6 +152,9 @@ export function BuilderLab({
 
   function removeDevice(id: string) {
     const name = nameOf(id);
+    const at = net.devices.findIndex((d) => d.id === id);
+    const neighbour = net.devices[at + 1] ?? net.devices[at - 1];
+    focusNext.current = { deviceId: neighbour?.id ?? null };
     dispatch({ type: 'removeDevice', id });
     setSelectedId(null);
     setConnectingId(null);
@@ -137,6 +165,7 @@ export function BuilderLab({
   function removeCable(linkId: string) {
     const link = net.links.find((l) => l.id === linkId);
     dispatch({ type: 'disconnect', linkId });
+    focusNext.current = { deviceId: selectedId };
     if (link !== undefined) {
       setStatus(
         `Removed the cable between ${nameOf(link.a)} and ${nameOf(link.b)}.`,
@@ -157,6 +186,7 @@ export function BuilderLab({
   return (
     // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- Escape from any focused control inside cancels connecting; the region itself is not a control
     <section
+      ref={labRef}
       className={styles.lab}
       aria-label="Network builder"
       onKeyDown={(event) => {
@@ -168,7 +198,7 @@ export function BuilderLab({
         network.
       </p>
 
-      <div className={styles.toolbar}>
+      <div className={styles.toolbar} data-palette="">
         {kinds.length === 0 ? (
           <p className={styles.note}>This lab has no devices to add.</p>
         ) : (
@@ -272,6 +302,8 @@ export function BuilderLab({
           <h3 className={styles.cardTitle}>
             Terminal on {terminalDevice.name}
           </h3>
+          {/* The terminal stays bound to its device: the key remounts it when
+              another device is opened, so its scrollback is discarded. */}
           <TerminalLab
             key={terminalDevice.id}
             net={net}

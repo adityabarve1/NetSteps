@@ -260,3 +260,20 @@ describe('Quiz accessibility', () => {
     expect(await axe(container)).toHaveNoViolations();
   });
 });
+
+describe('Quiz result announcement', () => {
+  it('keeps only the heading and message in the status region', async () => {
+    const user = userEvent.setup();
+    render(<Quiz questions={fiveQuestions} onSubmit={vi.fn()} />);
+    await answerAll(user, correctIndexes);
+    await user.click(submitButton());
+
+    const tryAgain = screen.getByRole('button', { name: 'Try again' });
+    const regions = screen.getAllByRole('status');
+    const result = regions.find((el) => el.textContent.includes('You got 5'));
+    expect(result).toBeDefined();
+    expect(result?.textContent).toContain('Well done');
+    expect(result?.contains(tryAgain)).toBe(false);
+    for (const region of regions) expect(region.contains(tryAgain)).toBe(false);
+  });
+});

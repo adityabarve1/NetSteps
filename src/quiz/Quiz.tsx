@@ -128,11 +128,14 @@ function QuizBody({ questions, onSubmit, previousBest }: Props) {
       noValidate
     >
       {result && (
-        <div className={styles.result} role="status">
-          <h3 ref={headingRef} tabIndex={-1} className={styles.resultHeading}>
-            You got {result.score} of {result.total}
-          </h3>
-          <p className={styles.resultMessage}>{resultMessage(result)}</p>
+        <div className={styles.result}>
+          {/* Only the heading and message are announced; the button is not. */}
+          <div role="status">
+            <h3 ref={headingRef} tabIndex={-1} className={styles.resultHeading}>
+              You got {result.score} of {result.total}
+            </h3>
+            <p className={styles.resultMessage}>{resultMessage(result)}</p>
+          </div>
           <button type="button" className={styles.button} onClick={tryAgain}>
             Try again
           </button>

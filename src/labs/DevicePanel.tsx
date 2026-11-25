@@ -97,6 +97,9 @@ export function DevicePanel({
         {device.name}{' '}
         <span className={styles.kind}>({KIND_NAME[device.kind]})</span>
       </h3>
+      <p className={styles.note}>
+        Change its settings here, connect it to another device, or remove it.
+      </p>
       {isSwitch ? (
         <p className={styles.note}>
           A switch has no address of its own. It passes traffic between the
