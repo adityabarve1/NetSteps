@@ -1,0 +1,277 @@
+/* The quiz. Colors come from tokens.css only. Everything wraps, so a 320px
+   phone never scrolls sideways. */
+
+.quiz {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+  color: var(--text);
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin: 0;
+  padding: var(--space-5);
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  color: var(--text);
+  font-weight: 600;
+  text-align: center;
+}
+
+.emptyHint {
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.best {
+  margin: 0;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+/* One rounded card per question. */
+.card {
+  min-width: 0;
+  margin: 0;
+  padding: var(--space-4);
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+}
+
+.legend {
+  /* A plain legend sits on top of the card's border. Floating it full width
+     puts it inside the card, and .options clears the float. */
+  float: left;
+  width: 100%;
+  padding: 0;
+  margin-bottom: var(--space-3);
+}
+
+.number {
+  display: block;
+  margin-bottom: var(--space-1);
+  color: var(--text-muted);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.prompt {
+  display: block;
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.options {
+  clear: both;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+/* The whole row is the target: at least 44px tall. */
+.option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 44px;
+  padding: var(--space-2) var(--space-3);
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: 1.0625rem;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+  transition:
+    background-color var(--transition),
+    border-color var(--transition);
+}
+
+.option:hover:not(.optionLocked) {
+  border-color: var(--accent);
+}
+
+.option:has(input:checked) {
+  background: var(--surface-sunken);
+  border-color: var(--accent);
+}
+
+.option:has(input:focus-visible) {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.optionLocked {
+  cursor: default;
+}
+
+.tag {
+  flex: none;
+  margin-left: auto;
+  padding: 0 var(--space-2);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.label {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.radio {
+  flex: none;
+  width: 1.375rem;
+  height: 1.375rem;
+  margin: 0;
+  accent-color: var(--accent);
+  cursor: inherit;
+}
+
+/* After Submit: the verdict never relies on colour alone. It has an icon and
+   words, and the left bar is only decoration. */
+.verdict {
+  margin-top: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface-sunken);
+  border-left: 6px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.right {
+  border-left-color: var(--accent);
+}
+
+.wrong {
+  border-left-color: var(--danger);
+}
+
+.verdict p {
+  margin: 0 0 var(--space-2);
+}
+
+.verdict p:last-child {
+  margin-bottom: 0;
+}
+
+.verdictLabel {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: 700;
+}
+
+.verdictIcon {
+  flex: none;
+}
+
+.right .verdictLabel {
+  color: var(--accent);
+}
+
+.wrong .verdictLabel {
+  color: var(--danger);
+}
+
+.rightAnswer {
+  overflow-wrap: anywhere;
+}
+
+.explanation {
+  line-height: 1.55;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3) var(--space-4);
+}
+
+.progress {
+  min-width: 0;
+}
+
+.progress p {
+  margin: 0;
+}
+
+.count {
+  font-weight: 600;
+}
+
+.help {
+  color: var(--text-muted);
+  font-size: 0.9375rem;
+}
+
+.button {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 var(--space-5);
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color var(--transition),
+    border-color var(--transition);
+}
+
+.button:hover:not(:disabled) {
+  border-color: var(--accent);
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-contrast);
+}
+
+/* The result panel sits above the questions, so focus lands on it first. */
+.result {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-5);
+  background: var(--surface-sunken);
+  border: 2px solid var(--accent);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lift);
+}
+
+.resultHeading {
+  margin: 0;
+  font-size: clamp(1.5rem, 5vw, 2rem);
+}
+
+.resultHeading:focus-visible {
+  outline-offset: 4px;
+}
+
+.resultMessage {
+  margin: 0 0 var(--space-2);
+  font-size: 1.125rem;
+}
