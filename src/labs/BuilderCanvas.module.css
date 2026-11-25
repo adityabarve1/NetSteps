@@ -1,0 +1,112 @@
+/* The builder canvas. Colours come from tokens.css only. */
+
+.canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  user-select: none;
+}
+
+.cable {
+  stroke: var(--border);
+  stroke-width: 3;
+  stroke-linecap: round;
+  transition: stroke var(--transition);
+}
+
+.cable:hover,
+.cableActive {
+  stroke: var(--accent);
+  stroke-width: 4;
+}
+
+.node {
+  cursor: grab;
+  outline: none;
+  touch-action: none;
+}
+
+.box {
+  fill: var(--surface);
+  stroke: var(--border);
+  stroke-width: 1.5;
+  transition: stroke var(--transition);
+}
+
+.node:hover .box {
+  stroke: var(--accent);
+}
+
+.nodeSelected .box {
+  fill: var(--surface-sunken);
+  stroke: var(--accent);
+  stroke-width: 3;
+}
+
+/* While picking the second device, every other device shows a dashed outline. */
+.nodePicking .box {
+  stroke: var(--accent-2);
+  stroke-dasharray: 6 4;
+}
+
+.nodeSource .box {
+  stroke: var(--accent);
+  stroke-width: 4;
+}
+
+.node:focus-visible .box {
+  stroke: var(--focus);
+  stroke-width: 4;
+  stroke-dasharray: none;
+}
+
+.iconBody {
+  fill: var(--surface-sunken);
+  stroke: var(--accent-2);
+  stroke-width: 2.5;
+}
+
+.iconPort {
+  fill: var(--accent);
+}
+
+.iconLine {
+  fill: none;
+  stroke: var(--accent-2);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+}
+
+.name {
+  fill: var(--text);
+  font-family: var(--font-body);
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.address {
+  fill: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+
+/* On a phone the canvas shrinks to about half size: make the names bigger and
+   leave the address to the side panel and to the device's spoken label. */
+@media (max-width: 36rem) {
+  .name {
+    font-size: 23px;
+  }
+
+  .address {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cable,
+  .box {
+    transition: none;
+  }
+}
