@@ -172,3 +172,37 @@ describe('hard-coded colours', () => {
     expect(colourLiteral.exec(css)?.[0]).toBeUndefined();
   });
 });
+
+// The progress ring is a graphic, so its parts need 3:1 (WCAG 1.4.11). The test
+// reads the stroke each part really uses, so pointing the track back at a soft
+// token fails here.
+describe('progress ring colours', () => {
+  const ringCss = readFileSync(
+    `${srcDir}pages/ProgressRing.module.css`,
+    'utf8',
+  );
+  const strokeOf = (rule: string): string => {
+    const block = new RegExp(String.raw`\.${rule}\s*\{([^}]*)\}`).exec(ringCss);
+    const stroke = /stroke:\s*var\(--([\w-]+)\)/.exec(block?.[1] ?? '');
+    if (!stroke) throw new Error(`.${rule} has no stroke: var(--token)`);
+    return stroke[1] ?? '';
+  };
+
+  it('draws the track with --border and the fill with --accent', () => {
+    expect(strokeOf('track')).toBe('border');
+    expect(strokeOf('fill')).toBe('accent');
+  });
+
+  describe.each(themes)('%s theme', (_name, tokens) => {
+    it.each(['track', 'fill'])(
+      'the ring %s is at least 3:1 on every surface it sits on',
+      (part) => {
+        for (const surface of ['surface', 'surface-sunken']) {
+          expect(
+            contrast(tokens, strokeOf(part), surface),
+          ).toBeGreaterThanOrEqual(3);
+        }
+      },
+    );
+  });
+});

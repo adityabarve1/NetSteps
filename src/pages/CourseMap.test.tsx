@@ -188,12 +188,14 @@ describe('CourseMap: loading and account notes', () => {
     const note = screen.getByText(
       'We will finish saving your progress when you are back online.',
     );
-    expect(note.closest('[role="status"]')).not.toBeNull();
+    expect(screen.getByRole('status')).toContainElement(note);
   });
 
   it('has an empty status region and no note when saving is fine', () => {
     renderCourseMap();
 
+    const region = screen.getByRole('status');
+    expect(region).toBeEmptyDOMElement();
     expect(screen.queryByText(/finish saving/)).toBeNull();
   });
 });

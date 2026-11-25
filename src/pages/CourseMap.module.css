@@ -20,8 +20,12 @@
   color: var(--text-muted);
 }
 
+/* Empty, the live region must stay in the page (display: none would drop it
+   from the accessibility tree, and a note added later might not be announced).
+   Zero height, and a negative margin cancels the flex gap it would add. */
 .sync:empty {
-  display: none;
+  height: 0;
+  margin-top: calc(-1 * var(--space-4));
 }
 
 .summary {

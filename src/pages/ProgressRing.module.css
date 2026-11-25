@@ -4,11 +4,11 @@
   flex: none;
 }
 
-/* The unfilled part. Decoration: the count in the middle carries the meaning. */
+/* The unfilled part. --border (3:1 on the surface), thinner than the fill. */
 .track {
   fill: none;
-  stroke: var(--border-soft);
-  stroke-width: 5;
+  stroke: var(--border);
+  stroke-width: 3;
 }
 
 .fill {
