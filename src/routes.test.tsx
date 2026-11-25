@@ -36,7 +36,7 @@ afterEach(() => {
 const routeTable: [path: string, heading: string | RegExp][] = [
   ['/', /Learn how computers talk to each other/],
   ['/learn', 'Course map'],
-  ['/learn/level-1/l1-what-is-a-network', 'Lesson'],
+  ['/learn/level-1/l1-what-is-a-network', 'Lesson not found'],
   ['/privacy', 'Privacy Policy'],
   ['/terms', 'Terms of Service'],
   ['/login', 'Sign in'],

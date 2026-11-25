@@ -38,3 +38,13 @@ if (typeof window !== 'undefined') {
     }),
   });
 }
+
+// jsdom does not implement scrolling and prints "not implemented" when a page
+// scrolls (ScrollRestoration does on every navigation). Do nothing instead.
+if (typeof window !== 'undefined') {
+  Object.defineProperty(window, 'scrollTo', {
+    writable: true,
+    configurable: true,
+    value: vi.fn(),
+  });
+}

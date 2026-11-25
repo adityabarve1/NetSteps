@@ -1,0 +1,169 @@
+/* Lesson page. Colors come from tokens.css only. */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  min-width: 0;
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
+  line-height: 1.2;
+}
+
+/* The hook: a larger lead paragraph, kept to a readable line length. */
+.hook {
+  max-width: 60ch;
+  margin: 0;
+  color: var(--text);
+  font-size: clamp(1.125rem, 2.5vw, 1.375rem);
+  line-height: 1.5;
+}
+
+/* Rounded cards: the analogy, the try-it area, labs and the cheat sheet. */
+.card,
+.analogy {
+  max-width: 70ch;
+  margin: 0 0 var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  overflow-wrap: anywhere;
+}
+
+.analogy {
+  border-inline-start: 6px solid var(--accent-2);
+}
+
+.cardTitle {
+  margin: 0 0 var(--space-3);
+  font-size: 1.125rem;
+}
+
+/* Phones: one column, the table of contents is a compact row above the text.
+   Wide screens: the table of contents is a sticky side column. It sits beside
+   the text, so it can never cover a heading that a link scrolls to. */
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-4);
+}
+
+.tocColumn {
+  min-width: 0;
+}
+
+.content {
+  min-width: 0;
+  max-width: 70ch;
+  font-size: 1.0625rem;
+  line-height: 1.65;
+}
+
+/* Long code and preformatted text scroll inside their own box. */
+.content pre,
+.content table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.content :is(p, ul, ol) {
+  margin-block: 0 var(--space-4);
+}
+
+@media (min-width: 60rem) {
+  .layout {
+    grid-template-columns: 14rem minmax(0, 1fr);
+    gap: var(--space-6);
+    align-items: start;
+  }
+
+  .tocColumn {
+    position: sticky;
+    top: var(--space-4);
+    max-height: calc(100vh - 2 * var(--space-4));
+    overflow-y: auto;
+  }
+}
+
+.safety {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--surface-sunken);
+  font-weight: 600;
+}
+
+.oneLine {
+  font-size: 1.1875rem;
+  font-weight: 700;
+}
+
+.takeaways {
+  padding-inline-start: var(--space-5);
+}
+
+.nextWrap {
+  margin: var(--space-5) 0 0;
+}
+
+.nextLink,
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: var(--space-2) var(--space-5);
+  border: 2px solid var(--accent);
+  border-radius: var(--radius-md);
+  background: var(--accent);
+  color: var(--accent-contrast);
+  font: inherit;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.nextLink {
+  font-size: 1.125rem;
+}
+
+.nextLink:hover,
+.button:hover {
+  box-shadow: var(--shadow-lift);
+}
+
+/* Loading, retry, not found and error states. */
+.message {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+  max-width: 40rem;
+  margin: var(--space-5) auto;
+  padding: var(--space-5);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.message p {
+  margin: 0;
+}
+
+.messageTitle {
+  margin: 0;
+  font-size: clamp(1.5rem, 4vw, 2rem);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
