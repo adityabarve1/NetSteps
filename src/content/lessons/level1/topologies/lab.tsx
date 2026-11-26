@@ -48,11 +48,12 @@ export function StarLab({ onDone }: { onDone: () => void }) {
         </li>
       </ol>
       <p>
-        The two goals tick by themselves as soon as the star is right. A
-        computer must have a cable to Switch1 and to nothing else, so a cable
-        straight from one computer to another does not count. Give every
-        computer its own address: two computers with the same address cannot
-        both be reached.
+        The goals tick by themselves. Goal 1 needs the cables: PC1 to PC4 each
+        have one cable to Switch1 and to nothing else, so a cable straight from
+        one computer to another does not count. Goal 2 needs the cables and the
+        addresses: all four computers in the same subnet, each with its own
+        address, because two computers with the same address cannot both be
+        reached.
       </p>
       <p>
         <strong>Now break the star on purpose.</strong> Select PC3 and press{' '}
@@ -65,7 +66,10 @@ export function StarLab({ onDone }: { onDone: () => void }) {
         its connection. The goals un-tick, because the star is no longer
         complete. Connect PC3 to Switch1 again to repair it. For a bigger test,
         select Switch1, press <strong>Remove device</strong> and ping again:
-        with the centre gone, nobody can reach anybody.
+        with the centre gone, nobody can reach anybody. To finish, press{' '}
+        <strong>Add a switch</strong> (the new switch is called Switch1 again)
+        and cable PC1 to PC4 to it once more. The goals tick again when the star
+        is rebuilt; the addresses stay on the computers.
       </p>
       <BuilderLab
         tasks={starTasks}

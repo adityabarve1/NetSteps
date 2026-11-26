@@ -46,6 +46,16 @@ function joinList(items: string[]): string {
 /** "A, B and D can still talk (3 of 5 devices)." and its two special cases. */
 export function statusSentence(t: Topology, ok: string[]): string {
   if (ok.length === 0) return 'No device can talk to another.';
+  if (t.kind === 'star') {
+    // The switch is named apart from the computers, so the counts match the text.
+    const computers = t.nodes.length - 1;
+    if (ok.length === t.nodes.length) {
+      return `All ${String(computers)} computers and the switch can talk to each other.`;
+    }
+    const talking = ok.filter((id) => id !== t.nodes[0]).length;
+    const list = joinList(ok.map((id) => nodeLabel(t, id)));
+    return `${list} can still talk (the switch and ${String(talking)} of ${String(computers)} computers).`;
+  }
   if (ok.length === t.nodes.length) {
     return `All ${String(ok.length)} devices can talk to each other.`;
   }
@@ -65,7 +75,7 @@ export function sceneDescription(
   ];
   const state = parts.length === 0 ? 'Nothing is broken.' : parts.join(' ');
   const hub = t.kind === 'star' ? ' with a switch in the middle' : '';
-  return `Diagram of a ${SHAPE_NAME[t.kind]} network of ${String(t.nodes.length)} devices${hub}. ${state} ${statusSentence(t, ok)}`;
+  return `Diagram of a ${SHAPE_NAME[t.kind]} network of ${String(t.kind === 'star' ? t.nodes.length - 1 : t.nodes.length)} devices${hub}. ${state} ${statusSentence(t, ok)}`;
 }
 
 export type TopologyStep = {

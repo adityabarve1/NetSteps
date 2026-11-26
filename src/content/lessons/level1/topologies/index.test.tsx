@@ -143,7 +143,9 @@ describe('lesson: Topologies', () => {
     const card = tryItCard();
     const verdict = within(card).getByRole('status');
     expect(verdict).toHaveTextContent('Nothing is broken yet.');
-    expect(verdict).toHaveTextContent('All 6 devices can talk');
+    expect(verdict).toHaveTextContent(
+      'All 5 computers and the switch can talk',
+    );
 
     // Star: cut the cable to C.
     await user.click(
@@ -151,7 +153,7 @@ describe('lesson: Topologies', () => {
     );
     expect(verdict).toHaveTextContent('You broke 1 cable and 0 devices.');
     expect(verdict).toHaveTextContent(
-      'Switch, A, B, D and E can still talk (5 of 6 devices).',
+      'Switch, A, B, D and E can still talk (the switch and 4 of 5 computers).',
     );
     // Break the switch itself: nobody talks.
     await user.click(within(card).getByRole('button', { name: 'Switch' }));

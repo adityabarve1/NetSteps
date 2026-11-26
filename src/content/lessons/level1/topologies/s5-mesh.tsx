@@ -87,8 +87,10 @@ export function Mesh() {
       <p>
         The internet is a partial mesh of networks. Big networks, such as
         internet providers, connect to several others, so there are many routes
-        between any two places, and a cut cable under the sea does not
-        disconnect a country.
+        between any two places. A cut cable under the sea usually does not
+        disconnect a country that has several cables. A place with only one or
+        two cables can be cut off, so the shape protects only where the links
+        really exist.
       </p>
       <ol className={styles.steps}>
         <li>

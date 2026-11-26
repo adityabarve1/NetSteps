@@ -1,7 +1,10 @@
 // Where to draw a topology, and what to call its parts. Pure: no React.
 //
-// Designed for 3 to 8 nodes (the lesson draws 5 or 6): the device boxes never
-// overlap in that range, in the wide and in the compact (phone) drawing.
+// Designed for 3 to 8 nodes (the lesson draws 5 or 6, see SIM_NODES): the device
+// boxes never overlap in that range, in the wide and in the compact (phone)
+// drawing. `makeTopology` allows up to 12 nodes for the pure logic, but this
+// layout is not meant for more than 8: in the wide scene boxes would overlap
+// (bus from 9, ring and mesh from 11, star at 12). layout.test.ts pins 3 to 8.
 
 import type { Topology } from './logic';
 

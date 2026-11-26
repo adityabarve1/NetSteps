@@ -133,15 +133,16 @@ export function NodeKindsDeeper() {
     <>
       <p>
         In a topology diagram, a node can be any device that takes part: a
-        laptop, a printer, a switch or a router. The drawings in this lesson
-        label every node with a letter and call them devices.
+        laptop, a printer, a switch or a <Term id="router">router</Term>. The
+        drawings in this lesson label every node with a letter and call them
+        devices.
       </p>
       <p>
-        There is one rule to keep in mind from the last lesson. An ordinary
-        computer does not pass other devices&rsquo; messages along. In a ring or
-        a mesh, nodes must pass messages along for each other, so in a real ring
-        or mesh those nodes are network devices such as switches and routers,
-        not plain computers.
+        There is one rule to keep in mind from the last lesson. A normal
+        computer in an ordinary LAN does not pass other devices&rsquo; messages
+        along. A ring or a mesh needs its nodes to forward messages for each
+        other. In Token Ring and FDDI, the computer&rsquo;s own network adapter
+        did this job. A mesh usually uses routers or switches.
       </p>
     </>
   );

@@ -66,6 +66,16 @@ describe('lesson 1.3 quiz', () => {
     },
   );
 
+  it('Q1 says who CAN still talk when it rejects "Only C and the switch"', () => {
+    expect(quiz[0]?.explanation).toContain(
+      'A, B, D and E can still talk to the switch and to each other',
+    );
+  });
+
+  it('Q2 says "in our single-ring model" in the prompt', () => {
+    expect(quiz[1]?.prompt).toContain('single-ring model');
+  });
+
   it('spreads the right answers over the positions', () => {
     expect(quiz.map((q) => q.correctIndex)).toEqual([1, 3, 0, 2, 1]);
     const positions = quiz.map((q) => q.correctIndex);

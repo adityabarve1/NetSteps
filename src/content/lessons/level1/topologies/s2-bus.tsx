@@ -90,6 +90,11 @@ export function CoaxDeeper() {
         terminator of 50 ohms sat at each end of the cable.
       </p>
       <p>
+        Every computer was part of the cable. Pulling off one T-connector, or a
+        terminator, opened the cable and could bring the whole segment down.
+        That is why the model says a cut backbone stops everyone.
+      </p>
+      <p>
         One cable segment could be up to 185 metres long and hold up to 30
         devices. All of them shared 10 megabits per second. The number
         &ldquo;10&rdquo; in the name is that speed, and &ldquo;BASE&rdquo; means

@@ -180,6 +180,7 @@ const lesson: Lesson = {
     'backbone',
     'terminator',
     'switch',
+    'router',
     'default-gateway',
     'partial-mesh',
     'physical-topology',

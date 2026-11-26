@@ -52,11 +52,12 @@ export function Star() {
 
       <h3>Your home is probably a star</h3>
       <p>
-        Look at your own home. Your router, the box from your internet provider,
-        sits in the middle. A games console plugged in by cable has its own
-        cable to it. Phones and laptops on Wi-Fi each have their own wireless
-        link to it. Each device has a separate link to the centre, so the home
-        network is a star, even though the &ldquo;cables&rdquo; are radio waves.
+        Look at your own home. Your <Term id="router">router</Term>, the box
+        from your internet provider, sits in the middle. A games console plugged
+        in by cable has its own cable to it. Phones and laptops on Wi-Fi each
+        have their own wireless link to it. Each device has a separate link to
+        the centre, so the home network is a star, even though the
+        &ldquo;cables&rdquo; are radio waves.
       </p>
       <p>
         Your computers need one more address to use that star. To reach anything

@@ -29,6 +29,34 @@ describe('statusSentence', () => {
   });
 });
 
+describe('statusSentence for a star counts the switch apart from the computers', () => {
+  const star = topologyOf('star');
+  it('says all five computers and the switch', () => {
+    expect(statusSentence(star, star.nodes)).toBe(
+      'All 5 computers and the switch can talk to each other.',
+    );
+  });
+  it('counts only computers in the fraction', () => {
+    expect(statusSentence(star, ['n0', 'n1', 'n2'])).toBe(
+      'Switch, A and B can still talk (the switch and 2 of 5 computers).',
+    );
+  });
+  it('never says "6 devices" anywhere in the star steps', () => {
+    for (const s of TOPOLOGY_STEPS.filter((x) => x.kind === 'star')) {
+      expect(s.caption).not.toMatch(/6 devices|of 6/);
+      expect(s.caption).not.toMatch(/All 6/);
+    }
+    expect(TOPOLOGY_STEPS[3]?.caption).toContain(
+      'All 5 computers and the switch',
+    );
+  });
+  it('the picture description counts five devices with a switch', () => {
+    expect(
+      sceneDescription(star, { links: [], nodes: [] }, star.nodes),
+    ).toContain('star network of 5 devices with a switch in the middle');
+  });
+});
+
 describe('the simulation steps', () => {
   it('has 12 steps: intact plus two failures for each shape', () => {
     expect(TOPOLOGY_STEPS).toHaveLength(12);
@@ -80,7 +108,7 @@ describe('the simulation steps', () => {
     expect(c[1]).toContain('No device can talk to another.');
     expect(c[2]).toContain('A, B, D and E can still talk (4 of 5 devices).');
     expect(c[4]).toContain(
-      'Switch, A, B, D and E can still talk (5 of 6 devices).',
+      'Switch, A, B, D and E can still talk (the switch and 4 of 5 computers).',
     );
     expect(c[5]).toContain('No device can talk to another.');
     expect(c[7]).toContain('No device can talk to another.');
@@ -108,6 +136,12 @@ describe('the simulation steps', () => {
     expect(topologyOf('mesh').links).toHaveLength(10);
     expect(TOPOLOGY_STEPS[9]?.caption).toContain('10 cables');
     expect(TOPOLOGY_STEPS[11]?.broken.links).toHaveLength(4);
+  });
+});
+
+describe('what the lesson draws', () => {
+  it('draws at most 8 nodes, the range the layout keeps free of overlaps', () => {
+    for (const n of Object.values(SIM_NODES)) expect(n).toBeLessThanOrEqual(8);
   });
 });
 

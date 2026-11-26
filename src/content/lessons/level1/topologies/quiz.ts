@@ -17,12 +17,12 @@ export const quiz: QuizQuestion[] = [
     ],
     correctIndex: 1,
     explanation:
-      'Each computer has its own cable, so the cut cuts off only C. A, B, D and E still reach the switch and each other. The switch is still working, so the claim that none can talk is wrong. C has no cable left, so C cannot talk to anyone. And C had only one cable, so the switch has no other route to it.',
+      'Each computer has its own cable, so the cut cuts off only C. A, B, D and E still reach the switch and each other. The switch is still working, so the claim that none can talk is wrong. C has no cable left, so C cannot talk to anyone, not even the switch. A, B, D and E can still talk to the switch and to each other. And C had only one cable, so the switch has no other route to it.',
   },
   {
     id: 'q2',
     prompt:
-      'Five devices are joined in a single ring. One of the five links between neighbouring devices is cut. What happens?',
+      'In our single-ring model, five devices are joined in a ring. One of the five links between neighbouring devices is cut. What happens?',
     options: [
       'Only the two devices beside the cut lose contact',
       'The ring sends the traffic along a spare cable',
@@ -31,7 +31,7 @@ export const quiz: QuizQuestion[] = [
     ],
     correctIndex: 3,
     explanation:
-      'In a single ring, messages must pass from neighbour to neighbour round the whole loop. A break blocks that, so in our model everyone stops. It is not only the two devices beside the cut, because the others also need the broken link. A single ring has no spare cable. And the mesh, not the ring, is the shape that survives breaks.',
+      'In a single ring, messages must pass from neighbour to neighbour round the whole loop. A break blocks that, so in our model everyone stops. It is not only the two devices beside the cut, because the others also need the broken link. A single ring has no spare cable. The claim that nothing changes is wrong, because a ring is not the most reliable shape: the mesh, not the ring, survives breaks.',
   },
   {
     id: 'q3',
