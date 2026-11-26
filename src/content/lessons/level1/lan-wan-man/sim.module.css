@@ -1,0 +1,129 @@
+/* The scope simulation. Colours come from tokens.css only. The current ring
+   or band has a thick outline, bold text AND a triangle marker; rings not
+   reached yet are dashed. Nothing depends on colour alone. */
+
+.frame {
+  max-width: 40rem;
+  margin-inline: auto;
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.ring circle,
+.band rect:first-child {
+  fill: var(--surface);
+  stroke: var(--border);
+  stroke-width: 2;
+}
+
+.reached circle,
+.reached rect:first-child {
+  fill: var(--surface-sunken);
+  stroke: var(--accent-2);
+}
+
+.now circle,
+.now rect:first-child {
+  fill: var(--surface-sunken);
+  stroke: var(--accent);
+  stroke-width: 5;
+}
+
+.future circle,
+.future rect:first-child {
+  stroke-dasharray: 6 5;
+}
+
+.animated .ring circle,
+.animated .band rect {
+  transition:
+    fill 500ms ease-in-out,
+    stroke 500ms ease-in-out,
+    stroke-width 500ms ease-in-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animated .ring circle,
+  .animated .band rect {
+    transition: none;
+  }
+}
+
+.ringName {
+  fill: var(--text-muted);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.now .ringName,
+.now .rowName {
+  fill: var(--text);
+  font-weight: 800;
+}
+
+.you {
+  fill: var(--text);
+}
+
+.youText {
+  fill: var(--text);
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.title {
+  fill: var(--text);
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.rowName {
+  fill: var(--text);
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.small {
+  fill: var(--text-muted);
+  font-family: var(--font-body);
+  font-size: 13px;
+}
+
+.future .rowName {
+  fill: var(--text-muted);
+}
+
+.marker {
+  fill: var(--accent);
+  font-size: 14px;
+}
+
+.bar {
+  fill: var(--border);
+}
+
+.reached .bar {
+  fill: var(--accent-2);
+}
+
+.now .bar {
+  fill: var(--accent);
+}
+
+/* The compact drawing is about 300 units wide and shows at a little under
+   full size on a phone, so its words are a size larger than the wide one. */
+.band .small {
+  font-size: 15px;
+}
+
+.band .rowName {
+  font-size: 18px;
+}
