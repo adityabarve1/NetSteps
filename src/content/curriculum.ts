@@ -31,9 +31,9 @@ const level1: LevelMeta = {
       title: 'What is a network',
       summary:
         'Connect a few devices yourself, then watch a message travel from one to another to see what makes a group of devices a network.',
-      minutes: 12,
-      built: false,
-      labIds: [],
+      minutes: 20,
+      built: true,
+      labIds: ['lab-l1-first-network'],
     },
     {
       id: 'l1-lan-wan-man',

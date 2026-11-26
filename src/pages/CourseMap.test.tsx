@@ -7,6 +7,7 @@ import {
   SECOND,
   THIRD,
   level1Built,
+  nothingBuilt,
   renderCourseMap,
 } from '@/test/courseMapTestKit';
 import { done, opened, stateOf, T1, T2, T3 } from '@/test/progressFixtures';
@@ -73,7 +74,7 @@ describe('CourseMap: the main button', () => {
   });
 
   it('with no built lesson at all, shows a note and no dead link', () => {
-    renderCourseMap({ levels: curriculum });
+    renderCourseMap({ levels: nothingBuilt });
 
     expect(
       screen.getByText('Lessons are being written. Check back soon.'),
@@ -203,13 +204,24 @@ describe('CourseMap: loading and account notes', () => {
 });
 
 describe('CourseMap: smoke and accessibility', () => {
-  it('the default export renders the real curriculum: 7 levels, none built', () => {
+  it('the default export renders the real curriculum: Level 1 has its first lesson, Levels 2 to 7 are "Coming soon"', () => {
     renderCourseMap({ levels: null });
 
     expect(screen.getAllByRole('heading', { level: 2 })).toHaveLength(7);
     expect(
-      screen.getByText('Lessons are being written. Check back soon.'),
-    ).toBeInTheDocument();
+      screen.queryByText('Lessons are being written. Check back soon.'),
+    ).toBeNull();
+    const level1 = screen.getByRole('region', { name: /^Level 1:/ });
+    expect(
+      within(level1).getByRole('link', { name: /What is a network/ }),
+    ).toHaveAttribute('href', `/learn/level-1/${FIRST}`);
+    for (let n = 2; n <= 7; n += 1) {
+      const section = screen.getByRole('region', {
+        name: new RegExp(`^Level ${String(n)}:`),
+      });
+      expect(within(section).getByText('Coming soon')).toBeInTheDocument();
+      expect(within(section).queryAllByRole('link')).toHaveLength(0);
+    }
   });
 
   it.each([
@@ -223,7 +235,8 @@ describe('CourseMap: smoke and accessibility', () => {
       },
     ],
     ['a sync note', { syncError: true }],
-    ['no built lessons', { levels: curriculum }],
+    ['no built lessons', { levels: nothingBuilt }],
+    ['the real curriculum', { levels: curriculum }],
   ])('has no axe violations for %s', async (_name, options) => {
     const { container } = renderCourseMap(options);
 

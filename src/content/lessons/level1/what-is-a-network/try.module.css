@@ -1,0 +1,137 @@
+/* The "Is it a network?" try-it. Colours come from tokens.css only. */
+
+.tryIt p {
+  margin: 0 0 var(--space-3);
+}
+
+.title {
+  margin: 0 0 var(--space-2);
+  font-size: 1.125rem;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-4);
+  align-items: center;
+}
+
+@media (min-width: 40rem) {
+  .layout {
+    grid-template-columns: minmax(12rem, 16rem) minmax(0, 24rem);
+  }
+}
+
+.controls {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.legend {
+  padding: 0 var(--space-2);
+  font-weight: 700;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 44px;
+  cursor: pointer;
+}
+
+.option input {
+  width: 1.25rem;
+  height: 1.25rem;
+  accent-color: var(--accent);
+}
+
+.option input:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.power {
+  margin-top: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--border-soft);
+}
+
+.picture {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.cable {
+  stroke: var(--accent);
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+
+.hub {
+  fill: var(--surface-sunken);
+  stroke: var(--accent-2);
+  stroke-width: 2.5;
+}
+
+.hubOff {
+  stroke: var(--border);
+  stroke-dasharray: 6 4;
+}
+
+.device {
+  fill: var(--surface);
+  stroke: var(--border);
+  stroke-width: 1.5;
+  stroke-dasharray: 5 4;
+}
+
+.deviceOn {
+  fill: var(--surface-sunken);
+  stroke: var(--accent);
+  stroke-width: 3;
+  stroke-dasharray: none;
+}
+
+.label {
+  fill: var(--text);
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.verdict {
+  margin-top: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--border-soft);
+  border-inline-start: 6px solid var(--danger);
+  border-radius: var(--radius-md);
+  background: var(--surface-sunken);
+}
+
+.verdictYes {
+  border-inline-start-color: var(--accent);
+}
+
+.verdict .summary {
+  margin: 0;
+}
+
+.badge {
+  font-weight: 800;
+}
+
+.details {
+  margin: var(--space-2) 0 0;
+  padding-inline-start: var(--space-5);
+}
+
+/* One column on a phone: the picture shrinks, so its words grow. */
+@media (max-width: 40rem) {
+  .label {
+    font-size: 21px;
+  }
+}

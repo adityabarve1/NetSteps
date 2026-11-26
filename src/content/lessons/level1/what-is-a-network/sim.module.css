@@ -1,0 +1,127 @@
+/* The journey simulation. Colours come from tokens.css only. A lit device is
+   shown by a thicker outline AND bold text, the message by an envelope with
+   the word "Message", and the active link by its width and an arrowhead, so
+   nothing depends on colour alone. */
+
+.svg {
+  display: block;
+  width: 100%;
+  max-width: 40rem;
+  height: auto;
+  margin-inline: auto;
+}
+
+.link {
+  stroke: var(--border);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.linkActive {
+  stroke: var(--accent);
+  stroke-width: 6;
+}
+
+.arrow {
+  fill: var(--accent);
+}
+
+.box {
+  fill: var(--surface);
+  stroke: var(--border);
+  stroke-width: 1.5;
+}
+
+.deviceLit .box {
+  fill: var(--surface-sunken);
+  stroke: var(--accent);
+  stroke-width: 4;
+}
+
+.name {
+  fill: var(--text);
+  font-family: var(--font-body);
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.deviceLit .name {
+  font-weight: 800;
+}
+
+.detail {
+  fill: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 14px;
+}
+
+/* The message marker: an envelope and its word. It is decoration on top of
+   the drawing, so it never catches the pointer. */
+.message {
+  pointer-events: none;
+}
+
+.envelope {
+  fill: var(--accent);
+  stroke: var(--accent-contrast);
+  stroke-width: 1.5;
+}
+
+.flap {
+  fill: none;
+  stroke: var(--accent-contrast);
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+}
+
+.tag {
+  fill: var(--text);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* The marker glides to its next device, unless the learner asked for less
+   motion (the player then passes reducedMotion and this class is left off). */
+.moving {
+  transition: transform 600ms ease-in-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .moving {
+    transition: none;
+  }
+}
+
+.phoneLegend {
+  display: none;
+}
+
+/* On a phone the drawing shrinks to about two thirds: make the words bigger
+   and move the addresses out of the drawing into a line of text below it. */
+@media (max-width: 36rem) {
+  .name {
+    font-size: 22px;
+  }
+
+  .tag {
+    font-size: 22px;
+  }
+
+  .detail {
+    display: none;
+  }
+
+  .phoneLegend {
+    display: block;
+    margin: var(--space-2) 0 0;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    text-align: center;
+  }
+
+  .phoneLegend span {
+    display: block;
+  }
+}

@@ -63,3 +63,31 @@ Labs are listed in `lesson.labs` as `{ id, title, render: ({ onDone }) => ReactN
 2. Register it in `src/routes.tsx` with `lazy`, using the route table of spec §9. Protect signed-in-only pages with `<ProtectedRoute>`.
 3. Test it in `<Name>.test.tsx`: heading, key links, empty and signed-out states, and `toHaveNoViolations` from `vitest-axe`. Extend `src/routes.test.tsx` for the new route. Wrap in `MemoryRouter` and any providers (`AuthProvider`, `ProgressProvider`) it needs, injecting fakes rather than hitting Supabase.
 4. Handle loading, empty and error states. Unknown ids or params render the friendly not-found view and never write progress.
+
+## Level 1 lesson template (from `what-is-a-network`)
+
+Copy `src/content/lessons/level1/what-is-a-network/` and rename. Files and roles:
+
+| File | Role |
+| --- | --- |
+| `logic.ts` + `logic.test.ts` (+ `logic.<part>.test.ts` when a test file nears 300 lines) | Pure step builder for the sim and the try-it decision. Never throw: odd input returns one friendly step or verdict. |
+| `labChecks.ts` + `labChecks.test.ts` | Pure `LabTask[]` for the builder. Ping goals use `canPing`/`twoPcsCanPingTask`, never `ping`. |
+| `s<N>-<name>.tsx` | One section each. Export ONLY components (body + one per Go-deeper block); react-refresh warns on a file that mixes components and objects. |
+| `sim.tsx` (+ `sim.module.css`, `sim.test.tsx`) | `JOURNEY_SIM_ID` string const, the diagram component, the `SimPlayer` wrapper. Steps computed once at module level from a fixed `Network`. |
+| `try.tsx`, `lab.tsx`, `real.tsx`, `quiz.ts`, `wrapUp.tsx` (why it matters + cheat sheet), `diagrams.tsx`, `lesson.module.css` | One part each. |
+| `index.tsx` | Assembles the `Lesson` object only; default export. |
+| `index.test.tsx` | Renders the REAL page at `/learn/level-1/<id>` with `renderLessonPage` (fake progress, real loader): heading order, sim to last step, quiz 5 questions, sim + quiz -> `completeLesson` once, quiz alone -> not, try-it, lab -> `completeLab` (reuse `@/labs/builderTestKit`), axe. |
+
+Wiring: sim `onFinished={markSimFinished}` (from `useLessonRun()`); lab `render: ({ onDone }) => <MyLab onDone={onDone} />` and inside `<BuilderLab onAllDone={onDone} />`; `primarySimulationId` = the sim id const; lab id const = `labIds` in `curriculum.ts`; every `<Term id>` id goes in `lesson.glossary` and in `src/content/glossary/level1.ts` (reuse ids that exist: `network`, `link`, `host`, `switch`, `router`, `ip-address`, `subnet`, `subnet-mask`, `packet`, `ping`, `server`, `internet`, `web`, `wi-fi`, ...). Loader line in `loaders.ts`; `built: true`, honest `minutes`, `labIds` in `curriculum.ts`.
+
+Gotchas hit:
+- A CSS-module class with no rule is `undefined` at runtime (`cx` drops it, tests cannot find it). Give every class you reference a rule.
+- Tests use non-scoped CSS module names, so query `.moving`, not `styles.moving` (typed `string | undefined`).
+- Tables: wrap in `<div data-prose="">`, give row header `th scope="row"` and every `td` a `data-label`; `lesson.module.css` stacks rows into cards under 36rem (the layout's `overflow-wrap: anywhere` otherwise breaks words mid-letter). Also set `caption { display: block }` when stacking.
+- SVG text is in viewBox units: at 320px a 380-wide drawing shrinks to ~0.65. Raise font sizes in a `max-width: 36rem` query, hide secondary text and repeat it as HTML below. Leave room above top labels (negative viewBox y).
+- The marker moves with an inline `style={{ transform }}` (position, not theming) plus a `transition` class applied only when `!reducedMotion`.
+- `pnpm test <file>` needs the TEST path; a source path matches nothing and prints no summary.
+- A test that hard-codes "nothing is built" must use the `nothingBuilt` fixture (`@/test/courseMapTestKit`, Landing test), not the real curriculum.
+- Port 5173 may be taken by someone else's dev server: use `pnpm exec vite --port 5180 --strictPort`; headless Chrome can be driven with Node's built-in `WebSocket` over the DevTools protocol (no new deps). Keep scripts and screenshots in the scratchpad.
+
+Before committing: TDD evidence (RED then GREEN) and at least 5 mutants killed per pure file; `pnpm exec eslint <folder>`, `pnpm typecheck`, `pnpm test src/content src/pages src/routes.test.tsx`; screenshots at 1100 and 320 in light and dark (sim first, middle, last; try-it; lab with terminal; quiz before and after; recap; `/learn`); then `pnpm check` and `pnpm build`; `git add` explicit paths only.

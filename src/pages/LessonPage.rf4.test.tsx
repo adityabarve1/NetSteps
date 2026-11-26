@@ -1,13 +1,15 @@
 // RF4 with the REAL curriculum and loaders (nothing is mocked here): a lesson
 // route whose ids do not name a built lesson shows "Lesson not found" and never
-// touches progress. At this point no lesson is built, so every real id is unbuilt.
-import { render, screen } from '@testing-library/react';
+// touches progress. The positive control opens a real built lesson and checks
+// that it DOES write progress, so the negative cases cannot pass by accident.
+import { render, screen, waitFor } from '@testing-library/react';
 import { createMemoryRouter } from 'react-router';
 import { RouterProvider } from 'react-router/dom';
 import { afterEach, describe, expect, it } from 'vitest';
 import { axe } from 'vitest-axe';
 import { AuthProvider } from '@/auth/AuthProvider';
 import { findLesson } from '@/content/curriculum';
+import { GUEST_STORAGE_KEY } from '@/progress/localStore';
 import { ProgressProvider } from '@/progress/ProgressProvider';
 import { routes } from '@/routes';
 import { createFakeSupabase } from '@/test/fakeSupabase';
@@ -53,6 +55,24 @@ describe('lesson route guard (real curriculum)', () => {
     expect(findLesson('level-1', 'l2-ethernet-and-mac-addresses')).toBe(
       undefined,
     );
+    expect(findLesson('level-1', 'l1-what-is-a-network')?.built).toBe(true);
+  });
+
+  it('positive control: a built lesson loads and records that it was opened', async () => {
+    renderAt('/learn/level-1/l1-what-is-a-network');
+
+    expect(
+      await screen.findByRole(
+        'heading',
+        { level: 1, name: 'What is a network' },
+        { timeout: 5000 },
+      ),
+    ).toBeVisible();
+    await waitFor(() => {
+      expect(localStorage.getItem(GUEST_STORAGE_KEY)).toContain(
+        'l1-what-is-a-network',
+      );
+    });
   });
 
   it.each(cases)(

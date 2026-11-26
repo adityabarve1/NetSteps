@@ -9,7 +9,9 @@ export type LessonLoaders = Readonly<Record<LessonId, LessonLoader>>;
 //   'l1-what-is-a-network': () => import('./lessons/level1/what-is-a-network'),
 // An entry here and `built: true` in curriculum.ts always go together (a test
 // checks they agree).
-const lessonLoaders: LessonLoaders = {};
+const lessonLoaders: LessonLoaders = {
+  'l1-what-is-a-network': () => import('./lessons/level1/what-is-a-network'),
+};
 
 export function registeredLessonIds(): LessonId[] {
   return Object.keys(lessonLoaders);

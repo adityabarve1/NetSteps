@@ -73,3 +73,19 @@ Use one per lesson. Always add the limit of the analogy.
 - [ ] Real-computer exercises give the right command for Windows and for macOS/Linux, show believable sample output, and are safe, read-only and limited to the learner's own device.
 - [ ] Glossary definitions are correct, short and use no undefined jargon.
 - [ ] If you are not sure of a fact, check a primary source (an RFC or vendor documentation) or leave it out. Do not guess.
+
+## Level 1 lesson template (from `what-is-a-network`)
+
+Read `src/content/lessons/level1/what-is-a-network/` before writing; match its tone and shape.
+
+- **Hook**: two sentences, a real moment, ending on a question. **Analogy**: one paragraph mapping every part (houses = devices, roads = links, junctions = switches/routers, street address = IP address), then a second paragraph "Where the comparison stops working: ...".
+- **Sections**: 6 sections, each 300 to 600 words of core text, split by `h3` subheadings into 2 to 4 short chunks. Each section has one concrete thing to look at: a table worked example, a sim, a diagram or a numbered scenario ("one evening, one home network"). Define a term with `<Term>` the first time, at most 2 or 3 new terms per paragraph.
+- **Go deeper**: 1 or 2 per section, 2 to 4 short paragraphs or a list, titled as a specific claim or question ("How a switch learns which way to send"). Use them for engineer vocabulary, history, numbers and edge cases, and say which later Level covers it in full.
+- **Simplifications**: state them, label them "for now", and point to the later lesson by topic ("the lesson on packet and circuit switching"), never by a link to an unbuilt page.
+- **Sim captions**: one full sentence or two per step, present tense, naming devices by their on-screen names, saying what moves and why ("SW1 is a switch: it passes the message on toward PC2."). Failure captions say what is missing and what would fix it. Put the sim inside the section it explains, followed by "Notice three things:" bullets.
+- **Try it**: under a minute, checkboxes or a slider, a verdict in a `role="status"` box that starts with a word ("Network" / "Not a network") as well as a colour.
+- **Lab intro**: one paragraph goal, numbered steps using the exact button labels of the builder, the exact values to type, what success looks like, and a "Break it on purpose" invitation.
+- **Real computer**: first sentence "Only do this on your own device and network."; Windows, macOS and Linux commands; believable sample output in `<pre>`; a bullet per output line saying what it means. Avoid `localhost`.
+- **Myths**: 5 to 7 real misconceptions as Myth/Fact cards; add a troubleshooting checklist Go deeper that reuses the lesson's failure reasons.
+- **Cheat sheet**: a 3-column table (Term, What it is, Example), 8 to 10 rows.
+- British spelling (fibre, neighbour, organisation), as in the rest of the code base.

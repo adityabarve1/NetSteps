@@ -1,0 +1,213 @@
+/* Shared styles for the lesson "What is a network". Colours come from
+   tokens.css only. */
+
+/* A table of short facts. It scrolls inside itself on a narrow phone. */
+.table {
+  max-width: var(--measure, 42rem);
+  margin: 0 auto var(--space-4);
+  border-collapse: collapse;
+  font-size: 0.975rem;
+  line-height: 1.5;
+}
+
+.table caption {
+  padding-block-end: var(--space-2);
+  color: var(--text-muted);
+  font-weight: 600;
+  text-align: start;
+}
+
+.table th,
+.table td {
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--border-soft);
+  text-align: start;
+  vertical-align: top;
+}
+
+.table thead th {
+  border-bottom: 2px solid var(--border);
+  background: var(--surface-sunken);
+}
+
+.table th,
+.table td {
+  overflow-wrap: normal;
+}
+
+/* On a phone each row becomes a small card: the row's first cell is its
+   title and every other cell shows its column name (data-label) first. */
+@media (max-width: 36rem) {
+  .table,
+  .table tbody,
+  .table tr,
+  .table th,
+  .table td {
+    display: block;
+  }
+
+  .table thead {
+    display: none;
+  }
+
+  .table caption {
+    display: block;
+  }
+
+  .table tr {
+    padding: var(--space-2) 0;
+    border-bottom: 1px solid var(--border-soft);
+  }
+
+  .table th,
+  .table td {
+    padding: var(--space-1) 0;
+    border: 0;
+  }
+
+  .table td[data-label]::before {
+    content: attr(data-label) ': ';
+    color: var(--text-muted);
+    font-weight: 700;
+  }
+}
+
+/* "Yes" and "No" answers: a word and a symbol, never colour alone. */
+.yes,
+.no {
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.yes {
+  color: var(--accent);
+}
+
+.no {
+  color: var(--danger);
+}
+
+/* A small static diagram with its caption. */
+.figure {
+  max-width: 30rem;
+  margin: 0 auto var(--space-5);
+}
+
+.figure svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+
+.figure figcaption {
+  margin-top: var(--space-2);
+  color: var(--text-muted);
+  font-size: 0.9375rem;
+}
+
+/* Diagram parts. */
+.dBox {
+  fill: var(--surface-sunken);
+  stroke: var(--accent-2);
+  stroke-width: 2;
+}
+
+.dLink {
+  stroke: var(--border);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.dRadio {
+  fill: none;
+  stroke: var(--accent-2);
+  stroke-width: 2.5;
+  stroke-dasharray: 6 5;
+  stroke-linecap: round;
+}
+
+.dText {
+  fill: var(--text);
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.dSmall {
+  fill: var(--text-muted);
+  font-family: var(--font-body);
+  font-size: 13px;
+}
+
+@media (max-width: 36rem) {
+  .dText {
+    font-size: 17px;
+  }
+
+  .dSmall {
+    font-size: 15px;
+  }
+}
+
+/* Myth and fact pairs. */
+.myths {
+  max-width: var(--measure, 42rem);
+  margin: 0 auto var(--space-4);
+  padding: 0;
+  list-style: none;
+}
+
+.myths li {
+  margin-bottom: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--border-soft);
+  border-inline-start: 5px solid var(--accent-2);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+
+.myths p {
+  margin: 0;
+}
+
+.myths p + p {
+  margin-top: var(--space-2);
+}
+
+.label {
+  font-weight: 700;
+}
+
+/* Sample terminal output: dark in both themes, like a real terminal. */
+.output {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--terminal-bg);
+  color: var(--terminal-text);
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  white-space: pre;
+}
+
+.command {
+  padding: 0.1em 0.35em;
+  border-radius: var(--radius-sm);
+  background: var(--surface-sunken);
+  font-family: var(--font-mono);
+  font-size: 0.95em;
+}
+
+.note {
+  padding: var(--space-3) var(--space-4);
+  border-inline-start: 4px solid var(--accent);
+  border-radius: var(--radius-sm);
+  background: var(--surface-sunken);
+}
+
+.steps li + li {
+  margin-top: var(--space-2);
+}

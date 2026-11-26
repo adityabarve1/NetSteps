@@ -17,8 +17,8 @@ import { opened, stateOf, T1 } from '@/test/progressFixtures';
 
 const FIRST = 'l1-what-is-a-network';
 
-// The real curriculum has no built lesson yet. This copy has one, so the tests
-// can see what the page does once a lesson exists.
+// Fixed copies of the curriculum, so these tests do not change each time a
+// lesson is built: one with only the first lesson built, one with none.
 const withOneBuiltLesson: LevelMeta[] = curriculum.map((level, i) =>
   i === 0
     ? {
@@ -29,6 +29,15 @@ const withOneBuiltLesson: LevelMeta[] = curriculum.map((level, i) =>
       }
     : level,
 );
+
+const nothingBuilt: LevelMeta[] = curriculum.map((level) => ({
+  ...level,
+  lessons: level.lessons.map((lesson) => ({
+    ...lesson,
+    built: false,
+    labIds: [],
+  })),
+}));
 
 function authValue(status: AuthStatus): AuthContextValue {
   return {
@@ -186,7 +195,7 @@ describe('Landing page: headings and calls to action', () => {
   });
 
   it('"Continue learning" goes to /learn when no lesson is built yet', () => {
-    renderLanding({ status: 'signed-in', ready: true });
+    renderLanding({ status: 'signed-in', ready: true, levels: nothingBuilt });
 
     expect(
       screen.getByRole('link', { name: 'Continue learning' }),
@@ -230,9 +239,19 @@ describe('Landing page: levels and lesson steps', () => {
   });
 
   it('marks every level with no built lesson "Coming soon"', () => {
-    renderLanding();
+    renderLanding({ levels: nothingBuilt });
 
     expect(screen.getAllByText('Coming soon')).toHaveLength(7);
+  });
+
+  it('with the real curriculum, Level 1 is open and Levels 2 to 7 are "Coming soon"', () => {
+    renderLanding();
+
+    expect(screen.getAllByText('Coming soon')).toHaveLength(6);
+    expect(screen.getByRole('link', { name: 'Open Level 1' })).toHaveAttribute(
+      'href',
+      '/learn',
+    );
   });
 
   it('does not mark a level that has a built lesson, and links to it', () => {

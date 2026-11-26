@@ -1,5 +1,6 @@
 import { screen, within } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
+import { curriculum } from '@/content/curriculum';
 import {
   FIRST,
   SECOND,
@@ -10,6 +11,15 @@ import {
 } from '@/test/courseMapTestKit';
 import type { ProgressState } from '@/progress/types';
 import { done, opened, stateOf, T1, T2 } from '@/test/progressFixtures';
+
+// Minutes come from the curriculum, which a lesson task may adjust.
+function minutesOf(id: string): number {
+  const lesson = curriculum
+    .flatMap((level) => level.lessons)
+    .find((l) => l.id === id);
+  if (lesson === undefined) throw new Error(`No lesson ${id}`);
+  return lesson.minutes;
+}
 
 function row(title: string): HTMLElement {
   const item = screen
@@ -35,11 +45,13 @@ describe('CourseMap lesson rows', () => {
       'href',
       `/learn/level-1/${FIRST}`,
     );
-    expect(first).toHaveTextContent('12 min');
+    expect(first).toHaveTextContent(`${String(minutesOf(FIRST))} min`);
     expect(first).toHaveTextContent('Done');
     expect(row('LAN, WAN and MAN')).toHaveTextContent('In progress');
     expect(row('Topologies')).toHaveTextContent('Not started');
-    expect(row('Topologies')).toHaveTextContent('12 min');
+    expect(row('Topologies')).toHaveTextContent(
+      `${String(minutesOf('l1-topologies'))} min`,
+    );
   });
 
   it('shows "Lab done" only when every lab of the lesson is completed', () => {

@@ -16,7 +16,7 @@ export const SECOND = 'l1-lan-wan-man';
 export const THIRD = 'l1-topologies';
 
 // All six Level 1 lessons built; the first has two labs. Levels 2 to 7 are not
-// built. The real curriculum has no built lesson yet, so tests use this copy.
+// built. A fixed copy, so the tests do not change each time a lesson is built.
 export const level1Built: LevelMeta[] = curriculum.map((level, i) =>
   i === 0
     ? {
@@ -29,6 +29,16 @@ export const level1Built: LevelMeta[] = curriculum.map((level, i) =>
       }
     : level,
 );
+
+// No lesson built at all (how the course started).
+export const nothingBuilt: LevelMeta[] = curriculum.map((level) => ({
+  ...level,
+  lessons: level.lessons.map((lesson) => ({
+    ...lesson,
+    built: false,
+    labIds: [],
+  })),
+}));
 
 // Level 1 with only its first two lessons built.
 export const partlyBuilt: LevelMeta[] = curriculum.map((level, i) =>
