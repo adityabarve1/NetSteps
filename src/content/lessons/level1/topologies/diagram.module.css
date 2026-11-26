@@ -1,0 +1,144 @@
+/* The topology drawing, shared by the simulation and the try-it. Colours come
+   from tokens.css only. Nothing depends on colour alone: a cut cable is
+   dashed, crossed out and labelled "cut"; a broken device is crossed out and
+   says "down"; a device that cannot talk says "cut off"; a device that can
+   talk has a thick outline. */
+
+.svg {
+  display: block;
+  width: 100%;
+  max-width: 40rem;
+  height: auto;
+  margin-inline: auto;
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+
+.link,
+.drop {
+  stroke: var(--border);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+}
+
+.backbone {
+  stroke-width: 6;
+}
+
+.live {
+  stroke: var(--accent);
+}
+
+.cut {
+  stroke: var(--danger);
+  stroke-dasharray: 6 6;
+  stroke-width: 3;
+}
+
+.dashed {
+  stroke-dasharray: 4 4;
+  stroke: var(--danger);
+}
+
+.box {
+  fill: var(--surface);
+  stroke: var(--border);
+  stroke-width: 1.5;
+  stroke-dasharray: 5 4;
+}
+
+.boxGood {
+  fill: var(--surface-sunken);
+  stroke: var(--accent);
+  stroke-width: 3.5;
+  stroke-dasharray: none;
+}
+
+.boxOff {
+  stroke: var(--danger);
+}
+
+.hub {
+  stroke-width: 4;
+}
+
+.name {
+  fill: var(--text);
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 800;
+}
+
+/* A halo in the page colour keeps words readable where a cable runs behind them. */
+.state,
+.nameDown,
+.cutWord {
+  paint-order: stroke;
+  stroke: var(--surface);
+  stroke-width: 4px;
+  stroke-linejoin: round;
+}
+
+.state {
+  fill: var(--text-muted);
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.stateDown {
+  fill: var(--danger);
+}
+
+.crossLine {
+  fill: none;
+  stroke: var(--danger);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.cross path {
+  fill: none;
+  stroke: var(--danger);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.crossBack {
+  fill: var(--surface);
+  stroke: var(--danger);
+  stroke-width: 1.5;
+}
+
+.cutWord {
+  fill: var(--danger);
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+/* Colours ease between steps, unless the learner asked for less motion (the
+   player then leaves this class off). */
+.fade {
+  transition:
+    stroke 250ms ease,
+    fill 250ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fade {
+    transition: none;
+  }
+}
+
+/* The compact drawing is about as wide as a phone: keep its words readable. */
+@media (max-width: 30rem) {
+  .name {
+    font-size: 17px;
+  }
+
+  .state,
+  .cutWord {
+    font-size: 14px;
+  }
+}

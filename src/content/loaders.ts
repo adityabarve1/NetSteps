@@ -11,6 +11,8 @@ export type LessonLoaders = Readonly<Record<LessonId, LessonLoader>>;
 // checks they agree).
 const lessonLoaders: LessonLoaders = {
   'l1-what-is-a-network': () => import('./lessons/level1/what-is-a-network'),
+  // l1-topologies
+  'l1-topologies': () => import('./lessons/level1/topologies'),
 };
 
 export function registeredLessonIds(): LessonId[] {

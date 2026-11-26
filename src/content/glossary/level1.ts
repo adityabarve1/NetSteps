@@ -117,4 +117,65 @@ export const level1: Glossary = {
     definition:
       'A small piece of data with the sender’s and receiver’s addresses on it. Large messages travel as many packets.',
   },
+  // l1-topologies
+  topology: {
+    term: 'topology',
+    definition:
+      'The shape of a network: how its devices and links are arranged. The four basic shapes are bus, star, ring and mesh.',
+  },
+  'bus-topology': {
+    term: 'bus',
+    definition:
+      'A network shape in which every device taps into one shared cable, called the backbone.',
+  },
+  'star-topology': {
+    term: 'star',
+    definition:
+      'A network shape in which every device has its own cable to one central device, usually a switch.',
+  },
+  'ring-topology': {
+    term: 'ring',
+    definition:
+      'A network shape in which devices are joined in a closed loop and pass messages from neighbour to neighbour.',
+  },
+  'mesh-topology': {
+    term: 'mesh',
+    definition:
+      'A network shape in which devices are joined directly to many others, so a message can take more than one route.',
+  },
+  'partial-mesh': {
+    term: 'partial mesh',
+    definition:
+      'A mesh in which only some pairs of devices are joined directly, which costs less than joining every pair.',
+  },
+  backbone: {
+    term: 'backbone',
+    definition:
+      'The main cable of a bus, which every device on the bus taps into. Also, the fast links that join the big parts of a larger network.',
+  },
+  terminator: {
+    term: 'terminator',
+    definition:
+      'A plug at each end of a bus cable that absorbs the signal, so it does not bounce back along the cable.',
+  },
+  'single-point-of-failure': {
+    term: 'single point of failure',
+    definition:
+      'One part that, if it breaks, stops the whole network, such as the switch in a star.',
+  },
+  'physical-topology': {
+    term: 'physical topology',
+    definition:
+      'How the devices and cables of a network are actually laid out.',
+  },
+  'logical-topology': {
+    term: 'logical topology',
+    definition:
+      'How messages flow between the devices of a network, which can differ from how the cables are laid out.',
+  },
+  'default-gateway': {
+    term: 'default gateway',
+    definition:
+      'The address of the router that a device sends messages to when they are meant for another network, such as the internet.',
+  },
 };
