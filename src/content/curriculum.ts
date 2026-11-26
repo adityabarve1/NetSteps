@@ -41,9 +41,9 @@ const level1: LevelMeta = {
       title: 'LAN, WAN and MAN',
       summary:
         'Learn how networks are grouped by how far they reach, from your desk to far-apart cities, and sort everyday examples into the right group.',
-      minutes: 10,
-      built: false,
-      labIds: [],
+      minutes: 25,
+      built: true,
+      labIds: ['lab-l1-classify'],
     },
     {
       id: 'l1-topologies',

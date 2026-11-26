@@ -117,4 +117,70 @@ export const level1: Glossary = {
     definition:
       'A small piece of data with the sender’s and receiver’s addresses on it. Large messages travel as many packets.',
   },
+  // l1-lan-wan-man
+  pan: {
+    term: 'PAN (personal area network)',
+    definition:
+      'A very small network around one person, such as a phone joined to wireless earbuds or a smartwatch. It usually reaches no more than about 10 metres.',
+  },
+  lan: {
+    term: 'LAN (local area network)',
+    definition:
+      'A network in one place, such as a home, a school building or an office, usually run by one person or organisation. As a rule of thumb it reaches up to about 2 kilometres.',
+  },
+  man: {
+    term: 'MAN (metropolitan area network)',
+    definition:
+      'A network that covers a city or a large area, joining many sites in one place. As a rule of thumb it reaches up to about 100 kilometres.',
+  },
+  wan: {
+    term: 'WAN (wide area network)',
+    definition:
+      'A network that joins other networks over long distances, between cities or countries. It is usually built from lines and services rented from telecom companies.',
+  },
+  bluetooth: {
+    term: 'Bluetooth',
+    definition:
+      'A short-range radio link for joining nearby devices, such as a phone and earbuds. Many Bluetooth devices reach about 10 metres.',
+  },
+  tethering: {
+    term: 'tethering',
+    definition:
+      'Using your phone as the link to the internet for another device, for example a laptop joined to the phone by a USB cable.',
+  },
+  isp: {
+    term: 'ISP (internet service provider)',
+    definition:
+      'A company that sells you a connection to the internet, such as a home broadband or mobile provider.',
+  },
+  'leased-line': {
+    term: 'leased line',
+    definition:
+      'A private data line between two places that a telecom company rents to a customer, so only that customer uses it.',
+  },
+  campus: {
+    term: 'campus',
+    definition:
+      'A group of buildings on one site that belong to one organisation, such as a school, a university or a company site.',
+  },
+  'sd-wan': {
+    term: 'SD-WAN',
+    definition:
+      'Software that manages several WAN connections of an organisation from one place and chooses which connection to use for each kind of traffic.',
+  },
+  'private-address': {
+    term: 'private address',
+    definition:
+      'An IP address from a range kept for use inside networks: 10.x.x.x, 172.16.x.x to 172.31.x.x or 192.168.x.x. It is not used on the public internet.',
+  },
+  vpn: {
+    term: 'VPN (virtual private network)',
+    definition:
+      'A way to send private data across a shared network such as the internet through an encrypted tunnel, so others on the way cannot read it.',
+  },
+  'default-gateway': {
+    term: 'default gateway',
+    definition:
+      'The address of the router a device sends messages to when they are meant for another network, such as the internet.',
+  },
 };
