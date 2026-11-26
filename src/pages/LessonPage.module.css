@@ -163,8 +163,16 @@
       'toc analogy rail'
       'toc content rail'
       'toc next rail';
-    grid-template-columns: 16rem minmax(0, 1fr) 20rem;
+    /* The text column stops growing at 120ch and the three columns sit
+       together in the middle, so the key terms rail stays next to the text
+       instead of being pushed to the far edge of a huge screen. */
+    grid-template-columns: 16rem minmax(0, 120ch) 22rem;
     grid-template-rows: repeat(5, auto);
+    justify-content: center;
+  }
+
+  .content {
+    --measure: 100ch;
   }
 
   .rail {

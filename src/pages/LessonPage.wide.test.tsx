@@ -136,8 +136,12 @@ describe('lesson layout (LessonPage.module.css)', () => {
     );
     const three = ruleIn(page, '.page', wide);
     expect(three).toMatch(
-      /grid-template-columns:\s*[\d.]+rem\s+minmax\(0,\s*1fr\)\s+[\d.]+rem/,
+      /grid-template-columns:\s*[\d.]+rem\s+minmax\(0,\s*\d+ch\)\s+[\d.]+rem/,
     );
+    expect(three).toMatch(/justify-content:\s*center/);
+    // The rail must stay near the text: the text column is capped, not 1fr.
+    expect(three).not.toMatch(/minmax\(0,\s*1fr\)/);
+    expect(ruleIn(page, '.content', wide)).toMatch(/--measure:\s*100ch/);
   });
 
   it('makes the key terms rail sticky below the header, scrolling inside', () => {
