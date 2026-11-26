@@ -1,14 +1,25 @@
 /* Lesson page. Colors come from tokens.css only. */
 
 .page {
-  display: flex;
+  display: grid;
   flex: 1;
-  flex-direction: column;
+  grid-template-areas:
+    'title'
+    'hook'
+    'analogy'
+    'toc'
+    'content'
+    'rail'
+    'next';
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: repeat(7, auto);
+  align-content: start;
   gap: var(--space-5);
   min-width: 0;
 }
 
 .title {
+  grid-area: title;
   margin: 0;
   font-size: clamp(1.75rem, 5vw, 2.5rem);
   line-height: 1.2;
@@ -16,6 +27,7 @@
 
 /* The hook: a larger lead paragraph, kept to a readable line length. */
 .hook {
+  grid-area: hook;
   max-width: 60ch;
   margin: 0;
   color: var(--text);
@@ -36,6 +48,7 @@
 }
 
 .analogy {
+  grid-area: analogy;
   max-width: 70ch;
   border-inline-start: 6px solid var(--accent-2);
 }
@@ -48,14 +61,19 @@
 /* Phones: one column, the table of contents is a compact row above the text.
    Wide screens: the table of contents is a sticky side column. It sits beside
    the text, so it can never cover a heading that a link scrolls to. */
-.layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--space-4);
+.tocColumn {
+  grid-area: toc;
+  min-width: 0;
 }
 
-.tocColumn {
-  min-width: 0;
+/* Key terms: after the lesson text on narrow screens (a summary to review),
+   a sticky column on the right of wide ones. One element, placed by the grid. */
+.rail {
+  grid-area: rail;
+}
+
+.next {
+  grid-area: next;
 }
 
 /* The content column is as wide as the screen allows. Running text keeps a
@@ -71,9 +89,10 @@
    - data-prose on any element caps it at the readable measure, data-wide on any
      element lifts the cap (for example a p that holds a very wide table). */
 .content {
-  /* About 70 characters at the body size. In rem on purpose: a ch measure
-     changes with each element's font size, and headings would not line up. */
-  --measure: 42rem;
+  /* About 80 characters. In ch, so it grows with the fluid root type that
+     big screens get (see global.css). */
+  --measure: 80ch;
+  grid-area: content;
   min-width: 0;
   font-size: 1.0625rem;
   line-height: 1.65;
@@ -111,9 +130,17 @@
 }
 
 @media (min-width: 60rem) {
-  .layout {
+  .page {
+    grid-template-areas:
+      'title title'
+      'hook hook'
+      'analogy analogy'
+      'toc content'
+      'toc rail'
+      'toc next';
     grid-template-columns: 14rem minmax(0, 1fr);
-    gap: var(--space-6);
+    grid-template-rows: repeat(6, auto);
+    gap: var(--space-5) var(--space-6);
     align-items: start;
   }
 
@@ -121,6 +148,29 @@
     position: sticky;
     top: var(--space-4);
     max-height: calc(100vh - 2 * var(--space-4));
+    overflow-y: auto;
+  }
+}
+
+/* Big screens: table of contents | lesson | key terms. In rem, so zooming in
+   moves the breakpoint with the text. The header scrolls away, so the sticky
+   offset is a small gap. */
+@media (min-width: 92rem) {
+  .page {
+    grid-template-areas:
+      'toc title rail'
+      'toc hook rail'
+      'toc analogy rail'
+      'toc content rail'
+      'toc next rail';
+    grid-template-columns: 16rem minmax(0, 1fr) 20rem;
+    grid-template-rows: repeat(5, auto);
+  }
+
+  .rail {
+    position: sticky;
+    top: var(--space-4);
+    max-height: calc(100svh - 2 * var(--space-4));
     overflow-y: auto;
   }
 }
@@ -142,7 +192,7 @@
 }
 
 .nextWrap {
-  margin: var(--space-5) 0 0;
+  margin: var(--space-4) 0 0;
 }
 
 .nextLink,

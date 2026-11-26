@@ -6,7 +6,12 @@
   box-sizing: border-box;
 }
 
+/* Big screens get bigger type: 100% up to 1440px wide, then growing smoothly to
+   130% at 2560px (30% of 16px = 4.8px over 1120px of width). Every rem-based
+   size, spacing included, scales with it. Percentages keep the browser's own
+   font-size setting in charge. */
 html {
+  font-size: clamp(100%, calc(100% + (100vw - 1440px) * 0.004286), 130%);
   -webkit-text-size-adjust: 100%;
 }
 

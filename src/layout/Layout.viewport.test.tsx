@@ -137,7 +137,7 @@ describe('no hard cap below the wide page width', () => {
     ['src/layout/Header.module.css', ['.inner']],
     ['src/layout/Footer.module.css', ['.inner']],
     ['src/pages/CourseMap.module.css', ['.page', '.levels']],
-    ['src/pages/LessonPage.module.css', ['.page', '.layout']],
+    ['src/pages/LessonPage.module.css', ['.page']],
     ['src/auth/pages/AuthPages.module.css', ['.stage']],
   ];
 
@@ -223,7 +223,7 @@ describe('page CSS uses the width', () => {
     const source = css('src/pages/LessonPage.module.css');
 
     expect(source).toMatch(
-      /@media \(min-width: 60rem\)\s*\{\s*\.layout\s*\{[^}]*grid-template-columns:\s*14rem minmax\(0,\s*1fr\)/,
+      /@media \(min-width: 60rem\)\s*\{\s*\.page\s*\{[^}]*grid-template-columns:\s*14rem minmax\(0,\s*1fr\)/,
     );
     expect(source).toMatch(/\.tocColumn\s*\{[^}]*position:\s*sticky/);
     // The column itself is not capped; only running text inside it is.
@@ -238,7 +238,7 @@ describe('page CSS uses the width', () => {
     )?.[1];
 
     expect(capped).toMatch(/max-width:\s*var\(--measure\)/);
-    expect(ruleOf(source, '.content')).toMatch(/--measure:\s*42rem/);
+    expect(ruleOf(source, '.content')).toMatch(/--measure:\s*80ch/);
     expect(ruleOf(source, '.quizWrap')).toMatch(/max-width:\s*56rem/);
     expect(ruleOf(source, '.content [data-wide]')).toMatch(/max-width:\s*none/);
   });

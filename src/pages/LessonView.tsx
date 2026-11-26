@@ -3,6 +3,7 @@ import { GoDeeper } from '@/content/components/GoDeeper';
 import { LessonSection } from '@/content/components/LessonSection';
 import { TableOfContents } from '@/content/components/TableOfContents';
 import type { Lesson, LessonMeta } from '@/content/types';
+import { KeyTerms } from '@/pages/KeyTerms';
 import { LabFrame } from '@/pages/LabFrame';
 import { LessonRunContext } from '@/pages/lessonRun';
 import styles from '@/pages/LessonPage.module.css';
@@ -93,74 +94,74 @@ export function LessonView({
           {lesson.analogy}
         </section>
 
-        <div className={styles.layout}>
-          <div className={styles.tocColumn}>
-            <TableOfContents sections={parts} activeId={activeId} />
-          </div>
-          <div className={styles.content}>
-            {lesson.sections.map((section) => (
-              <LessonSection
-                key={section.id}
-                id={section.id}
-                title={section.title}
-              >
-                {section.body}
-                {section.deeper?.map((block) => (
-                  <GoDeeper key={block.title} title={block.title}>
-                    {block.body}
-                  </GoDeeper>
-                ))}
-              </LessonSection>
-            ))}
-
-            <LessonSection id="try-it" title="Try it yourself">
-              <div className={styles.card}>{lesson.tryIt}</div>
+        <div className={styles.tocColumn}>
+          <TableOfContents sections={parts} activeId={activeId} />
+        </div>
+        <div className={styles.content}>
+          {lesson.sections.map((section) => (
+            <LessonSection
+              key={section.id}
+              id={section.id}
+              title={section.title}
+            >
+              {section.body}
+              {section.deeper?.map((block) => (
+                <GoDeeper key={block.title} title={block.title}>
+                  {block.body}
+                </GoDeeper>
+              ))}
             </LessonSection>
+          ))}
 
-            {lesson.labs.length > 0 && (
-              <LessonSection id="practice-lab" title="Practice lab">
-                {lesson.labs.map((lab) => (
-                  <LabFrame key={lab.id} lab={lab} />
-                ))}
-              </LessonSection>
-            )}
+          <LessonSection id="try-it" title="Try it yourself">
+            <div className={styles.card}>{lesson.tryIt}</div>
+          </LessonSection>
 
-            {lesson.realComputer !== undefined && (
-              <LessonSection id="on-your-computer" title="On your own computer">
-                {lesson.realComputer}
-                <p className={styles.safety}>
-                  Only do this on your own device and network.
-                </p>
-              </LessonSection>
-            )}
-
-            <LessonSection id="why-it-matters" title="Why it matters">
-              {lesson.whyItMatters}
+          {lesson.labs.length > 0 && (
+            <LessonSection id="practice-lab" title="Practice lab">
+              {lesson.labs.map((lab) => (
+                <LabFrame key={lab.id} lab={lab} />
+              ))}
             </LessonSection>
+          )}
 
-            <LessonSection id="check-yourself" title="Check yourself">
-              <div className={styles.quizWrap}>
-                <Quiz
-                  key={lesson.id}
-                  questions={lesson.quiz}
-                  onSubmit={tracking.onQuizSubmit}
-                  previousBest={tracking.previousBest}
-                />
-              </div>
+          {lesson.realComputer !== undefined && (
+            <LessonSection id="on-your-computer" title="On your own computer">
+              {lesson.realComputer}
+              <p className={styles.safety}>
+                Only do this on your own device and network.
+              </p>
             </LessonSection>
+          )}
 
-            <LessonSection id="recap" title="Recap">
-              <p className={styles.oneLine}>{lesson.recap.oneLine}</p>
-              <ul className={styles.takeaways}>
-                {lesson.recap.takeaways.map((takeaway) => (
-                  <li key={takeaway}>{takeaway}</li>
-                ))}
-              </ul>
-              <div className={styles.card}>{lesson.recap.cheatSheet}</div>
-            </LessonSection>
+          <LessonSection id="why-it-matters" title="Why it matters">
+            {lesson.whyItMatters}
+          </LessonSection>
 
-            <NextLesson lessonId={lesson.id} />
-          </div>
+          <LessonSection id="check-yourself" title="Check yourself">
+            <div className={styles.quizWrap}>
+              <Quiz
+                key={lesson.id}
+                questions={lesson.quiz}
+                onSubmit={tracking.onQuizSubmit}
+                previousBest={tracking.previousBest}
+              />
+            </div>
+          </LessonSection>
+
+          <LessonSection id="recap" title="Recap">
+            <p className={styles.oneLine}>{lesson.recap.oneLine}</p>
+            <ul className={styles.takeaways}>
+              {lesson.recap.takeaways.map((takeaway) => (
+                <li key={takeaway}>{takeaway}</li>
+              ))}
+            </ul>
+            <div className={styles.card}>{lesson.recap.cheatSheet}</div>
+          </LessonSection>
+        </div>
+        <KeyTerms ids={lesson.glossary} className={styles.rail} />
+        <div className={styles.next}>
+          <NextLesson lessonId={lesson.id} />
         </div>
       </article>
     </LessonRunContext>

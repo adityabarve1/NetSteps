@@ -274,7 +274,7 @@ describe('LessonPage: wide layout hooks', () => {
       name: 'In this lesson',
     });
 
-    const layout = container.querySelector('.layout');
+    const layout = container.querySelector('.page');
     expect(layout?.querySelector('.tocColumn')).toContainElement(nav);
     const content = layout?.querySelector('.content');
     expect(content).toContainElement(
