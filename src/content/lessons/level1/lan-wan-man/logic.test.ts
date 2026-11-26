@@ -68,10 +68,24 @@ describe('scopeQuestions', () => {
   it('keeps scenarios consistent with the lesson table (rented lines are WAN-style, owned city networks are MAN)', () => {
     for (const q of scopeQuestions) {
       if (/rent/i.test(q.prompt)) expect(q.scope, q.prompt).toBe('WAN');
+      if (q.scope === 'MAN') expect(q.prompt, q.prompt).not.toMatch(/offices/);
+    }
+  });
+
+  it('never reasons from ownership to a LAN or MAN verdict (the lesson says one owner points to a LAN)', () => {
+    for (const q of scopeQuestions) {
+      expect(q.why, q.prompt).not.toMatch(/ownership agrees/i);
       if (q.scope === 'MAN') {
-        expect(q.prompt, q.prompt).toMatch(/\bown\b/);
-        expect(q.prompt, q.prompt).not.toMatch(/offices/);
+        // Saying that ownership does NOT settle it is fine; leaning on it is not.
+        const text = q.why.replace('Ownership alone would not settle it', '');
+        expect(text, q.prompt).not.toMatch(/\bown(s|ed|er|ership)?\b|runs it/i);
       }
+    }
+  });
+
+  it('bases every explanation on distance or on the rule of thumb for the scope', () => {
+    for (const q of scopeQuestions) {
+      expect(q.why, q.prompt).toMatch(/km|metre|kilometre|distance/i);
     }
   });
 

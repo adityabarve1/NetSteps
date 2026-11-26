@@ -89,6 +89,11 @@ describe('lesson 1.2 quiz', () => {
     }
   });
 
+  it('does not hint that owning the network decides the answer', () => {
+    expect(quiz[1]?.explanation).not.toContain('one council’s network');
+    expect(quiz[1]?.explanation).toContain('does not decide the answer here');
+  });
+
   it('teaches no distance-only rule for a WAN', () => {
     for (const q of quiz) {
       expect(q.explanation).not.toContain('does not make a WAN');

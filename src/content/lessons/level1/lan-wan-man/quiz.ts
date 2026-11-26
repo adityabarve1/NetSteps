@@ -26,7 +26,7 @@ export const quiz: QuizQuestion[] = [
     ],
     correctIndex: 1,
     explanation:
-      'It is a MAN: 10 km is above the 2 km limit of a LAN and well below 100 km. Each building does have its own LAN, but the network that joins them is larger than one site. Joining many buildings does not decide it. A WAN reaches between cities and countries, and this network stays inside one city. It is not the internet, which is a network of networks run by many organisations. This is one council’s network.',
+      'It is a MAN: 10 km is above the 2 km limit of a LAN and well below 100 km. Each building does have its own LAN, but the network that joins them is larger than one site. Joining many buildings does not decide it. A WAN reaches between cities and countries, and this network stays inside one city. It is not the internet, which is a network of networks run by many organisations. Who owns the network does not decide the answer here; distance does.',
   },
   {
     id: 'q3',

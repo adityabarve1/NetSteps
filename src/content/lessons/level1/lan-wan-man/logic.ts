@@ -83,21 +83,21 @@ export const scopeQuestions: ScopeQuestion[] = [
       'A council’s own fibre cables link its libraries, schools and traffic lights across a city about 25 km wide.',
     scope: 'MAN',
     km: 25,
-    why: 'By distance alone, 25 km is far more than a building or campus (2 km) but less than 100 km, so it is city sized. The council owns the cables, so ownership agrees.',
+    why: 'By distance alone, 25 km is far more than a building or campus (2 km) but less than 100 km, so it is city sized, a MAN. Ownership alone would not settle it, so use the distance rule of thumb.',
   },
   {
     prompt:
       'A council’s own fibre cables link its buildings across a city about 10 km wide.',
     scope: 'MAN',
     km: 10,
-    why: 'By distance alone, 10 km is above the 2 km limit of a LAN and well inside a city. The council owns the cables, so ownership agrees.',
+    why: 'By distance alone, 10 km is above the 2 km limit of a LAN and well inside a city, so it is a MAN. Ownership alone would not settle it, so use the distance rule of thumb.',
   },
   {
     prompt:
       'A university runs its own fibre network joining its campuses, spread across one city about 30 km wide.',
     scope: 'MAN',
     km: 30,
-    why: 'By distance alone, 30 km is city sized: bigger than any one campus, smaller than 100 km. One owner runs it, so ownership agrees.',
+    why: 'By distance alone, 30 km is city sized: bigger than any one campus, smaller than 100 km, so it is a MAN. Ownership alone would not settle it, so use the distance rule of thumb.',
   },
   {
     prompt:
