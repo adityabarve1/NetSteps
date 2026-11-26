@@ -81,6 +81,7 @@ describe('lesson: LAN, WAN and MAN', () => {
       'Why it matters',
       'Check yourself',
       'Recap',
+      'Key terms',
     ]);
     expect(
       screen.getAllByRole('button', { name: /^Go deeper:/ }).length,

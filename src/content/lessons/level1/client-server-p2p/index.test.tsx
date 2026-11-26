@@ -57,6 +57,7 @@ describe('lesson: Client-server vs peer-to-peer', () => {
       'Why it matters',
       'Check yourself',
       'Recap',
+      'Key terms',
     ]);
     expect(screen.getAllByRole('button', { name: /^Go deeper:/ })).toHaveLength(
       12,
