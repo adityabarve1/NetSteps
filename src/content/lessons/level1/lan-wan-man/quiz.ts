@@ -17,25 +17,25 @@ export const quiz: QuizQuestion[] = [
   {
     id: 'q2',
     prompt:
-      'A firm links its three offices with its own network. All three are in one city, about 10 km apart. By the rules of thumb in this lesson, what is the network?',
+      'A council links its buildings with its own fibre cables. The buildings are spread across a city about 10 km wide. By distance alone, using the rules of thumb in this lesson, what is the network?',
     options: [
-      'A LAN, because every office has a LAN',
+      'A LAN, because every building has a LAN',
       'A MAN, because it is the size of a city',
-      'A WAN, because it joins several sites',
-      'A PAN, because one firm owns it',
+      'A WAN, because it joins many buildings',
+      'The internet, because it joins many networks',
     ],
     correctIndex: 1,
     explanation:
-      'It is a MAN: 10 km is above the 2 km limit of a LAN and well below 100 km. Each office does have its own LAN, but the network that joins them is bigger. Joining several sites does not make a WAN: a WAN is for places far apart, over about 100 km. Who owns the network does not make it a PAN. A PAN is built around one person.',
+      'It is a MAN: 10 km is above the 2 km limit of a LAN and well below 100 km. Each building does have its own LAN, but the network that joins them is larger than one site. Joining many buildings does not decide it. A WAN reaches between cities and countries, and this network stays inside one city. It is not the internet, which is a network of networks run by many organisations. This is one council’s network.',
   },
   {
     id: 'q3',
     prompt: 'Which sentence about the internet is the most accurate?',
     options: [
-      'It is one very large LAN that covers the world',
-      'It is one WAN that belongs to a single company',
-      'It is the same thing as the web',
-      'It is a network of networks, made of many LANs and WANs',
+      'One very large LAN that is spread over the whole world',
+      'One huge WAN that belongs to a single large company',
+      'The same thing as the web, which is all the pages online',
+      'A network of networks that joins many LANs and WANs',
     ],
     correctIndex: 3,
     explanation:
@@ -46,9 +46,9 @@ export const quiz: QuizQuestion[] = [
     prompt:
       'Your computer’s IP address is 192.168.0.14. What does this most likely tell you?',
     options: [
-      'It is a private address, used inside a LAN such as a home network',
-      'It is a public address, so the computer is directly on the internet',
-      'It is a WAN address, used only on long-distance lines',
+      'A private address, used inside LANs such as home networks',
+      'A public address, so the computer is directly on the internet',
+      'A WAN address, used only on long-distance lines',
     ],
     correctIndex: 0,
     explanation:
@@ -59,10 +59,10 @@ export const quiz: QuizQuestion[] = [
     prompt:
       'One book says a LAN reaches up to 1 km. Another says up to 2 km. Why do the books disagree?',
     options: [
-      'Each country defines LAN in its own law',
-      'LANs grew bigger after Wi-Fi was invented',
-      'The limits are rules of thumb, not an official standard',
-      'One of the books must be wrong',
+      'Each country defines the word LAN in its own laws',
+      'LANs grew much bigger after Wi-Fi was invented',
+      'They are rules of thumb, not an official standard',
+      'One of the two books must have made a mistake',
     ],
     correctIndex: 2,
     explanation:

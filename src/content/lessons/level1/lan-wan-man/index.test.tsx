@@ -148,12 +148,12 @@ describe('lesson: LAN, WAN and MAN', () => {
     expect(verdict).toHaveTextContent(/^LAN local area network\./);
     fireEvent.change(slider, { target: { value: '0' } });
     expect(card).toHaveTextContent('Distance: 1 m');
-    expect(slider).toHaveAttribute('aria-valuetext', '1 m: PAN');
+    expect(slider).toHaveAttribute('aria-valuetext', '1 m');
     expect(verdict).toHaveTextContent(/^PAN personal area network\./);
     expect(verdict).toHaveTextContent('Example: Your phone and your wireless');
     fireEvent.change(slider, { target: { value: '200' } });
     expect(card).toHaveTextContent('Distance: 20,000 km');
-    expect(slider).toHaveAttribute('aria-valuetext', '20,000 km: WAN');
+    expect(slider).toHaveAttribute('aria-valuetext', '20,000 km');
     expect(verdict).toHaveTextContent(/^WAN wide area network\./);
     expect(card).toHaveTextContent(
       'WAN: more than about 100 km (you are here)',
@@ -183,6 +183,23 @@ describe('lesson: LAN, WAN and MAN', () => {
     expect(progress.completeLab).toHaveBeenCalledTimes(1);
     expect(progress.completeLab).toHaveBeenCalledWith(LAB);
     expect(progress.completeLesson).not.toHaveBeenCalled();
+  });
+
+  it('the lab text is honest about what the practice lab does', async () => {
+    await open();
+    const frame = screen.getByRole('group', { name: 'Sort networks by reach' });
+    expect(frame.textContent).toContain('shows the right number');
+    expect(frame.textContent).toContain('first try');
+    expect(frame.textContent).not.toContain('and try again. If you are right');
+  });
+
+  it('the real-computer text is accurate about link-local and loopback addresses', async () => {
+    await open();
+    const part = screen.getByRole('region', { name: 'On your own computer' });
+    expect(part.textContent).toContain('will not reach the internet');
+    expect(part.textContent).not.toContain('not a working LAN address');
+    expect(part.textContent).toContain('127.0.0.1');
+    expect(part.textContent).toContain('Mac mini');
   });
 
   it('the real-computer exercise starts with the safety line and uses only safe commands', async () => {

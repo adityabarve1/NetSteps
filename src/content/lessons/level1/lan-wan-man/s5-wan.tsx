@@ -46,8 +46,9 @@ export function Wan() {
       <ol>
         <li>
           Acme cannot lay a cable between two countries. It rents a line between
-          the two sites from a telecom company. This is called a{' '}
-          <Term id="leased-line">leased line</Term>, and only Acme uses it.
+          the two sites from a telecom company, a company that runs phone and
+          data lines. This is called a <Term id="leased-line">leased line</Term>
+          , and only Acme uses it.
         </li>
         <li>
           At each end, a router joins the site&rsquo;s LAN to the rented line.

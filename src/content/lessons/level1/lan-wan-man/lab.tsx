@@ -14,8 +14,9 @@ export function ClassifyLab({ onDone }: { onDone: () => void }) {
   return (
     <>
       <p>
-        Goal: decide which kind of network each everyday scenario is. You get
-        six scenarios and it takes about five minutes.
+        Goal: decide which kind of network each everyday scenario is, by the
+        distance rules of thumb. You get six scenarios and it takes about five
+        minutes.
       </p>
       <ol className={styles.steps}>
         <li>
@@ -23,19 +24,21 @@ export function ClassifyLab({ onDone }: { onDone: () => void }) {
           the links.
         </li>
         <li>
-          Pick the type from this list: <strong>0</strong> = PAN (up to about 10
-          metres, around one person), <strong>1</strong> = LAN (up to about 2
-          kilometres, one place), <strong>2</strong> = MAN (up to about 100
-          kilometres, a city), <strong>3</strong> = WAN (farther than that,
-          between cities and countries).
+          Pick the number of the type. <strong>0</strong> is a PAN: up to about
+          10 metres, around one person. <strong>1</strong> is a LAN: up to about
+          2 kilometres, one place. <strong>2</strong> is a MAN: up to about 100
+          kilometres, a city. <strong>3</strong> is a WAN: farther than that,
+          between cities and countries.
         </li>
         <li>
           Type the number of your choice, 0, 1, 2 or 3, and press{' '}
           <strong>Check</strong>.
         </li>
         <li>
-          If you are wrong, read the explanation and try again. If you are
-          right, press <strong>Next problem</strong>.
+          After a wrong answer, the explanation shows the right number. Type it
+          to go on. After a right answer, press <strong>Next problem</strong>.
+          At the end you see how many you got right on the first try, so think
+          before you press <strong>Check</strong>.
         </li>
       </ol>
       <p>

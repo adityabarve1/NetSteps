@@ -19,7 +19,9 @@ const MAC_IFCONFIG = `en0: flags=8863<UP,BROADCAST,...> mtu 1500
 	inet 192.168.1.23 netmask 0xffffff00 broadcast ...
 	status: active`;
 
-const LINUX_IP_ADDR = `2: wlan0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 ...
+const LINUX_IP_ADDR = `1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 ...
+    inet 127.0.0.1/8 scope host lo
+2: wlan0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 ...
     link/ether 3c:22:fb:1a:7f:04 brd ff:ff:ff:ff:ff:ff
     inet 192.168.1.23/24 brd 192.168.1.255 scope global ...`;
 
@@ -73,8 +75,10 @@ export function RealComputer() {
       </ul>
       <p>
         <strong>macOS:</strong> open Terminal (in Applications, then Utilities)
-        and type {cmd('ifconfig en0')}. On most Macs, en0 is the Wi-Fi adapter.
-        Look for the line that starts with <em>inet</em>. (In these samples,
+        and type {cmd('ifconfig en0')}. On many Macs, en0 is the Wi-Fi adapter.
+        On a Mac mini or Mac Studio, en0 may be the Ethernet port instead. Look
+        for the line that starts with <em>inet</em> followed by a dotted number,
+        not the line that starts with <em>inet6</em>. (In these samples,
         &ldquo;...&rdquo; marks the end of a long line that was cut short.)
       </p>
       <pre className={styles.output}>{MAC_IFCONFIG}</pre>
@@ -92,7 +96,10 @@ export function RealComputer() {
       <pre className={styles.output}>{LINUX_IP_ADDR}</pre>
       <p>
         Here 192.168.1.23/24 is the IP address with its mask in slash form: /24
-        means 255.255.255.0. This command does not print the gateway either.
+        means 255.255.255.0. This command does not print the gateway either. The
+        list also shows an adapter called lo with the address 127.0.0.1. That is
+        your computer talking to itself. It is not your LAN address, so ignore
+        it here.
       </p>
 
       <h3>Step 2: is the address private?</h3>
@@ -138,7 +145,8 @@ export function RealComputer() {
         <li>
           <strong>169.254.x.x</strong> is a different case. Your computer made
           that address up for itself because it could not get one from the
-          network. It is not a working LAN address; check your Wi-Fi or cable.
+          network. It only works with devices on the same link, and it will not
+          reach the internet or other LANs. Check your Wi-Fi or cable.
         </li>
       </ul>
 

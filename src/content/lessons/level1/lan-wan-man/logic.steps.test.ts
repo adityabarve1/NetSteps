@@ -54,6 +54,14 @@ describe('scopeSteps', () => {
   });
 });
 
+describe('scopeSteps wording', () => {
+  it('uses no word that the lesson has not defined yet in its captions', () => {
+    for (const s of scopeSteps) {
+      expect(s.caption, s.title).not.toMatch(/Bluetooth|telecom/i);
+    }
+  });
+});
+
 describe('scopeInfo', () => {
   it('has a name, a reach and an example for every scope', () => {
     for (const scope of SCOPES) {

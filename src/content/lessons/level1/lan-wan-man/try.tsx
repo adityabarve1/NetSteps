@@ -30,8 +30,9 @@ export function HowFarDoesItReach() {
       <h3 className={styles.title}>How far does it reach?</h3>
       <p>
         Move the slider to set the distance between the two devices that are
-        farthest apart. The name of the network changes as you go. You can also
-        use the arrow keys, Page Up and Page Down, Home and End.
+        farthest apart. The name of the network changes as you go. It goes by
+        distance alone: even a wired USB link of 1 metre is PAN-sized. You can
+        also use the arrow keys, Page Up and Page Down, Home and End.
       </p>
 
       <label className={styles.label} htmlFor={sliderId}>
@@ -45,7 +46,7 @@ export function HowFarDoesItReach() {
         max={SLIDER_MAX}
         step={1}
         value={position}
-        aria-valuetext={`${distance}: ${scope}`}
+        aria-valuetext={distance}
         onChange={(e) => {
           setPosition(Number(e.target.value));
         }}

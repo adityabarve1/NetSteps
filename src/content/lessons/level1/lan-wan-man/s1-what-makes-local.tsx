@@ -7,9 +7,9 @@ export function WhatMakesLocal() {
     <>
       <p>
         In the last lesson you saw that networks come in every size, from two
-        devices to the whole internet. People sort them by one simple question:
-        how far does the network reach? Four names cover the sizes, from
-        smallest to largest:
+        devices to the whole <Term id="internet">internet</Term>. People sort
+        them by one simple question: how far does the network reach? Four names
+        cover the sizes, from smallest to largest:
       </p>
       <ul>
         <li>
@@ -84,12 +84,12 @@ export function OwnershipDeeper() {
         network.
       </p>
       <p>
-        On a LAN, one owner decides everything. That owner buys the switches and
-        access points, pulls the cables, picks the rules and fixes what breaks.
-        This person or team is often called the network administrator. A WAN
-        crosses land and seas that belong to other people. So its owner usually
-        rents the long-distance lines from telecom companies and pays a monthly
-        fee.
+        On a LAN, one owner decides everything. That owner buys the boxes that
+        pass messages along, pulls the cables, picks the rules and fixes what
+        breaks. This person or team is often called the network administrator. A
+        WAN crosses land and seas that belong to other people. So its owner
+        usually rents the long-distance lines from telecom companies (companies
+        that run phone and data lines) and pays a monthly fee.
       </p>
       <p>
         This is a pattern, not a law. A very large company can own its own

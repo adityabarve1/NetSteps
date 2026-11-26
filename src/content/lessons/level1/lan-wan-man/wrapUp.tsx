@@ -13,9 +13,9 @@ export function WhyItMatters() {
       <ul>
         <li>
           <strong>Finding faults.</strong> If the printer works but no website
-          loads, your LAN is fine and the problem is on the line out of your
-          home, or beyond it. If even the printer fails, start with your own
-          LAN.
+          loads, your LAN is probably fine and the problem is on the line out of
+          your home, or beyond it. If even the printer fails, start with your
+          own LAN.
         </li>
         <li>
           <strong>Choosing and buying.</strong> A shop with a branch in another

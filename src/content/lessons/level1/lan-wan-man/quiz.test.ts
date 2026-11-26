@@ -13,12 +13,12 @@ const KEY: { right: string; wrong: Record<number, string> }[] = [
     right: 'A MAN, because it is the size of a city',
     wrong: {
       0: 'does have its own LAN',
-      2: 'does not make a WAN',
-      3: 'does not make it a PAN',
+      2: 'does not decide it',
+      3: 'not the internet',
     },
   },
   {
-    right: 'It is a network of networks, made of many LANs and WANs',
+    right: 'A network of networks that joins many LANs and WANs',
     wrong: {
       0: 'not one LAN',
       1: 'not one WAN',
@@ -26,11 +26,11 @@ const KEY: { right: string; wrong: Record<number, string> }[] = [
     },
   },
   {
-    right: 'It is a private address, used inside a LAN such as a home network',
+    right: 'A private address, used inside LANs such as home networks',
     wrong: { 1: 'not a public address', 2: 'no separate address range' },
   },
   {
-    right: 'The limits are rules of thumb, not an official standard',
+    right: 'They are rules of thumb, not an official standard',
     wrong: { 0: 'No country', 1: 'Wi-Fi does not set', 3: 'neither book' },
   },
 ];
@@ -80,9 +80,26 @@ describe('lesson 1.2 quiz', () => {
     }
   });
 
+  it('never makes the right option the single longest one', () => {
+    for (const q of quiz) {
+      const lengths = q.options.map((o) => o.length);
+      const right = lengths[q.correctIndex] ?? 0;
+      const longer = lengths.filter((n) => n >= right).length;
+      expect(longer, q.id).toBeGreaterThanOrEqual(2);
+    }
+  });
+
+  it('teaches no distance-only rule for a WAN', () => {
+    for (const q of quiz) {
+      expect(q.explanation).not.toContain('does not make a WAN');
+      expect(q.explanation).not.toContain('over about 100 km');
+    }
+    expect(quiz[1]?.prompt).toContain('By distance alone');
+  });
+
   it('the number questions agree with the lesson limits', () => {
     // 10 km: above the 2 km LAN limit, below the 100 km MAN limit.
-    expect(quiz[1]?.prompt).toContain('about 10 km apart');
+    expect(quiz[1]?.prompt).toContain('about 10 km wide');
     expect(quiz[1]?.explanation).toContain('2 km');
     expect(quiz[1]?.explanation).toContain('100 km');
     expect(quiz[3]?.prompt).toContain('192.168.0.14');

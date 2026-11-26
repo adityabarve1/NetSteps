@@ -29,18 +29,20 @@ const lesson: Lesson = {
         reach. The rooms in your building are joined by corridors that the
         building&rsquo;s owner looks after. The streets of one town join its
         buildings, and the town council looks after them. Highways and flights
-        join far-apart towns and countries, and no single person looks after
-        them: you use roads and airlines that belong to other people. Networks
-        come in the same sizes. A PAN is your desk, a LAN is the corridors of
-        one building, a MAN is the streets of one town, and a WAN is the
-        highways and flights between far-apart places.
+        join far-apart towns and countries. No single person looks after them:
+        you use roads and airlines that belong to other people.
+      </p>
+      <p>
+        Networks come in the same sizes. A PAN is your desk. A LAN is the
+        corridors of one building. A MAN is the streets of one town. A WAN is
+        the highways and flights between far-apart places.
       </p>
       <p>
         Where the comparison stops working: nothing drives along the cables. A
         message travels as a signal, much faster than any car. Also, the edges
         are blurrier than the edge of a town. A big company can own its own
-        long-distance links, and a network does not change its nature when it
-        grows: only its distance, and who runs it, change.
+        long-distance links. A network does not change its nature when it grows.
+        Only its distance, who runs it and its technology change.
       </p>
     </>
   ),
@@ -155,7 +157,7 @@ const lesson: Lesson = {
       'A PAN is the network around one person (Bluetooth, a USB cable). A LAN is one building or campus, usually run by one owner, mostly with Ethernet and Wi-Fi.',
       'A MAN covers a city. A WAN joins LANs over long distances, usually with lines and services rented from telecom companies.',
       'Who runs the network often matters more than the number of kilometres: one owner points to a LAN, rented lines point to a WAN.',
-      'The internet is a network of networks. It joins many LANs and WANs run by thousands of organisations, and no single organisation owns it. Home addresses such as 192.168.1.23 are private and live inside a LAN.',
+      'The internet is a network of networks. It joins many LANs and WANs, and no single organisation owns it. Home addresses such as 192.168.1.23 are private and live inside a LAN.',
     ],
     cheatSheet: <CheatSheet />,
   },

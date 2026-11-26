@@ -80,45 +80,45 @@ export const scopeQuestions: ScopeQuestion[] = [
   },
   {
     prompt:
-      'A city council joins its libraries, offices and traffic lights, spread across a city about 25 km wide, into one network.',
+      'A council’s own fibre cables link its libraries, schools and traffic lights across a city about 25 km wide.',
     scope: 'MAN',
     km: 25,
-    why: '25 km is far more than a building or campus (2 km) but less than 100 km, so it is a city-sized network.',
+    why: 'By distance alone, 25 km is far more than a building or campus (2 km) but less than 100 km, so it is city sized. The council owns the cables, so ownership agrees.',
   },
   {
     prompt:
-      'A company links its three offices, all in the same city and about 10 km apart, with its own network.',
+      'A council’s own fibre cables link its buildings across a city about 10 km wide.',
     scope: 'MAN',
     km: 10,
-    why: '10 km is above the 2 km limit of a LAN but well inside a city, so it counts as a MAN.',
+    why: 'By distance alone, 10 km is above the 2 km limit of a LAN and well inside a city. The council owns the cables, so ownership agrees.',
   },
   {
     prompt:
-      'A cable company runs one network that reaches homes across a town about 40 km wide.',
+      'A university runs its own fibre network joining its campuses, spread across one city about 30 km wide.',
     scope: 'MAN',
-    km: 40,
-    why: '40 km is town sized: bigger than any campus, smaller than 100 km.',
+    km: 30,
+    why: 'By distance alone, 30 km is city sized: bigger than any one campus, smaller than 100 km. One owner runs it, so ownership agrees.',
   },
   {
     prompt:
-      'A bank links its branch in London to its branch in Tokyo, about 9,500 km away.',
+      'A bank links its branch in London to its branch in Tokyo, about 9,500 km away, with lines rented from telecom companies.',
     scope: 'WAN',
     km: 9500,
-    why: '9,500 km is far above 100 km, and the link crosses countries, so it is a WAN.',
+    why: '9,500 km is far above 100 km and the link crosses countries over rented lines, so it is WAN-scale.',
   },
   {
     prompt:
       'A shop in Chicago connects to its warehouse about 1,200 km away, using a line rented from a telecom company.',
     scope: 'WAN',
     km: 1200,
-    why: '1,200 km is far above 100 km, and the link runs over a line the shop rents rather than owns, which is typical of a WAN.',
+    why: '1,200 km is far above 100 km, and the link runs over a line the shop rents rather than owns, which is typical of a WAN-scale link.',
   },
   {
     prompt:
-      'A school in Spain and a school in Chile set up a regular video lesson, about 10,000 km apart.',
+      'A firm’s office in Madrid and its office in Santiago, Chile, about 10,000 km apart, are joined by a line rented from a telecom company.',
     scope: 'WAN',
     km: 10000,
-    why: 'The two schools are on different continents, thousands of kilometres apart, so the link between them is a WAN.',
+    why: 'The offices are on different continents. The network joining them reaches thousands of kilometres, far beyond a campus or a city, so it is a WAN-scale link.',
   },
 ];
 
@@ -138,7 +138,7 @@ export function generateScopeProblem(rng: Rng): Problem {
   const list = SCOPES.map((s, n) => `${String(n)} = ${s}`).join(', ');
   return {
     id: `scope-${String(i)}`,
-    prompt: `${q.prompt} Which kind of network is this? The options are ${list}. Type 0, 1, 2 or 3, the number next to your choice.`,
+    prompt: `${q.prompt} Which kind of network is this, by the distance rules of thumb? The options are ${list}. Type 0, 1, 2 or 3, the number next to your choice.`,
     answer,
     tolerance: 0,
     explanation: `${q.why} So the answer is ${String(answer)} (${q.scope}).`,
@@ -228,7 +228,7 @@ const STEP_DRAFTS: StepDraft[] = [
     title: 'Earbuds and phone',
     km: 0.001,
     caption:
-      'PAN: your phone plays music to your wireless earbuds over Bluetooth. This tiny network usually reaches no more than about 10 metres and is built around one person.',
+      'PAN: your phone plays music to your wireless earbuds. This tiny network usually reaches no more than about 10 metres and is built around one person.',
   },
   {
     scope: 'LAN',
@@ -256,7 +256,7 @@ const STEP_DRAFTS: StepDraft[] = [
     title: 'Different countries',
     km: 9500,
     caption:
-      'WAN: a bank joins its offices in different countries, thousands of kilometres apart. The company usually cannot lay cable between countries, so it rents lines from telecom companies.',
+      'WAN: a bank joins its offices in different countries, thousands of kilometres apart. The company usually cannot lay cable between countries, so it rents lines from companies that run long-distance data lines.',
   },
 ];
 

@@ -65,6 +65,22 @@ describe('scopeQuestions', () => {
     expect(new Set(prompts).size).toBe(prompts.length);
   });
 
+  it('keeps scenarios consistent with the lesson table (rented lines are WAN-style, owned city networks are MAN)', () => {
+    for (const q of scopeQuestions) {
+      if (/rent/i.test(q.prompt)) expect(q.scope, q.prompt).toBe('WAN');
+      if (q.scope === 'MAN') {
+        expect(q.prompt, q.prompt).toMatch(/\bown\b/);
+        expect(q.prompt, q.prompt).not.toMatch(/offices/);
+      }
+    }
+  });
+
+  it('never calls a scenario link "a WAN" outright in an explanation (WAN-scale only)', () => {
+    for (const q of scopeQuestions) {
+      expect(q.why, q.prompt).not.toMatch(/is a WAN(?!-)/);
+    }
+  });
+
   it('classifies every scenario the same way as its own distance', () => {
     for (const q of scopeQuestions) {
       expect(scopeForDistance(q.km), q.prompt).toBe(q.scope);
@@ -111,6 +127,7 @@ describe('generateScopeProblem', () => {
     const p = generateScopeProblem(createRng(1));
     expect(p.prompt).toContain('0 = PAN, 1 = LAN, 2 = MAN, 3 = WAN');
     expect(p.prompt).toContain('Type 0, 1, 2 or 3');
+    expect(p.prompt).toContain('distance rules of thumb');
   });
 
   it('explains why, naming the scope and its number', () => {

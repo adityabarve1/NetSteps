@@ -45,11 +45,12 @@ export function InternetOfNetworks() {
       <h3>Is the internet a WAN?</h3>
       <p>
         Some books call the internet &ldquo;the biggest WAN&rdquo;. That is a
-        fair first picture, but it hides something. A WAN is usually built for
-        one organisation, such as Acme&rsquo;s rented line. The internet belongs
-        to no single organisation. It is better to say that the internet{' '}
-        <strong>joins many networks</strong>, including LANs and WANs, and that
-        WANs are some of the parts it is made from.
+        fair first picture, but it hides something. A WAN is often a private
+        network that joins one organisation&rsquo;s sites, such as Acme&rsquo;s
+        rented line. Providers also run shared WANs that many customers use. The
+        internet belongs to no single organisation. It is better to say that the
+        internet <strong>joins many networks</strong>, including LANs and WANs,
+        and that WANs are some of the parts it is made from.
       </p>
       <p>
         Your own home, in turn, is a LAN that is a small part of the internet.
