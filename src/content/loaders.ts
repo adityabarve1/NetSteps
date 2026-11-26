@@ -17,6 +17,8 @@ const lessonLoaders: LessonLoaders = {
   'l1-topologies': () => import('./lessons/level1/topologies'),
   // l1-client-server-p2p
   'l1-client-server-p2p': () => import('./lessons/level1/client-server-p2p'),
+  // l1-packet-vs-circuit
+  'l1-packet-vs-circuit': () => import('./lessons/level1/packet-vs-circuit'),
 };
 
 export function registeredLessonIds(): LessonId[] {

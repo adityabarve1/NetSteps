@@ -81,9 +81,9 @@ const level1: LevelMeta = {
       title: 'Packet vs circuit switching',
       summary:
         'Compare the old phone network, which reserved a line for each call, with the internet, which splits messages into small packets.',
-      minutes: 15,
-      built: false,
-      labIds: [],
+      minutes: 40,
+      built: true,
+      labIds: ['lab-l1-packets'],
     },
   ],
 };

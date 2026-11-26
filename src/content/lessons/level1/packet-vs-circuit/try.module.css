@@ -1,0 +1,130 @@
+/* The "How long does the message take?" try-it. Colours come from tokens.css only. */
+
+.tryIt p {
+  margin: 0 0 var(--space-3);
+}
+
+.title {
+  margin: 0 0 var(--space-2);
+  font-size: 1.125rem;
+}
+
+.controls {
+  display: grid;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.control {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.control label {
+  font-weight: 700;
+}
+
+.control select {
+  min-height: 44px;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+}
+
+.control input[type='range'] {
+  width: 100%;
+  min-height: 44px;
+  accent-color: var(--accent);
+}
+
+.control select:focus-visible,
+.control input[type='range']:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.value {
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+.fixed {
+  margin: 0 0 var(--space-4);
+  padding-inline-start: var(--space-5);
+  color: var(--text-muted);
+}
+
+.chart {
+  display: block;
+  width: 100%;
+  max-width: 40rem;
+  height: auto;
+  margin-bottom: var(--space-3);
+}
+
+.barLabel {
+  fill: var(--text);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* Three bars told apart by fill and outline as well as by their words. */
+.bar {
+  fill: var(--accent);
+  stroke: var(--text);
+  stroke-width: 1.5;
+}
+
+.barPacket {
+  fill: var(--surface-sunken);
+  stroke: var(--accent-2);
+  stroke-width: 3;
+  stroke-dasharray: 7 4;
+}
+
+.barMessage {
+  fill: var(--surface);
+  stroke: var(--text-muted);
+  stroke-width: 2;
+}
+
+.result {
+  margin-top: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--border-soft);
+  border-inline-start: 6px solid var(--accent);
+  border-radius: var(--radius-md);
+  background: var(--surface-sunken);
+}
+
+.result p {
+  margin: 0;
+}
+
+.result p + p {
+  margin-top: var(--space-2);
+}
+
+.verdict {
+  font-weight: 800;
+}
+
+.caveat {
+  margin-top: var(--space-3);
+  color: var(--text-muted);
+  font-size: 0.9375rem;
+}
+
+/* On a phone the chart shrinks to about 0.7, so its words grow. */
+@media (max-width: 36rem) {
+  .barLabel {
+    font-size: 21px;
+  }
+}
