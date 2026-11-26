@@ -61,7 +61,7 @@ const level1: LevelMeta = {
       title: 'Client-server vs peer-to-peer',
       summary:
         'Compare a network where one main computer serves everyone with one where computers share with each other, and see what happens as more people join.',
-      minutes: 30,
+      minutes: 40,
       built: true,
       labIds: ['lab-l1-server'],
     },

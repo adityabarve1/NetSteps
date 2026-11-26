@@ -60,8 +60,8 @@ export function ScalingAndFailure() {
       </p>
       <p>
         This also helps with scaling: more copies can answer more clients at
-        once. In peer-to-peer, no one peer is essential. If one leaves, others
-        who have the same pieces carry on.
+        once. In a real swarm of peers, no one peer is essential. If one leaves,
+        others who hold the same pieces carry on.
       </p>
       <p className={styles.note}>
         &ldquo;More than one&rdquo; moves the problem, it does not remove it.

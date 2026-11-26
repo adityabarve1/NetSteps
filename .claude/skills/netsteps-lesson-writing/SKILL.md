@@ -20,7 +20,7 @@ Audience: beginners and students with no networking background. Full theory with
 9. **Recap**: "In one line", 3 to 5 bullet takeaways, and a small cheat sheet the learner can keep.
 10. **Next lesson** link.
 
-Target 8 to 30 minutes per lesson (`minutes` in the curriculum).
+Target 8 to 60 minutes per lesson (most lessons 15 to 30; a full-depth lesson with a real-computer exercise may take up to about 40) (`minutes` in the curriculum).
 
 ## Language rules
 

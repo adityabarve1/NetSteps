@@ -81,8 +81,8 @@ export function RealLife() {
       </p>
       <p>
         A server mostly sends data out to clients, and sending data out is
-        called to <Term id="upload">upload</Term>. Receiving it is to{' '}
-        <Term id="download">download</Term>. The next section puts numbers on
+        called <Term id="upload">uploading</Term>. Receiving it is called{' '}
+        <Term id="download">downloading</Term>. The next section puts numbers on
         both.
       </p>
       <p>

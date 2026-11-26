@@ -10,7 +10,7 @@ describe('validateLesson: a good lesson', () => {
   it('accepts the smallest and largest allowed values', () => {
     const recap = fixtureLesson().recap;
     expect(problemsFor({}, { minutes: 8 })).toEqual([]);
-    expect(problemsFor({}, { minutes: 30 })).toEqual([]);
+    expect(problemsFor({}, { minutes: 60 })).toEqual([]);
     expect(
       problemsFor({
         recap: { ...recap, takeaways: ['a', 'b', 'c', 'd', 'e'] },
@@ -68,19 +68,24 @@ describe('validateLesson: glossary, simulation, recap and minutes', () => {
     ).toEqual([expect.stringMatching(/takeaway 2 is empty/)]);
   });
 
-  it('flags minutes outside 8 to 30, including values that are not numbers', () => {
+  it('flags minutes outside 8 to 60, including values that are not numbers', () => {
     for (const minutes of [
       7,
-      31,
+      61,
       0,
       -5,
       Number.NaN,
       Number.POSITIVE_INFINITY,
     ]) {
       expect(problemsFor({}, { minutes })).toEqual([
-        expect.stringMatching(/minutes must be between 8 and 30/),
+        expect.stringMatching(/minutes must be between 8 and 60/),
       ]);
     }
+  });
+
+  it('accepts minutes at the 8 and 60 boundaries', () => {
+    expect(problemsFor({}, { minutes: 8 })).toEqual([]);
+    expect(problemsFor({}, { minutes: 60 })).toEqual([]);
   });
 
   it('flags an empty hook', () => {

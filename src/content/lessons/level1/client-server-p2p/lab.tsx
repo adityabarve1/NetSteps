@@ -47,7 +47,7 @@ export function ServerLab({ onDone }: { onDone: () => void }) {
           Test it. Select PC1, press <strong>Open terminal</strong> and type{' '}
           {code('ping 192.168.1.100')}, then press Enter. Do the same from PC2
           and PC3. A ping checks that the server answers each computer, so a
-          reply means the cable path works.
+          reply shows that a working path exists between the two devices.
         </li>
       </ol>
       <p>
