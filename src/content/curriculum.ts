@@ -51,9 +51,9 @@ const level1: LevelMeta = {
       title: 'Topologies',
       summary:
         'See the common ways to arrange a network, then break a link or a device and watch which others can still talk.',
-      minutes: 12,
-      built: false,
-      labIds: [],
+      minutes: 25,
+      built: true,
+      labIds: ['lab-l1-star'],
     },
     {
       id: 'l1-client-server-p2p',
