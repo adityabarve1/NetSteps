@@ -80,7 +80,7 @@ describe('TerminalLab basics', () => {
       inside.getByText('Pinging 192.168.1.20 with 32 bytes of data:'),
     ).toBeVisible();
     expect(
-      inside.getAllByText('Reply from 192.168.1.20: bytes=32 time=2ms TTL=64'),
+      inside.getAllByText('Reply from 192.168.1.20: bytes=32 time=2ms TTL=128'),
     ).toHaveLength(4);
     expect(box()).toHaveValue('');
     expect(box()).toHaveFocus();

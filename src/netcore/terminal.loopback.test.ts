@@ -9,7 +9,7 @@ const unix = (host: string, input: string) =>
 
 const winOk = (ip: string) => [
   `Pinging ${ip} with 32 bytes of data:`,
-  ...lines4(`Reply from ${ip}: bytes=32 time<1ms TTL=64`),
+  ...lines4(`Reply from ${ip}: bytes=32 time<1ms TTL=128`),
   '',
   `Ping statistics for ${ip}:`,
   '    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),',

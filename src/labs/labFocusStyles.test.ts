@@ -27,4 +27,18 @@ describe('builder and terminal visual states', () => {
     );
     expect(screen?.[1]).toMatch(/border:\s*1px solid var\(--border-soft\)/);
   });
+
+  it('scrolls long terminal lines inside the box, never the page', () => {
+    const css = read('./TerminalLab.module.css');
+    const scrollback = /\.scrollback\s*\{([^}]*)\}/.exec(css)?.[1];
+    const box = /\.screen\s*\{([^}]*)\}/.exec(css)?.[1];
+    const outer = /\.terminal\s*\{([^}]*)\}/.exec(css)?.[1];
+
+    expect(scrollback).toMatch(/overflow:\s*auto/);
+    expect(scrollback).toMatch(/white-space:\s*pre;/);
+    expect(box).toMatch(/min-width:\s*0/);
+    expect(box).toMatch(/overflow:\s*hidden/);
+    expect(outer).toMatch(/min-width:\s*0/);
+    expect(outer).toMatch(/max-width:\s*100%/);
+  });
 });

@@ -310,9 +310,9 @@ describe('Landing page: full-viewport hero', () => {
   );
   const heroRule = /\.hero\s*\{([^}]*)\}/.exec(css)?.[1] ?? '';
 
-  it('fills the viewport with a 100vh fallback before 100svh', () => {
+  it('fills the viewport with 100vh, then 100svh, then 100dvh, each overriding the last where supported', () => {
     expect(heroRule).toMatch(
-      /min-height:\s*100vh;[\s\S]*min-height:\s*100svh;/,
+      /min-height:\s*100vh;[\s\S]*min-height:\s*100svh;[\s\S]*min-height:\s*100dvh;/,
     );
   });
 

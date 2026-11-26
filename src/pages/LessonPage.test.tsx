@@ -91,8 +91,10 @@ describe('LessonPage content', () => {
 
   it('marks the section in view as current in the table of contents', async () => {
     let callback: IntersectionObserverCallback = () => undefined;
+    const constructed = vi.fn();
     class FakeObserver {
       constructor(cb: IntersectionObserverCallback) {
+        constructed();
         callback = cb;
       }
       observe = vi.fn();
@@ -104,6 +106,10 @@ describe('LessonPage content', () => {
     try {
       renderLessonPage(at('level-1', A));
       await screen.findByRole('heading', { level: 1 });
+      // The observer is made in an effect, which can run just after the heading shows.
+      await waitFor(() => {
+        expect(constructed).toHaveBeenCalled();
+      });
       const target = document.getElementById('more');
       expect(target).not.toBeNull();
 
@@ -202,7 +208,10 @@ describe('LessonPage content', () => {
     const { unmount } = renderLessonPage(at('level-1', A));
     await screen.findByRole('heading', { level: 1 });
 
-    expect(document.title).toBe(`Lesson A - ${siteConfig.name}`);
+    // The title is set in an effect, which can run just after the heading shows.
+    await waitFor(() => {
+      expect(document.title).toBe(`Lesson A - ${siteConfig.name}`);
+    });
     unmount();
     expect(document.title).toBe('Before');
   });

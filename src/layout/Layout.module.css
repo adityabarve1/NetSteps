@@ -4,6 +4,7 @@
   flex-direction: column;
   min-height: 100vh;
   min-height: 100svh;
+  min-height: 100dvh;
   /* One soft wash across the whole shell, edge to edge, on every page. Its
      colours are the hero's, which every text colour is already checked on. */
   background:

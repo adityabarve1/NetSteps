@@ -17,6 +17,7 @@ const PACKETS = 4;
 const times = (make: (n: number) => string): string[] =>
   Array.from({ length: PACKETS }, (_, i) => make(i + 1));
 
+// Real Windows starts replies at TTL 128 (Linux and macOS at 64).
 function windowsLines(target: string, outcome: Outcome): string[] {
   const received = outcome.kind === 'ok' ? PACKETS : 0;
   const replies = ((): string[] => {
@@ -24,7 +25,7 @@ function windowsLines(target: string, outcome: Outcome): string[] {
       case 'ok': {
         const time =
           outcome.rttMs === 0 ? 'time<1ms' : `time=${String(outcome.rttMs)}ms`;
-        return times(() => `Reply from ${target}: bytes=32 ${time} TTL=64`);
+        return times(() => `Reply from ${target}: bytes=32 ${time} TTL=128`);
       }
       case 'no-config':
         return times(() => 'General failure.');

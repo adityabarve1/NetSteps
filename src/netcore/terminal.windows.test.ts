@@ -90,7 +90,7 @@ describe('windows ping: success', () => {
     expect(win('pc1', 'ping 192.168.1.20')).toEqual({
       lines: [
         'Pinging 192.168.1.20 with 32 bytes of data:',
-        ...lines4('Reply from 192.168.1.20: bytes=32 time=2ms TTL=64'),
+        ...lines4('Reply from 192.168.1.20: bytes=32 time=2ms TTL=128'),
         ...STATS('192.168.1.20', 4),
         'Approximate round trip times in milli-seconds:',
         '    Minimum = 2ms, Maximum = 2ms, Average = 2ms',
@@ -109,7 +109,7 @@ describe('windows ping: success', () => {
       expect(rtt).toBe(ms);
       const lines = win(host, `ping ${to}`).lines;
       expect(lines.filter((l) => l.startsWith('Reply from'))).toEqual(
-        lines4(`Reply from ${to}: bytes=32 time=${String(rtt)}ms TTL=64`),
+        lines4(`Reply from ${to}: bytes=32 time=${String(rtt)}ms TTL=128`),
       );
       expect(lines.at(-1)).toBe(
         `    Minimum = ${String(rtt)}ms, Maximum = ${String(rtt)}ms, Average = ${String(rtt)}ms`,
@@ -120,7 +120,7 @@ describe('windows ping: success', () => {
   it('answers a ping to its own address in under 1 ms', () => {
     expect(win('pc1', 'ping 192.168.1.10').lines).toEqual([
       'Pinging 192.168.1.10 with 32 bytes of data:',
-      ...lines4('Reply from 192.168.1.10: bytes=32 time<1ms TTL=64'),
+      ...lines4('Reply from 192.168.1.10: bytes=32 time<1ms TTL=128'),
       ...STATS('192.168.1.10', 4),
       'Approximate round trip times in milli-seconds:',
       '    Minimum = 0ms, Maximum = 0ms, Average = 0ms',

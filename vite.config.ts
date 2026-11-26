@@ -10,6 +10,9 @@ export default defineConfig({
   },
   test: {
     environment: 'jsdom',
+    // Longer than the 8s findBy/waitFor limit in src/test/setup.ts, so a slow
+    // lazy route reports its own error instead of a bare timeout.
+    testTimeout: 20000,
     setupFiles: ['./src/test/setup.ts'],
     include: ['src/**/*.test.{ts,tsx}', 'scripts/**/*.test.ts'],
     css: {

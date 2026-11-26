@@ -109,12 +109,14 @@ describe('Layout shell structure', () => {
 describe('Layout CSS: fills the viewport', () => {
   const layout = css('src/layout/Layout.module.css');
 
-  it('is a flex column at least one viewport tall, with a 100vh fallback first', () => {
+  it('is a flex column at least one viewport tall, with a 100vh, then 100svh, then 100dvh (later wins where supported)', () => {
     const shell = ruleOf(layout, '.shell');
 
     expect(shell).toMatch(/display:\s*flex/);
     expect(shell).toMatch(/flex-direction:\s*column/);
-    expect(shell).toMatch(/min-height:\s*100vh;[\s\S]*min-height:\s*100svh;/);
+    expect(shell).toMatch(
+      /min-height:\s*100vh;[\s\S]*min-height:\s*100svh;[\s\S]*min-height:\s*100dvh;/,
+    );
     expect(shell).not.toMatch(/(?<!min-)height:/);
   });
 
@@ -239,6 +241,18 @@ describe('page CSS uses the width', () => {
     expect(ruleOf(source, '.content')).toMatch(/--measure:\s*42rem/);
     expect(ruleOf(source, '.quizWrap')).toMatch(/max-width:\s*56rem/);
     expect(ruleOf(source, '.content [data-wide]')).toMatch(/max-width:\s*none/);
+  });
+
+  it('gives text and wide blocks one shared left edge (nothing is centred)', () => {
+    const source = css('src/pages/LessonPage.module.css');
+    const capped = /\.content section > :is\(p, ul, ol[^{]*\{([^}]*)\}/.exec(
+      source,
+    )?.[1];
+
+    expect(capped).toMatch(/margin-inline:\s*0/);
+    expect(capped).not.toMatch(/margin-inline:\s*auto/);
+    expect(ruleOf(source, '.quizWrap')).toMatch(/margin-inline:\s*0/);
+    expect(ruleOf(source, '.quizWrap')).not.toMatch(/margin-inline:\s*auto/);
   });
 
   it('centres the auth card on a full-height stage', () => {

@@ -110,22 +110,36 @@ export function canConnect(net: Network, a: string, b: string): ConnectCheck {
   return { ok: true };
 }
 
-// A 4 x 3 grid of starting spots, filled row by row.
-const SLOT_XS = [60, 180, 300, 420];
-const SLOT_YS = [50, 150, 250];
+// Starting spots on a 4 x 3 grid (a device box is about 100px wide and tall, so
+// the grid cannot be tighter), taken in an order chosen so that the first six
+// devices are never in a straight line: a cable between any two of them never
+// runs behind a third. Filling the grid row by row put PC1, PC2 and PC3 side by
+// side, with the PC1 to PC3 cable hidden behind PC2.
+const SLOTS: readonly { x: number; y: number }[] = [
+  { x: 60, y: 50 },
+  { x: 180, y: 50 },
+  { x: 60, y: 150 },
+  { x: 300, y: 150 },
+  { x: 180, y: 250 },
+  { x: 300, y: 250 },
+  { x: 300, y: 50 },
+  { x: 60, y: 250 },
+  { x: 180, y: 150 },
+  { x: 420, y: 150 },
+  { x: 420, y: 50 },
+  { x: 420, y: 250 },
+];
 const SLOT_CLEARANCE = 40;
 
-/** The first grid spot with no device close by, so new devices never pile up. */
+/** The first starting spot with no device close by, so new devices never pile up. */
 export function nextFreePosition(net: Network): { x: number; y: number } {
-  for (const y of SLOT_YS) {
-    for (const x of SLOT_XS) {
-      const taken = net.devices.some(
-        (d) => Math.hypot(d.x - x, d.y - y) < SLOT_CLEARANCE,
-      );
-      if (!taken) return { x, y };
-    }
+  for (const { x, y } of SLOTS) {
+    const taken = net.devices.some(
+      (d) => Math.hypot(d.x - x, d.y - y) < SLOT_CLEARANCE,
+    );
+    if (!taken) return { x, y };
   }
-  return { x: SLOT_XS[0] ?? CANVAS.minX, y: SLOT_YS[0] ?? CANVAS.minY };
+  return SLOTS[0] ?? { x: CANVAS.minX, y: CANVAS.minY };
 }
 
 function uniqueNumber(net: Network, kind: DeviceKind): number {

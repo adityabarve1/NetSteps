@@ -1,4 +1,4 @@
-import { useId, useMemo } from 'react';
+import { useEffect, useId, useMemo, useRef } from 'react';
 import { GoDeeper } from '@/content/components/GoDeeper';
 import { LessonSection } from '@/content/components/LessonSection';
 import { TableOfContents } from '@/content/components/TableOfContents';
@@ -31,6 +31,27 @@ function laterParts(lesson: Lesson): Part[] {
   ];
 }
 
+// The lesson loads after the route change, so the route change's focus could
+// only land on <main> (or nowhere, after a retry removed the focused status).
+// When the lesson shows, move focus to its h1 so a keyboard or screen reader
+// user starts at the top. Only when focus is still on the page itself: if the
+// learner already moved it to something, leave it there. That also makes
+// StrictMode's second effect a no-op, since the h1 already has focus.
+function useFocusHeading() {
+  const heading = useRef<HTMLHeadingElement>(null);
+  useEffect(() => {
+    const active = document.activeElement;
+    if (
+      active === null ||
+      active === document.body ||
+      active.tagName === 'MAIN'
+    ) {
+      heading.current?.focus({ preventScroll: true });
+    }
+  }, []);
+  return heading;
+}
+
 // One loaded lesson, in the order of spec section 7. The lesson owns where its
 // simulation goes (inside a section body, using useLessonRun); this page only
 // tracks progress. The parent keys this component by lesson id, so everything
@@ -45,6 +66,7 @@ export function LessonView({
   const tracking = useLessonTracking(lesson);
   useDocumentTitle(meta.title);
   const analogyId = useId();
+  const headingRef = useFocusHeading();
 
   const parts = useMemo(
     () => [
@@ -59,7 +81,9 @@ export function LessonView({
   return (
     <LessonRunContext value={tracking.run}>
       <article className={styles.page}>
-        <h1 className={styles.title}>{meta.title}</h1>
+        <h1 ref={headingRef} className={styles.title} tabIndex={-1}>
+          {meta.title}
+        </h1>
         <p className={styles.hook}>{lesson.hook}</p>
 
         <section className={styles.analogy} aria-labelledby={analogyId}>

@@ -65,7 +65,7 @@ describe('lesson route guard (real curriculum)', () => {
       await screen.findByRole(
         'heading',
         { level: 1, name: 'What is a network' },
-        { timeout: 5000 },
+        { timeout: 15000 },
       ),
     ).toBeVisible();
     await waitFor(() => {

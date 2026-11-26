@@ -59,7 +59,8 @@
 }
 
 /* The content column is as wide as the screen allows. Running text keeps a
-   readable line length (about 70 characters) and sits in the middle of it; blocks
+   readable line length (about 70 characters) and starts at the column's left edge,
+   the same edge the wide blocks start at; blocks
    that are not running text (simulations, labs, practice, the quiz, cards) use
    the whole column, so a wide monitor shows more of them, not longer lines.
 
@@ -82,14 +83,14 @@
 .content section > div:has(> h3 > button[aria-expanded]),
 .content [data-prose] {
   max-width: var(--measure);
-  margin-inline: auto;
+  margin-inline: 0;
 }
 
 /* The quiz is a stack of questions: wide enough for its answers, not stretched
    across a huge screen. */
 .quizWrap {
   max-width: 56rem;
-  margin-inline: auto;
+  margin-inline: 0;
 }
 
 .content [data-wide] {

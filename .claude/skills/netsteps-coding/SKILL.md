@@ -73,7 +73,7 @@ Copy `src/content/lessons/level1/what-is-a-network/` and rename. Files and roles
 | `logic.ts` + `logic.test.ts` (+ `logic.<part>.test.ts` when a test file nears 300 lines) | Pure step builder for the sim and the try-it decision. Never throw: odd input returns one friendly step or verdict. |
 | `labChecks.ts` + `labChecks.test.ts` | Pure `LabTask[]` for the builder. Every goal names the lab's own devices (PC1, PC2 by name, as the instructions do) and tests the combined intent ("PC1 and PC2 are joined through a switch", not "some switch has two PCs"). Ping goals use `canPing` both ways, never `ping`. |
 | `s<N>-<name>.tsx` | One section each. Export ONLY components (body + one per Go-deeper block); react-refresh warns on a file that mixes components and objects. |
-| `sim.tsx` (+ `sim.module.css`, `sim.test.tsx`) | `JOURNEY_SIM_ID` string const, the diagram component, the `SimPlayer` wrapper. Steps computed once at module level from a fixed `Network`. |
+| `sim.tsx` (+ `sim.module.css`, `sim.test.tsx`) | `JOURNEY_SIM_ID` string const, the diagram component, the `SimPlayer` wrapper. Steps computed once at module level from a fixed `Network`. Below 30rem draw a compact, vertical version with `useCompactLayout()` from `@/sim/useCompactLayout`. |
 | `try.tsx`, `lab.tsx`, `real.tsx`, `quiz.ts`, `wrapUp.tsx` (why it matters + cheat sheet), `diagrams.tsx`, `lesson.module.css` | One part each. |
 | `quiz.test.ts` | Pins each question's right option TEXT, spread-out positions, 3-4 distinct options, a phrase per wrong option in the explanation, and sentence length. |
 | `index.tsx` | Assembles the `Lesson` object only; default export. |

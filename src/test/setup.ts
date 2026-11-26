@@ -1,9 +1,14 @@
 import '@testing-library/jest-dom/vitest';
-import { cleanup } from '@testing-library/react';
+import { cleanup, configure } from '@testing-library/react';
 import { afterEach, expect, vi } from 'vitest';
 import * as axeMatchers from 'vitest-axe/matchers';
 
 expect.extend(axeMatchers);
+
+// findBy and waitFor give up after 1s by default. A lesson route loads its code
+// lazily, and on a busy machine (a parallel test run, OneDrive) that can take
+// longer, which showed up as flaky tests. A passing test never waits this long.
+configure({ asyncUtilTimeout: 8000 });
 
 // A developer's .env.local holds a real Supabase project. No test may reach it,
 // so the client always sees "not configured" unless a test injects a fake.
