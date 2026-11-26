@@ -71,9 +71,9 @@ const level1: LevelMeta = {
       title: 'Bandwidth vs latency',
       summary:
         'Use sliders to see the difference between how much data a link can carry each second and how long a message takes to arrive.',
-      minutes: 14,
-      built: false,
-      labIds: [],
+      minutes: 40,
+      built: true,
+      labIds: ['lab-l1-transfer'],
     },
     {
       id: 'l1-packet-vs-circuit',
