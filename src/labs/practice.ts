@@ -129,6 +129,42 @@ export function generateTransferTime(rng: Rng): Problem {
   };
 }
 
+const MESSAGE_SIZES_KB = [3, 4, 5, 6, 7, 8, 9, 12, 15, 20, 25, 30, 45] as const;
+const PAYLOADS_BYTES = [500, 800, 1000, 1200, 1400, 1500] as const;
+
+// Every size/payload pair that needs 2 to 100 packets. Built once, so no
+// problem needs a retry. 1 KB is 1000 bytes in this course.
+const PACKET_PAIRS: readonly { sizeKB: number; payload: number }[] =
+  MESSAGE_SIZES_KB.flatMap((sizeKB) =>
+    PAYLOADS_BYTES.map((payload) => ({ sizeKB, payload })),
+  ).filter(({ sizeKB, payload }) => {
+    const packets = Math.ceil((sizeKB * 1000) / payload);
+    return packets >= 2 && packets <= 100;
+  });
+
+/** "How many packets does this message need?" Rounds up: the last one is short. */
+export function generatePacketProblem(rng: Rng): Problem {
+  const { sizeKB, payload } = pick(PACKET_PAIRS, rng);
+  const bytes = sizeKB * 1000;
+  const answer = Math.ceil(bytes / payload);
+  const full = Math.floor(bytes / payload);
+  const size = String(sizeKB);
+  const max = String(payload);
+  const rest =
+    bytes % payload === 0
+      ? `That divides exactly, so ${String(answer)} full packets carry it.`
+      : `${String(full)} full packets carry ${String(full * payload)} bytes and ${String(bytes - full * payload)} bytes are left over, which need one more, shorter packet. That makes ${String(answer)}.`;
+  return {
+    id: `packets-${size}kb-${max}b`,
+    prompt: `A ${size} KB message is sent with at most ${max} bytes per packet: how many packets?`,
+    answer,
+    tolerance: 0,
+    unit: 'packets',
+    explanation: `1 KB is 1000 bytes, so ${size} KB is ${String(bytes)} bytes. Divide by ${max} bytes per packet and round up, because a part packet still needs a packet. ${rest}`,
+    params: { sizeKB, payload },
+  };
+}
+
 const PLACE_VALUES = [128, 64, 32, 16, 8, 4, 2, 1] as const;
 
 function joinWithAnd(items: readonly number[]): string {

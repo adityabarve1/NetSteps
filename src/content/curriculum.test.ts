@@ -105,6 +105,18 @@ describe('built lessons', () => {
     }
   });
 
+  it('are exactly the six Level 1 lessons', () => {
+    const built = allLessons.filter((lesson) => lesson.built).map((l) => l.id);
+    expect(built).toEqual([
+      'l1-what-is-a-network',
+      'l1-lan-wan-man',
+      'l1-topologies',
+      'l1-client-server-p2p',
+      'l1-bandwidth-latency',
+      'l1-packet-vs-circuit',
+    ]);
+  });
+
   it('are exactly the lessons that have a registered loader', () => {
     const built = allLessons.filter((lesson) => lesson.built).map((l) => l.id);
     expect(new Set(built)).toEqual(new Set(registeredLessonIds()));

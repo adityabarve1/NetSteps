@@ -19,6 +19,8 @@ const lessonLoaders: LessonLoaders = {
   'l1-client-server-p2p': () => import('./lessons/level1/client-server-p2p'),
   // l1-bandwidth-latency
   'l1-bandwidth-latency': () => import('./lessons/level1/bandwidth-latency'),
+  // l1-packet-vs-circuit
+  'l1-packet-vs-circuit': () => import('./lessons/level1/packet-vs-circuit'),
 };
 
 export function registeredLessonIds(): LessonId[] {
