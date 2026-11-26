@@ -49,7 +49,11 @@ export function ClientServerIdea() {
       <ClientServerDiagram />
       <p>Notice three things about this arrangement:</p>
       <ul>
-        <li>The client starts every conversation. The server only answers.</li>
+        <li>
+          In this basic model, the client starts every conversation and the
+          server only answers. (Some services, such as chat, also let a server
+          send you something unasked.)
+        </li>
         <li>
           The server stays on and usually keeps the same address, so clients
           always know where to ask. Clients come and go.
@@ -104,9 +108,10 @@ export function OneComputerManyServersDeeper() {
       </p>
       <p>
         It uses a number called a port, written after the address. Web servers
-        usually wait on port 80 (plain web) or 443 (the encrypted version).
-        Level 5 explains ports in full. For now, remember that one address can
-        lead to several servers.
+        usually wait on port 80 (plain web) or 443 (the secure version, which
+        scrambles the data so that others cannot read it). Level 5 explains
+        ports in full. For now, remember that one address can lead to several
+        servers.
       </p>
     </>
   );

@@ -80,6 +80,12 @@ export function RealLife() {
         What makes one a server is the program it runs.
       </p>
       <p>
+        A server mostly sends data out to clients, and sending data out is
+        called to <Term id="upload">upload</Term>. Receiving it is to{' '}
+        <Term id="download">download</Term>. The next section puts numbers on
+        both.
+      </p>
+      <p>
         Smaller services use smaller setups. A school might run its file server
         on one computer in a cupboard. A hobbyist might rent a small slice of
         someone else&rsquo;s server. The idea is the same at every size.

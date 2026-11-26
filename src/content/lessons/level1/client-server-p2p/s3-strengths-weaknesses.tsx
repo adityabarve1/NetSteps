@@ -7,7 +7,7 @@ import {
   formatSeconds,
 } from './logic';
 
-const COUNTS = [1, 5, 10, 20, 50];
+const COUNTS = [1, 2, 3, 5, 10, 20, 50];
 
 const LIMIT_TEXT = {
   'server upload': 'Server upload',
@@ -91,8 +91,9 @@ export function StrengthsAndWeaknesses() {
       <ul>
         <li>
           <strong>It can run out of room.</strong> Every client takes a share of
-          the server&rsquo;s capacity. When too many ask at once, everyone
-          waits. The numbers are below.
+          the server&rsquo;s capacity, which is how much data it can send out
+          each second. When too many ask at once, everyone waits. The numbers
+          are below.
         </li>
         <li>
           <strong>It has a single point of failure</strong> when only one server
@@ -133,11 +134,12 @@ export function StrengthsAndWeaknesses() {
       <WorkedTable />
       <p>
         With one client, the client&rsquo;s own download speed is the limit: 16
-        seconds. From two clients on, the server is busier than any client, and
-        every extra client adds 8 seconds. Double the clients, double the wait:
-        5 clients take 40 seconds and 10 take 80. The slowest part, here the
-        server&rsquo;s upload, is the <Term id="bottleneck">bottleneck</Term>,
-        and adding clients cannot help it.
+        seconds. With two clients the two times tie at 16 seconds. From three
+        clients on, the server is the busier one, and every extra client adds 8
+        seconds. Double the clients, double the wait: 5 clients take 40 seconds
+        and 10 take 80. The slowest part, here the server&rsquo;s upload, is the{' '}
+        <Term id="bottleneck">bottleneck</Term>, and adding clients cannot help
+        it.
       </p>
       <p className={styles.keyline}>
         Client-server time grows in step with the number of clients, once the

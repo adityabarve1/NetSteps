@@ -67,7 +67,8 @@ export function RealComputer() {
         <li>
           <strong>Size</strong>: how much data came back. When the browser
           reused a copy it saved earlier, this column may say something like
-          &ldquo;cache&rdquo; instead of a number.
+          &ldquo;cache&rdquo; instead of a number, which means a saved copy was
+          used.
         </li>
         <li>
           <strong>Time</strong>: how long the request took, in milliseconds (ms,

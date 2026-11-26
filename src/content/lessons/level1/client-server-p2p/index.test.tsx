@@ -171,6 +171,40 @@ describe('lesson: Client-server vs peer-to-peer', () => {
     expect(part.textContent).not.toMatch(/localhost|ping|ipconfig|console/i);
   });
 
+  it('the worked table matches the formulas, including the tie at two clients', async () => {
+    await open();
+    const table = screen.getByRole('table', {
+      name: /One 800-megabit file, a server that uploads/,
+    });
+    const rows = within(table).getAllByRole('row').slice(1);
+    const cells = rows.map((r) =>
+      within(r)
+        .getAllByRole('cell')
+        .map((c) => c.textContent),
+    );
+    expect(
+      rows.map((r) => within(r).getByRole('rowheader').textContent),
+    ).toEqual(['1', '2', '3', '5', '10', '20', '50']);
+    expect(cells.map((c) => c[1])).toEqual([
+      '16 seconds',
+      '16 seconds',
+      '24 seconds',
+      '40 seconds',
+      '80 seconds',
+      '160 seconds',
+      '400 seconds',
+    ]);
+    expect(screen.getByText(/two times tie at 16 seconds/)).toBeInTheDocument();
+  });
+
+  it('says the peer-to-peer model starts from an original source', async () => {
+    await open();
+    expect(document.body.textContent).toMatch(
+      /the original source, which uploads at 100 Mbps/,
+    );
+    expect(document.body.textContent).not.toMatch(/no single main computer/);
+  });
+
   it('has no axe violations', async () => {
     const { container } = await open();
     expect(await axe(container)).toHaveNoViolations();

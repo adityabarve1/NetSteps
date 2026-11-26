@@ -33,13 +33,13 @@ export const quiz: QuizQuestion[] = [
       'At a school, the only file server loses power. The computers and the switch work, but nobody can open their files. What does this show?',
     options: [
       'The server is a single point of failure: when it stops, the service stops for everyone',
-      'All of the students’ computers broke at the same moment',
+      'The students’ computers need new addresses before they can reach the server',
       'The switch must be broken, because switches store the files',
       'The school has too many clients, so it needs a faster switch',
     ],
     correctIndex: 0,
     explanation:
-      'With one server, its failure stops the service for every client. That is a single point of failure. The students’ computers still work, so they have not all broken. The switch works too, and a switch only passes data along; it does not store files. Too many clients would slow a server down, not stop it at once, and a faster switch cannot bring back a server with no power.',
+      'With one server, its failure stops the service for every client. That is a single point of failure. The computers worked until the server lost power and nothing changed for their addresses, so addresses are not the problem. The switch works too, and a switch only passes data along; it does not store files. Too many clients would slow a server down, not stop it at once, and a faster switch cannot bring back a server with no power.',
   },
   {
     id: 'q4',

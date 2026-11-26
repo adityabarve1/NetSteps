@@ -22,7 +22,7 @@ const KEY: { right: string; wrong: Record<number, string> }[] = [
     right:
       'The server is a single point of failure: when it stops, the service stops for everyone',
     wrong: {
-      1: 'still work',
+      1: 'addresses are not the problem',
       2: 'only passes data along',
       3: 'Too many clients',
     },

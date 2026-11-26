@@ -65,9 +65,9 @@ export function ScalingAndFailure() {
       </p>
       <p className={styles.note}>
         &ldquo;More than one&rdquo; moves the problem, it does not remove it.
-        The load balancer can fail too, so serious services make that redundant
-        as well. Engineers keep asking one question: what happens if this part
-        stops?
+        The load balancer can fail too, so serious services keep a spare for
+        that as well. Engineers keep asking one question: what happens if this
+        part stops?
       </p>
 
       <h3>Common mistakes and myths</h3>

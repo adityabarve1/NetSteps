@@ -181,9 +181,9 @@ export const level1: Glossary = {
       'A design that mixes client-server and peer-to-peer ideas, for example servers that keep accounts and introduce users, while the users’ devices share the data.',
   },
   cdn: {
-    term: 'content delivery network (CDN)',
+    term: 'CDN',
     definition:
-      'Many servers in different places that keep copies of popular files, so each user is answered by a server nearby.',
+      'Short for content delivery network: many servers in different places that keep copies of popular files, so each user is answered by a server nearby.',
   },
   'single-point-of-failure': {
     term: 'single point of failure',

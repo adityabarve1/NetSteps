@@ -63,25 +63,25 @@ export function WaitTimes() {
         <li>In peer-to-peer, each peer also uploads at {N.peerUpMbps} Mbps</li>
       </ul>
 
-      <svg className={styles.chart} viewBox="0 0 400 112" aria-hidden="true">
-        <text className={styles.barLabel} x={BAR_X} y={16}>
+      <svg className={styles.chart} viewBox="0 0 400 124" aria-hidden="true">
+        <text className={styles.barLabel} x={BAR_X} y={18}>
           {`Client-server: ${formatSeconds(r.clientServer)} seconds`}
         </text>
         <rect
           className={styles.bar}
           x={BAR_X}
-          y={22}
+          y={28}
           width={barWidth(r.clientServer)}
           height={18}
           rx={4}
         />
-        <text className={styles.barLabel} x={BAR_X} y={68}>
+        <text className={styles.barLabel} x={BAR_X} y={76}>
           {`Peer-to-peer: ${formatSeconds(r.peerToPeer)} seconds`}
         </text>
         <rect
           className={cx(styles.bar, styles.barPeer)}
           x={BAR_X}
-          y={74}
+          y={86}
           width={barWidth(r.peerToPeer)}
           height={18}
           rx={4}

@@ -96,6 +96,6 @@
 /* On a phone the chart shrinks to about 0.7, so its words grow. */
 @media (max-width: 36rem) {
   .barLabel {
-    font-size: 21px;
+    font-size: 25px;
   }
 }

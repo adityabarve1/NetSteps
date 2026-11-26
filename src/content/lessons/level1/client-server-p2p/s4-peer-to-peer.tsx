@@ -21,8 +21,14 @@ export function PeerToPeer() {
       <p>
         In a P2P network each computer is a <Term id="peer">peer</Term>. A peer
         asks other peers for data, and it also answers when others ask it. It
-        plays both roles at once. There is no single main computer that
-        everything depends on.
+        plays both roles at once. In a real swarm of peers, no one peer is
+        essential: if one leaves, the others carry on.
+      </p>
+      <p>
+        Our model still needs a starting point. It begins with one computer that
+        holds the whole file: the original source, which uploads at 100 Mbps,
+        like the server before. The peers then help each other on top of that,
+        so the original source is no longer the only sender.
       </p>
       <PeerToPeerDiagram />
       <p>
@@ -35,13 +41,13 @@ export function PeerToPeer() {
         In client-server, each new client only adds demand, because the server
         has to upload to every one of them. In P2P, each new peer adds demand
         and also adds supply, because it can pass on what it has already
-        received.
+        received. The original source keeps uploading too.
       </p>
       <p>
         Our numbers show it. Every peer uploads at 10 Mbps. With 10 peers, the
-        server and the peers can together upload 100 + 10 × 10 = 200 Mbps. The
-        10 copies of the 800-megabit file add up to 8000 megabits, so the time
-        is 8000 ÷ 200 = 40 seconds. Client-server needed 80.
+        original source and the peers can together upload 100 + 10 × 10 = 200
+        Mbps. The 10 copies of the 800-megabit file add up to 8000 megabits, so
+        the time is 8000 ÷ 200 = 40 seconds. Client-server needed 80.
       </p>
 
       <h3>Watch the same file go out both ways</h3>
@@ -92,8 +98,9 @@ export function PeerToPeer() {
         </li>
       </ul>
       <p className={styles.note}>
-        P2P is a technique, like a cable is a tool. What people share with it
-        can be legal or not; the technique itself is neither.
+        P2P is a technique, like a hammer: whether it is used legally depends on
+        what people do with it. What they share can be allowed or not; the
+        technique itself is neither.
       </p>
     </>
   );

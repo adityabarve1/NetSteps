@@ -85,7 +85,7 @@ export function PeerToPeerDiagram() {
       <svg
         viewBox="0 0 360 200"
         role="img"
-        aria-label="Diagram: five peers in a ring. Each peer has a dashed line to every other peer. There is no server."
+        aria-label="Diagram: five peers in a ring. Each peer has a dashed line to every other peer. No peer is in charge."
       >
         {pairs.map(([a, b]) =>
           a === undefined || b === undefined ? null : (
