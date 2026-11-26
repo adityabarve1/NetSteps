@@ -91,7 +91,9 @@ export function DevicesAndLinks() {
 export function WiredWirelessDeeper() {
   return (
     <>
-      <p>Neither kind of link is simply better. Each one trades something.</p>
+      <p>
+        Neither kind of link is better in every way. Each one trades something.
+      </p>
       <ul>
         <li>
           <strong>Wired</strong> links are usually faster and steadier. Other

@@ -79,7 +79,7 @@ Use one per lesson. Always add the limit of the analogy.
 Read `src/content/lessons/level1/what-is-a-network/` before writing; match its tone and shape.
 
 - **Hook**: two sentences, a real moment, ending on a question. **Analogy**: one paragraph mapping every part (houses = devices, roads = links, junctions = switches/routers, street address = IP address), then a second paragraph "Where the comparison stops working: ...".
-- **Sections**: 6 sections, each 300 to 600 words of core text, split by `h3` subheadings into 2 to 4 short chunks. Each section has one concrete thing to look at: a table worked example, a sim, a diagram or a numbered scenario ("one evening, one home network"). Define a term with `<Term>` the first time, at most 2 or 3 new terms per paragraph.
+- **Sections**: as long as the idea needs; `what-is-a-network` has 6 sections of roughly 300 to 600 words of core text each, split by `h3` subheadings into 2 to 4 short chunks. Each section has one concrete thing to look at: a table worked example, a sim, a diagram or a numbered scenario ("one evening, one home network"). Define a term with `<Term>` the first time, at most 2 or 3 new terms per paragraph.
 - **Go deeper**: 1 or 2 per section, 2 to 4 short paragraphs or a list, titled as a specific claim or question ("How a switch learns which way to send"). Use them for engineer vocabulary, history, numbers and edge cases, and say which later Level covers it in full.
 - **Simplifications**: state them, label them "for now", and point to the later lesson by topic ("the lesson on packet and circuit switching"), never by a link to an unbuilt page.
 - **Sim captions**: one full sentence or two per step, present tense, naming devices by their on-screen names, saying what moves and why ("SW1 is a switch: it passes the message on toward PC2."). Failure captions say what is missing and what would fix it. Put the sim inside the section it explains, followed by "Notice three things:" bullets.
@@ -89,3 +89,10 @@ Read `src/content/lessons/level1/what-is-a-network/` before writing; match its t
 - **Myths**: 5 to 7 real misconceptions as Myth/Fact cards; add a troubleshooting checklist Go deeper that reuses the lesson's failure reasons.
 - **Cheat sheet**: a 3-column table (Term, What it is, Example), 8 to 10 rows.
 - British spelling (fibre, neighbour, organisation), as in the rest of the code base.
+- **Names**: when the lab uses names (PC1, PC2), the instructions, the goal descriptions and the checks all use the same names.
+- **Checklist additions** (from the review of this lesson):
+  - [ ] Re-count every "two of them" / "all three" style claim in quiz explanations against the actual options.
+  - [ ] Check every "you will also see" claim against the exact command shown (`ifconfig en0` prints only en0).
+  - [ ] Define every word the lab uses (gateway, subnet mask, ...) before the lab, or explain it where the lab uses it.
+  - [ ] Keep recap and myth wording consistent with the sections (not every network uses IP: phone plus Bluetooth earbuds is a network).
+  - [ ] Search the folder for the banned words (simply, just, obviously, easy, of course, clearly, basically).

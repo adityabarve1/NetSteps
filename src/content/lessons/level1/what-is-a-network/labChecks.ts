@@ -1,10 +1,17 @@
 // Goals of the lab "Build your first network". Pure TypeScript: no React.
-// Ping-based goals use the shared `canPing`, which demands a real path between
-// two different devices, never `ping` alone.
+//
+// All three goals are about the SAME two computers, PC1 and PC2, found by name
+// (ignoring case, like `canPing`), so the lab instructions and the checks
+// agree and a distraction elsewhere on the canvas cannot tick a goal. The
+// ping goal uses the shared `canPing` (a real path between two different
+// devices), never a raw `ping`.
 
 import { canPing, type LabTask } from '@/labs/labTasks';
 import { parseIPv4, parseMask, sameSubnet } from '@/netcore/ipv4';
 import type { Device, Network } from '@/netcore/network';
+
+const FROM = 'PC1';
+const TO = 'PC2';
 
 function devicesOf(net: Network): Device[] {
   const devices: unknown = (net as Network | undefined)?.devices;
@@ -16,63 +23,75 @@ function linksOf(net: Network): Network['links'] {
   return Array.isArray(links) ? (links as Network['links']) : [];
 }
 
-/** True when some switch has at least two different computers cabled to it. */
-export function pcsShareASwitch(net: Network): boolean {
-  const devices = devicesOf(net);
-  const pcIds = new Set(
-    devices.filter((d) => d.kind === 'pc').map((d) => d.id),
+function named(net: Network, name: string): Device | undefined {
+  const wanted = name.toLowerCase();
+  return devicesOf(net).find(
+    (d) => typeof d.name === 'string' && d.name.toLowerCase() === wanted,
   );
-  const links = linksOf(net);
-  return devices
-    .filter((d) => d.kind === 'switch')
-    .some((s) => {
-      const pcs = new Set<string>();
-      for (const l of links) {
-        const other = l.a === s.id ? l.b : l.b === s.id ? l.a : undefined;
-        if (other !== undefined && pcIds.has(other)) pcs.add(other);
-      }
-      return pcs.size >= 2;
-    });
 }
 
 /**
- * True when two computers have valid, DIFFERENT addresses and valid masks, and
+ * Goal 1: PC1 and PC2 are joined through at least one switch. Every device
+ * between them must be a switch, so a chain of switches counts, but a direct
+ * cable or another computer in the middle does not.
+ */
+export function pcsLinkedThroughSwitch(net: Network): boolean {
+  const from = named(net, FROM);
+  const to = named(net, TO);
+  if (from === undefined || to === undefined || from.id === to.id) return false;
+  const kind = new Map(devicesOf(net).map((d) => [d.id, d.kind]));
+  const neighbours = (id: string): string[] =>
+    linksOf(net).flatMap((l) => (l.a === id ? [l.b] : l.b === id ? [l.a] : []));
+
+  // Breadth-first search over switches only, starting at PC1's switches.
+  const seen = new Set<string>();
+  const queue = neighbours(from.id).filter((id) => kind.get(id) === 'switch');
+  for (const id of queue) {
+    if (seen.has(id)) continue;
+    seen.add(id);
+    for (const next of neighbours(id)) {
+      if (next === to.id) return true;
+      if (kind.get(next) === 'switch' && !seen.has(next)) queue.push(next);
+    }
+  }
+  return false;
+}
+
+/**
+ * Goal 2: PC1 and PC2 have valid, DIFFERENT addresses and valid masks, and
  * each computer's own mask puts both addresses in the same subnet.
  */
 export function pcsShareASubnet(net: Network): boolean {
-  const configs = devicesOf(net)
-    .filter((d) => d.kind === 'pc')
-    .map((d) => ({ ip: parseIPv4(d.ip ?? ''), mask: parseMask(d.mask ?? '') }))
-    .filter(
-      (c): c is { ip: number; mask: number } =>
-        c.ip !== null && c.mask !== null,
-    );
-  return configs.some((a, i) =>
-    configs
-      .slice(i + 1)
-      .some(
-        (b) =>
-          a.ip !== b.ip &&
-          sameSubnet(a.ip, b.ip, a.mask) &&
-          sameSubnet(a.ip, b.ip, b.mask),
-      ),
+  const config = (d: Device | undefined) => ({
+    ip: parseIPv4(d?.ip ?? ''),
+    mask: parseMask(d?.mask ?? ''),
+  });
+  const a = config(named(net, FROM));
+  const b = config(named(net, TO));
+  if (a.ip === null || a.mask === null || b.ip === null || b.mask === null) {
+    return false;
+  }
+  return (
+    a.ip !== b.ip &&
+    sameSubnet(a.ip, b.ip, a.mask) &&
+    sameSubnet(a.ip, b.ip, b.mask)
   );
 }
 
 export const firstNetworkTasks: LabTask[] = [
   {
-    id: 'two-pcs-on-a-switch',
-    description: 'Two computers are connected through a switch',
-    check: pcsShareASwitch,
+    id: 'pcs-through-a-switch',
+    description: 'PC1 and PC2 are connected through a switch',
+    check: pcsLinkedThroughSwitch,
   },
   {
     id: 'same-subnet',
-    description: 'Both computers have their own addresses in the same subnet',
+    description: 'PC1 and PC2 have their own addresses in the same subnet',
     check: pcsShareASubnet,
   },
   {
-    id: 'pc1-pings-pc2',
-    description: 'PC1 can ping PC2',
-    check: (net) => canPing(net, 'PC1', 'PC2'),
+    id: 'pcs-can-ping',
+    description: 'PC1 and PC2 can ping each other',
+    check: (net) => canPing(net, FROM, TO) && canPing(net, TO, FROM),
   },
 ];

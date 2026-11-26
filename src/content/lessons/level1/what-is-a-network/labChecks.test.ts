@@ -2,81 +2,116 @@
 import { describe, expect, it } from 'vitest';
 import { evaluateLab } from '@/labs/labTasks';
 import type { Device, Network } from '@/netcore/network';
-import { device, link, net, sw } from '@/netcore/network.fixtures';
+import { device, link, net } from '@/netcore/network.fixtures';
 import {
   firstNetworkTasks,
-  pcsShareASwitch,
+  pcsLinkedThroughSwitch,
   pcsShareASubnet,
 } from './labChecks';
 
 // The builder names devices "PC1", "Switch1" and so on; the fixtures here do
-// the same so `canPing` (which matches names) sees what the learner sees.
-function pc(n: number, ip?: string, mask?: string): Device {
-  const config: { ip?: string; mask?: string } = {};
-  if (ip !== undefined) config.ip = ip;
-  if (mask !== undefined) config.mask = mask;
+// the same, because the goals (and `canPing`) find PC1 and PC2 by name.
+function pc(n: number, ip?: string, mask = '255.255.255.0'): Device {
+  const config = ip === undefined ? {} : { ip, mask };
   return { ...device(`pc${String(n)}`, 'pc', config), name: `PC${String(n)}` };
 }
+function sw(n: number): Device {
+  return {
+    ...device(`switch${String(n)}`, 'switch'),
+    name: `Switch${String(n)}`,
+  };
+}
+
+const goals = (n: Network) =>
+  evaluateLab(firstNetworkTasks, n).map((r) => r.done);
 
 const good = (): Network =>
   net(
-    [
-      pc(1, '192.168.1.10', '255.255.255.0'),
-      { ...sw('switch1'), name: 'Switch1' },
-      pc(2, '192.168.1.20', '255.255.255.0'),
-    ],
+    [pc(1, '192.168.1.10'), sw(1), pc(2, '192.168.1.20')],
     [link('pc1', 'switch1'), link('switch1', 'pc2')],
   );
 
-describe('pcsShareASwitch', () => {
-  it('is true when two computers are each cabled to the same switch', () => {
-    expect(pcsShareASwitch(good())).toBe(true);
+describe('pcsLinkedThroughSwitch (goal 1)', () => {
+  it('is true when PC1 and PC2 are each cabled to the same switch', () => {
+    expect(pcsLinkedThroughSwitch(good())).toBe(true);
   });
 
-  it('is false with only one computer on the switch', () => {
+  it('accepts a chain of switches between them', () => {
+    const n = net(
+      [pc(1), sw(1), sw(2), pc(2)],
+      [
+        link('pc1', 'switch1'),
+        link('switch1', 'switch2'),
+        link('switch2', 'pc2'),
+      ],
+    );
+    expect(pcsLinkedThroughSwitch(n)).toBe(true);
+  });
+
+  it('is false for a direct cable between PC1 and PC2', () => {
+    expect(
+      pcsLinkedThroughSwitch(net([pc(1), pc(2)], [link('pc1', 'pc2')])),
+    ).toBe(false);
+  });
+
+  it('is false when only PC1 is on the switch', () => {
+    const n = net([pc(1), sw(1), pc(2)], [link('pc1', 'switch1')]);
+    expect(pcsLinkedThroughSwitch(n)).toBe(false);
+  });
+
+  it('is false when the two switches are not joined', () => {
+    const n = net(
+      [pc(1), sw(1), sw(2), pc(2)],
+      [link('pc1', 'switch1'), link('switch2', 'pc2')],
+    );
+    expect(pcsLinkedThroughSwitch(n)).toBe(false);
+  });
+
+  it('does not let a computer stand in for a switch', () => {
+    const n = net(
+      [pc(1), sw(1), pc(3), pc(2)],
+      [link('pc1', 'switch1'), link('switch1', 'pc3'), link('pc3', 'pc2')],
+    );
+    expect(pcsLinkedThroughSwitch(n)).toBe(false);
+  });
+
+  it('does not count a computer between PC1 and the switch', () => {
+    const n = net(
+      [pc(1), pc(3), sw(1), pc(2)],
+      [link('pc1', 'pc3'), link('pc3', 'switch1'), link('switch1', 'pc2')],
+    );
+    expect(pcsLinkedThroughSwitch(n)).toBe(false);
+  });
+
+  it('ignores other computers on a switch when PC1 and PC2 are not on it', () => {
+    const n = net(
+      [pc(1), pc(2), pc(3), pc(4), sw(1)],
+      [link('pc1', 'pc2'), link('pc3', 'switch1'), link('switch1', 'pc4')],
+    );
+    expect(pcsLinkedThroughSwitch(n)).toBe(false);
+  });
+
+  it('matches names ignoring case, and is false without PC1 or PC2', () => {
+    const lower = good();
+    lower.devices = lower.devices.map((d) => ({
+      ...d,
+      name: d.name.toLowerCase(),
+    }));
+    expect(pcsLinkedThroughSwitch(lower)).toBe(true);
     const n = good();
-    expect(pcsShareASwitch({ ...n, links: n.links.slice(0, 1) })).toBe(false);
-  });
-
-  it('is false for two computers on two different switches', () => {
-    const n = net(
-      [pc(1), sw('s1'), sw('s2'), pc(2)],
-      [link('pc1', 's1'), link('s2', 'pc2')],
-    );
-    expect(pcsShareASwitch(n)).toBe(false);
-  });
-
-  it('does not count a second switch as a computer', () => {
-    const n = net(
-      [pc(1), sw('s1'), sw('s2')],
-      [link('pc1', 's1'), link('s1', 's2')],
-    );
-    expect(pcsShareASwitch(n)).toBe(false);
-  });
-
-  it('is false for a direct cable between two computers (no switch)', () => {
-    expect(pcsShareASwitch(net([pc(1), pc(2)], [link('pc1', 'pc2')]))).toBe(
-      false,
-    );
-  });
-
-  it('counts one computer cabled twice to the switch only once', () => {
-    const n = net(
-      [pc(1), sw('s1')],
-      [link('pc1', 's1', 'a'), link('s1', 'pc1', 'b')],
-    );
-    expect(pcsShareASwitch(n)).toBe(false);
+    n.devices = n.devices.filter((d) => d.name !== 'PC2');
+    expect(pcsLinkedThroughSwitch(n)).toBe(false);
   });
 
   it('is false for an empty or malformed network', () => {
-    expect(pcsShareASwitch(net([], []))).toBe(false);
-    expect(pcsShareASwitch({ devices: null } as unknown as Network)).toBe(
-      false,
-    );
+    expect(pcsLinkedThroughSwitch(net([], []))).toBe(false);
+    expect(
+      pcsLinkedThroughSwitch({ devices: null } as unknown as Network),
+    ).toBe(false);
   });
 });
 
-describe('pcsShareASubnet', () => {
+describe('pcsShareASubnet (goal 2)', () => {
   it('is true for two different addresses in one subnet', () => {
     expect(pcsShareASubnet(good())).toBe(true);
   });
@@ -109,10 +144,15 @@ describe('pcsShareASubnet', () => {
     expect(pcsShareASubnet(n)).toBe(false);
   });
 
-  it('is false with fewer than two computers or a malformed network', () => {
-    expect(pcsShareASubnet(net([pc(1, '192.168.1.10', '/24')], []))).toBe(
-      false,
+  it('only counts PC1 and PC2, not two other computers', () => {
+    const n = net(
+      [pc(1), pc(2), pc(3, '192.168.1.30'), pc(4, '192.168.1.40')],
+      [],
     );
+    expect(pcsShareASubnet(n)).toBe(false);
+  });
+
+  it('is false for a malformed network', () => {
     expect(pcsShareASubnet({ devices: 5 } as unknown as Network)).toBe(false);
   });
 });
@@ -121,45 +161,78 @@ describe('firstNetworkTasks', () => {
   it('has the three goals, in order, all done for a good network', () => {
     expect(evaluateLab(firstNetworkTasks, good())).toEqual([
       {
-        id: 'two-pcs-on-a-switch',
-        description: 'Two computers are connected through a switch',
+        id: 'pcs-through-a-switch',
+        description: 'PC1 and PC2 are connected through a switch',
         done: true,
       },
       {
         id: 'same-subnet',
-        description:
-          'Both computers have their own addresses in the same subnet',
+        description: 'PC1 and PC2 have their own addresses in the same subnet',
         done: true,
       },
-      { id: 'pc1-pings-pc2', description: 'PC1 can ping PC2', done: true },
+      {
+        id: 'pcs-can-ping',
+        description: 'PC1 and PC2 can ping each other',
+        done: true,
+      },
     ]);
   });
 
   it('nothing is done on an empty canvas', () => {
-    const done = evaluateLab(firstNetworkTasks, net([], [])).map((r) => r.done);
-    expect(done).toEqual([false, false, false]);
+    expect(goals(net([], []))).toEqual([false, false, false]);
+  });
+
+  it('the reviewer’s distraction case: PC1-PC2 cabled directly, PC3 and PC4 on the switch', () => {
+    const n = net(
+      [pc(1), pc(2), pc(3), pc(4), sw(1)],
+      [link('pc1', 'pc2'), link('pc3', 'switch1'), link('switch1', 'pc4')],
+    );
+    expect(goals(n)).toEqual([false, false, false]);
+  });
+
+  it('a direct cable with good addresses pings, but goal 1 stays undone', () => {
+    const n = net(
+      [pc(1, '192.168.1.10'), pc(2, '192.168.1.20')],
+      [link('pc1', 'pc2')],
+    );
+    expect(goals(n)).toEqual([false, true, true]);
+  });
+
+  it('two switches in a chain pass every goal', () => {
+    const n = net(
+      [pc(1, '192.168.1.10'), sw(1), sw(2), pc(2, '192.168.1.20')],
+      [
+        link('pc1', 'switch1'),
+        link('switch1', 'switch2'),
+        link('switch2', 'pc2'),
+      ],
+    );
+    expect(goals(n)).toEqual([true, true, true]);
+  });
+
+  it('the same address on both computers fails the ping goal (a raw ping would pass)', () => {
+    const n = net(
+      [pc(1, '192.168.1.10'), sw(1), pc(2, '192.168.1.10')],
+      [link('pc1', 'switch1'), link('switch1', 'pc2')],
+    );
+    expect(goals(n)).toEqual([true, false, false]);
   });
 
   it('the ping goal needs a real path, not only good addresses', () => {
     const n = good();
-    const unplugged = { ...n, links: n.links.slice(0, 1) };
-    expect(
-      evaluateLab(firstNetworkTasks, unplugged).map((r) => r.done),
-    ).toEqual([false, true, false]);
-  });
-
-  it('a direct cable passes the ping goal but not the switch goal', () => {
-    const n = net(
-      [
-        pc(1, '192.168.1.10', '255.255.255.0'),
-        pc(2, '192.168.1.20', '255.255.255.0'),
-      ],
-      [link('pc1', 'pc2')],
-    );
-    expect(evaluateLab(firstNetworkTasks, n).map((r) => r.done)).toEqual([
+    expect(goals({ ...n, links: n.links.slice(0, 1) })).toEqual([
       false,
       true,
-      true,
+      false,
     ]);
+  });
+
+  it('the ping goal must work in both directions', () => {
+    // PC2's narrow mask puts PC1 outside its subnet: PC1 reaches PC2, not back.
+    const n = net(
+      [pc(1, '192.168.1.10', '/16'), sw(1), pc(2, '192.168.2.20', '/24')],
+      [link('pc1', 'switch1'), link('switch1', 'pc2')],
+    );
+    expect(goals(n)).toEqual([true, false, false]);
   });
 });

@@ -21,6 +21,11 @@ function plural(n: number, one: string, many: string): string {
   return `${String(n)} ${n === 1 ? one : many}`;
 }
 
+// True for a missing or empty setting (not for one that is filled in but wrong).
+function blank(value: unknown): boolean {
+  return typeof value !== 'string' || value.trim() === '';
+}
+
 function nameOf(d: Device): string {
   return typeof d.name === 'string' && d.name.trim() !== '' ? d.name : d.id;
 }
@@ -101,6 +106,24 @@ export function journeySteps(
 
   const a = nameOf(source);
   const b = nameOf(target);
+  // A switch in this course has no address: it never sends or receives for
+  // itself, so it gets its own words instead of a request to type an address.
+  if (source.kind === 'switch') {
+    return [
+      {
+        caption: `${a} is a switch: it has no address of its own here and only passes other devices’ messages along. Pick a computer to send from.`,
+        at,
+      },
+    ];
+  }
+  if (target.kind === 'switch') {
+    return [
+      {
+        caption: `${a} cannot send a message to ${b}: a switch has no address of its own here. It only passes other devices’ messages along.`,
+        at,
+      },
+    ];
+  }
   if (source === target) {
     return [
       {
@@ -117,8 +140,12 @@ export function journeySteps(
   );
   if (!result.ok) {
     const why: Record<string, string> = {
-      'no-ip-config': `${a} cannot send yet: it has no address of its own. Give it an IP address and a subnet mask first.`,
-      'unknown-host': `${a} cannot reach ${b}: ${b} has no address yet, so there is nothing to send the message to.`,
+      'no-ip-config': blank(source.ip)
+        ? `${a} cannot send yet: it has no address of its own. Give it an IP address and a subnet mask first.`
+        : `${a} cannot send yet: its IP address or subnet mask is not valid. Check both.`,
+      'unknown-host': blank(target.ip)
+        ? `${a} cannot reach ${b}: ${b} has no address yet, so there is nothing to send the message to.`
+        : `${a} cannot reach ${b}: ${b} has no valid address (${String(target.ip)} is not an IP address), so there is nothing to send the message to.`,
       'different-network': `${a} cannot reach ${b}: their addresses put them in different networks. Joining two networks needs a router, which a later lesson covers.`,
       'no-path': `${a} cannot reach ${b}: no chain of links and switches joins them, so the message has no way to get there.`,
     };
@@ -131,9 +158,10 @@ export function journeySteps(
   const end = path[path.length - 1];
   if (end !== target) {
     const other = end === undefined ? 'another device' : nameOf(end);
+    const pair = end === source ? `${a} and ${b}` : `${b} and ${other}`;
     return [
       {
-        caption: `${a} cannot reach ${b} for sure: ${other} has the same address, ${target.ip ?? ''}. Every device needs its own address.`,
+        caption: `${pair} have the same address, ${target.ip ?? ''}, so messages cannot tell them apart. Every device needs its own address.`,
         at,
       },
     ];
@@ -149,7 +177,7 @@ export type TryDevice = { id: string; name: string };
 /** The devices the learner can plug into the switch, in display order. */
 export const TRY_DEVICES: readonly TryDevice[] = [
   { id: 'laptop', name: 'Laptop' },
-  { id: 'phone', name: 'Phone' },
+  { id: 'desktop', name: 'Desktop' },
   { id: 'printer', name: 'Printer' },
   { id: 'tv', name: 'TV' },
 ];
@@ -157,11 +185,11 @@ export const TRY_DEVICES: readonly TryDevice[] = [
 // What each pair of devices could do together, keyed "first+second" in
 // catalogue order. A pair that is missing has little to share.
 const SHARING: Readonly<Record<string, string>> = {
-  'laptop+phone': 'Laptop and Phone can swap photos and files.',
+  'laptop+desktop': 'Laptop and Desktop can swap files and photos.',
   'laptop+printer': 'Laptop can print a page on Printer.',
   'laptop+tv': 'Laptop can play a video on TV.',
-  'phone+printer': 'Phone can print a photo on Printer.',
-  'phone+tv': 'Phone can play a video on TV.',
+  'desktop+printer': 'Desktop can print a page on Printer.',
+  'desktop+tv': 'Desktop can play a video on TV.',
 };
 
 export type Verdict = {

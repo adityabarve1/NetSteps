@@ -12,15 +12,16 @@ Wireless LAN adapter Wi-Fi:
    Subnet Mask . . . . . . . . . . . : 255.255.255.0
    Default Gateway . . . . . . . . . : 192.168.1.1`;
 
-const MAC_IFCONFIG = `en0: flags=8863<UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST> mtu 1500
+// Long lines are shortened with "..." so the sample fits a phone screen.
+const MAC_IFCONFIG = `en0: flags=8863<UP,BROADCAST,...> mtu 1500
 	ether 3c:22:fb:1a:7f:04
-	inet6 fe80::1c2d:4e5f:6a7b:8c9d%en0 prefixlen 64 secured scopeid 0x6
-	inet 192.168.1.23 netmask 0xffffff00 broadcast 192.168.1.255
+	inet6 fe80::1c2d:4e5f:6a7b:8c9d%en0 prefixlen 64 ...
+	inet 192.168.1.23 netmask 0xffffff00 broadcast ...
 	status: active`;
 
-const LINUX_IP_ADDR = `2: wlan0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000
+const LINUX_IP_ADDR = `2: wlan0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 ...
     link/ether 3c:22:fb:1a:7f:04 brd ff:ff:ff:ff:ff:ff
-    inet 192.168.1.23/24 brd 192.168.1.255 scope global dynamic wlan0`;
+    inet 192.168.1.23/24 brd 192.168.1.255 scope global ...`;
 
 const WINDOWS_PING = `Pinging 127.0.0.1 with 32 bytes of data:
 Reply from 127.0.0.1: bytes=32 time<1ms TTL=128
@@ -93,7 +94,8 @@ export function RealComputer() {
       <p>
         <strong>macOS:</strong> open Terminal (in Applications, then Utilities)
         and type {cmd('ifconfig en0')}. On most Macs, en0 is the Wi-Fi adapter.
-        Look for the line that starts with <em>inet</em>:
+        Look for the line that starts with <em>inet</em>. (In these samples,
+        &ldquo;...&rdquo; marks the end of a long line that was cut short.)
       </p>
       <pre className={styles.output}>{MAC_IFCONFIG}</pre>
       <p>
@@ -110,8 +112,10 @@ export function RealComputer() {
       <pre className={styles.output}>{LINUX_IP_ADDR}</pre>
       <p>
         Here 192.168.1.23/24 is the IP address with its mask in slash form: /24
-        means 255.255.255.0. On macOS and Linux you will also see an adapter
-        called lo0 or lo with the address 127.0.0.1. That is the next step.
+        means 255.255.255.0. On Linux, {cmd('ip addr')} also lists an adapter
+        called lo with the address 127.0.0.1. On a Mac, {cmd('ifconfig')} with
+        no adapter name lists every adapter, including lo0 with 127.0.0.1. That
+        address is the next step.
       </p>
 
       <h3>Step 2: ping your own computer</h3>

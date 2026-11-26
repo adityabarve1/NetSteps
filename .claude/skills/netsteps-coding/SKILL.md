@@ -71,14 +71,21 @@ Copy `src/content/lessons/level1/what-is-a-network/` and rename. Files and roles
 | File | Role |
 | --- | --- |
 | `logic.ts` + `logic.test.ts` (+ `logic.<part>.test.ts` when a test file nears 300 lines) | Pure step builder for the sim and the try-it decision. Never throw: odd input returns one friendly step or verdict. |
-| `labChecks.ts` + `labChecks.test.ts` | Pure `LabTask[]` for the builder. Ping goals use `canPing`/`twoPcsCanPingTask`, never `ping`. |
+| `labChecks.ts` + `labChecks.test.ts` | Pure `LabTask[]` for the builder. Every goal names the lab's own devices (PC1, PC2 by name, as the instructions do) and tests the combined intent ("PC1 and PC2 are joined through a switch", not "some switch has two PCs"). Ping goals use `canPing` both ways, never `ping`. |
 | `s<N>-<name>.tsx` | One section each. Export ONLY components (body + one per Go-deeper block); react-refresh warns on a file that mixes components and objects. |
 | `sim.tsx` (+ `sim.module.css`, `sim.test.tsx`) | `JOURNEY_SIM_ID` string const, the diagram component, the `SimPlayer` wrapper. Steps computed once at module level from a fixed `Network`. |
 | `try.tsx`, `lab.tsx`, `real.tsx`, `quiz.ts`, `wrapUp.tsx` (why it matters + cheat sheet), `diagrams.tsx`, `lesson.module.css` | One part each. |
+| `quiz.test.ts` | Pins each question's right option TEXT, spread-out positions, 3-4 distinct options, a phrase per wrong option in the explanation, and sentence length. |
 | `index.tsx` | Assembles the `Lesson` object only; default export. |
 | `index.test.tsx` | Renders the REAL page at `/learn/level-1/<id>` with `renderLessonPage` (fake progress, real loader): heading order, sim to last step, quiz 5 questions, sim + quiz -> `completeLesson` once, quiz alone -> not, try-it, lab -> `completeLab` (reuse `@/labs/builderTestKit`), axe. |
 
 Wiring: sim `onFinished={markSimFinished}` (from `useLessonRun()`); lab `render: ({ onDone }) => <MyLab onDone={onDone} />` and inside `<BuilderLab onAllDone={onDone} />`; `primarySimulationId` = the sim id const; lab id const = `labIds` in `curriculum.ts`; every `<Term id>` id goes in `lesson.glossary` and in `src/content/glossary/level1.ts` (reuse ids that exist: `network`, `link`, `host`, `switch`, `router`, `ip-address`, `subnet`, `subnet-mask`, `packet`, `ping`, `server`, `internet`, `web`, `wi-fi`, ...). Loader line in `loaders.ts`; `built: true`, honest `minutes`, `labIds` in `curriculum.ts`.
+
+Tests a lab must have: for every ping goal, a duplicate-IP case and a direct-cable case, so that replacing `canPing` with a raw `ping(...).ok` fails a test; a "distraction" case (the right devices elsewhere on the canvas) where every goal stays undone.
+
+Shared registries (`src/content/glossary/level1.ts`, `src/content/loaders.ts`, `src/content/curriculum.ts`): Level 1 lessons are written in parallel, so only APPEND, under your own `// <lesson-id>` comment, and never reorder or reformat existing lines (merges conflict otherwise). In curriculum.ts change only your own lesson's `minutes`, `built` and `labIds`.
+
+If you reuse `journeySteps`, keep failure captions switch-aware: a switch has no address here, so never tell the learner to give it one.
 
 Gotchas hit:
 - A CSS-module class with no rule is `undefined` at runtime (`cx` drops it, tests cannot find it). Give every class you reference a rule.
@@ -87,6 +94,7 @@ Gotchas hit:
 - SVG text is in viewBox units: at 320px a 380-wide drawing shrinks to ~0.65. Raise font sizes in a `max-width: 36rem` query, hide secondary text and repeat it as HTML below. Leave room above top labels (negative viewBox y).
 - The marker moves with an inline `style={{ transform }}` (position, not theming) plus a `transition` class applied only when `!reducedMotion`.
 - `pnpm test <file>` needs the TEST path; a source path matches nothing and prints no summary.
+- A "Lesson not found" fixture must never be a sibling Level 1 lesson (another task builds it): use a Level 2+ id such as `/learn/level-2/l2-ethernet-and-mac-addresses`.
 - A test that hard-codes "nothing is built" must use the `nothingBuilt` fixture (`@/test/courseMapTestKit`, Landing test), not the real curriculum.
 - Port 5173 may be taken by someone else's dev server: use `pnpm exec vite --port 5180 --strictPort`; headless Chrome can be driven with Node's built-in `WebSocket` over the DevTools protocol (no new deps). Keep scripts and screenshots in the scratchpad.
 

@@ -19,7 +19,7 @@ describe('networkVerdict (the try-it)', () => {
       'Not a network yet. Laptop is connected, but it has no other device to talk to. A network needs at least two.',
     );
     expect(v.details).toEqual([
-      'Phone, Printer and TV have no link, so they are not part of it.',
+      'Desktop, Printer and TV have no link, so they are not part of it.',
     ]);
   });
 
@@ -34,7 +34,7 @@ describe('networkVerdict (the try-it)', () => {
     );
     expect(v.details).toEqual([
       'Laptop can print a page on Printer.',
-      'Phone and TV have no link, so they are not part of it.',
+      'Desktop and TV have no link, so they are not part of it.',
     ]);
   });
 
@@ -43,35 +43,35 @@ describe('networkVerdict (the try-it)', () => {
     expect(v.isNetwork).toBe(true);
     expect(v.details).toEqual([
       'Printer and TV have little to share with each other, but they can still exchange data, so they still form a network.',
-      'Laptop and Phone have no link, so they are not part of it.',
+      'Laptop and Desktop have no link, so they are not part of it.',
     ]);
   });
 
   it('everything connected lists every useful pair and leaves no one out', () => {
     const v = networkVerdict({
-      connected: ['tv', 'phone', 'printer', 'laptop'],
+      connected: ['tv', 'desktop', 'printer', 'laptop'],
       switchOn: true,
     });
     expect(v.summary).toBe(
-      'This is a network: Laptop, Phone, Printer and TV are linked through the switch.',
+      'This is a network: Laptop, Desktop, Printer and TV are linked through the switch.',
     );
     expect(v.details).toEqual([
-      'Laptop and Phone can swap photos and files.',
+      'Laptop and Desktop can swap files and photos.',
       'Laptop can print a page on Printer.',
       'Laptop can play a video on TV.',
-      'Phone can print a photo on Printer.',
-      'Phone can play a video on TV.',
+      'Desktop can print a page on Printer.',
+      'Desktop can play a video on TV.',
     ]);
   });
 
   it('a switch with no power joins nobody, even with cables in place', () => {
     const v = networkVerdict({
-      connected: ['laptop', 'phone'],
+      connected: ['laptop', 'desktop'],
       switchOn: false,
     });
     expect(v.isNetwork).toBe(false);
     expect(v.summary).toBe(
-      'Not a network right now. The switch has no power, so it cannot pass messages between Laptop and Phone, even though their cables are plugged in.',
+      'Not a network right now. The switch has no power, so it cannot pass messages between Laptop and Desktop, even though their cables are plugged in.',
     );
   });
 
@@ -83,11 +83,11 @@ describe('networkVerdict (the try-it)', () => {
 
   it('ignores unknown ids and repeats, and keeps the catalogue order', () => {
     const v = networkVerdict({
-      connected: ['laptop', 'laptop', 'toaster', '__proto__', 'phone'],
+      connected: ['laptop', 'laptop', 'toaster', '__proto__', 'desktop'],
       switchOn: true,
     });
     expect(v.summary).toBe(
-      'This is a network: Laptop and Phone are linked through the switch.',
+      'This is a network: Laptop and Desktop are linked through the switch.',
     );
   });
 
@@ -99,8 +99,8 @@ describe('networkVerdict (the try-it)', () => {
       { connected: 'laptop', switchOn: true },
       { connected: [1, null, {}], switchOn: 'yes' },
       // Only `true` turns the switch on: a missing or odd value means off.
-      { connected: ['laptop', 'phone'], switchOn: 'yes' },
-      { connected: ['laptop', 'phone'] },
+      { connected: ['laptop', 'desktop'], switchOn: 'yes' },
+      { connected: ['laptop', 'desktop'] },
     ] as unknown as Parameters<typeof networkVerdict>[0][];
     for (const input of odd) {
       const v = networkVerdict(input);
@@ -111,6 +111,6 @@ describe('networkVerdict (the try-it)', () => {
 
   it('the catalogue has four devices with unique ids', () => {
     const ids = TRY_DEVICES.map((d) => d.id);
-    expect(ids).toEqual(['laptop', 'phone', 'printer', 'tv']);
+    expect(ids).toEqual(['laptop', 'desktop', 'printer', 'tv']);
   });
 });

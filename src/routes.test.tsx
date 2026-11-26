@@ -37,7 +37,8 @@ const routeTable: [path: string, heading: string | RegExp][] = [
   ['/', /Learn how computers talk to each other/],
   ['/learn', 'Course map'],
   ['/learn/level-1/l1-what-is-a-network', 'What is a network'],
-  ['/learn/level-1/l1-lan-wan-man', 'Lesson not found'],
+  // A Level 2 lesson: no Level 1 lesson task will ever build it.
+  ['/learn/level-2/l2-ethernet-and-mac-addresses', 'Lesson not found'],
   ['/privacy', 'Privacy Policy'],
   ['/terms', 'Terms of Service'],
   ['/login', 'Sign in'],

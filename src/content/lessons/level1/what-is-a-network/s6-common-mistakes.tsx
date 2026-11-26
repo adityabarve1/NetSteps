@@ -86,7 +86,7 @@ export function TroubleshootingDeeper() {
         </li>
         <li>
           <strong>Do both ends have addresses?</strong> A device with no IP
-          address cannot send or be found.
+          address cannot take part in IP messages, such as a ping.
         </li>
         <li>
           <strong>Are they in the same subnet?</strong> If not, a router must

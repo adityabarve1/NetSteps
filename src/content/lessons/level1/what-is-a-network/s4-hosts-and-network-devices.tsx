@@ -63,9 +63,9 @@ export function HostsAndNetworkDevices() {
       </p>
       <ul>
         <li>
-          A <strong>switch</strong> joins devices inside one local network, such
-          as one home or one office floor. It passes each message to the right
-          device in that network.
+          A <strong>switch</strong> joins devices inside one local network: the
+          devices in one place, such as one home or one office floor. It passes
+          each message to the right device in that network.
         </li>
         <li>
           A <Term id="router">router</Term> joins different networks together,

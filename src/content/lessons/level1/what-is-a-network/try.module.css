@@ -132,6 +132,6 @@
 /* One column on a phone: the picture shrinks, so its words grow. */
 @media (max-width: 40rem) {
   .label {
-    font-size: 21px;
+    font-size: 19px;
   }
 }

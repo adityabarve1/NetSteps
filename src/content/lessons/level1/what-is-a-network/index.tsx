@@ -149,7 +149,7 @@ const lesson: Lesson = {
       'One device alone is not a network: you need at least two devices and a link between them.',
       'Links are wired (Ethernet copper, fibre) or wireless (Wi-Fi, Bluetooth, mobile). They carry signals, and the devices turn those back into data.',
       'Hosts, such as laptops, phones and servers, send and receive their own data. Network devices, such as switches and routers, pass other devices’ data along. An ordinary computer does not.',
-      'Every host has an IP address such as 192.168.1.10. With mask 255.255.255.0, devices whose first three numbers match are in the same subnet and can reach each other through a switch.',
+      'Every host on an IP network (home Wi-Fi, a school network) has an IP address such as 192.168.1.10. With mask 255.255.255.0, devices whose first three numbers match are in the same subnet and can reach each other through a switch.',
       'The internet is a network of networks. The web is one service on it, and Wi-Fi is only one kind of link.',
     ],
     cheatSheet: <CheatSheet />,

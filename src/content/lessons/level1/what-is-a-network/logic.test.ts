@@ -177,7 +177,7 @@ describe('journeySteps: a message that cannot arrive is one plain step', () => {
     ]);
   });
 
-  it('a receiver with a mistyped address also has no address', () => {
+  it('a receiver with a mistyped address has no VALID address', () => {
     const lan = net(
       [
         pc('pc1', '192.168.1.10'),
@@ -187,7 +187,7 @@ describe('journeySteps: a message that cannot arrive is one plain step', () => {
       [link('pc1', 'sw1'), link('sw1', 'pc2')],
     );
     expect(captions(lan, 'pc1', 'pc2')).toEqual([
-      'PC1 cannot reach PC2: PC2 has no address yet, so there is nothing to send the message to.',
+      'PC1 cannot reach PC2: PC2 has no valid address (192.168.1.300 is not an IP address), so there is nothing to send the message to.',
     ]);
   });
 
@@ -218,7 +218,7 @@ describe('journeySteps: a message that cannot arrive is one plain step', () => {
     expect(journeySteps(lan, 'pc1', 'pc2')).toEqual([
       {
         caption:
-          'PC1 cannot reach PC2 for sure: PC3 has the same address, 192.168.1.20. Every device needs its own address.',
+          'PC2 and PC3 have the same address, 192.168.1.20, so messages cannot tell them apart. Every device needs its own address.',
         at: ['pc1'],
       },
     ]);
@@ -230,7 +230,7 @@ describe('journeySteps: a message that cannot arrive is one plain step', () => {
       [link('pc1', 'sw1'), link('sw1', 'pc2')],
     );
     expect(captions(lan, 'pc1', 'pc2')).toEqual([
-      'PC1 cannot reach PC2 for sure: PC1 has the same address, 192.168.1.10. Every device needs its own address.',
+      'PC1 and PC2 have the same address, 192.168.1.10, so messages cannot tell them apart. Every device needs its own address.',
     ]);
   });
 });

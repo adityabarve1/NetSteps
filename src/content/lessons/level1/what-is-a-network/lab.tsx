@@ -33,8 +33,8 @@ export function FirstNetworkLab({ onDone }: { onDone: () => void }) {
           <code className={styles.command}>192.168.1.10</code> and the subnet
           mask <code className={styles.command}>255.255.255.0</code>. Select PC2
           and type <code className={styles.command}>192.168.1.20</code> with the
-          same mask. Leave the gateway empty: you only need one for a router,
-          and there is none here.
+          same mask. Leave <strong>Gateway</strong> empty: it is only needed
+          when a router is involved, and there is none here.
         </li>
         <li>
           Test it. Select PC1, press <strong>Open terminal</strong> and type{' '}
@@ -43,9 +43,12 @@ export function FirstNetworkLab({ onDone }: { onDone: () => void }) {
         </li>
       </ol>
       <p>
-        Success means all three goals show <strong>Done</strong> and PC1 gets
-        four replies from PC2. You have built a real (simulated) network: two
-        hosts, one network device, two links and two addresses in one subnet.
+        The goals tick by themselves as soon as the network is right. The ping
+        in step 4 shows you why: PC1 gets four replies from PC2. The message
+        must pass through a switch, so a cable straight from PC1 to PC2 does not
+        count for the first goal; a chain of several switches does. You have
+        built a real (simulated) network: two hosts, one network device, two
+        links and two addresses in one subnet.
       </p>
       <p>
         Finished? Break it on purpose and ping again: remove one cable, change

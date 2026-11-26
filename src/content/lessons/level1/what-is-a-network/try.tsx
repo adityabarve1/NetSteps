@@ -6,7 +6,7 @@ import styles from './try.module.css';
 // Where each device sits around the switch in the little picture.
 const SPOTS: Record<string, { x: number; y: number }> = {
   laptop: { x: 55, y: 40 },
-  phone: { x: 265, y: 40 },
+  desktop: { x: 265, y: 40 },
   printer: { x: 55, y: 150 },
   tv: { x: 265, y: 150 },
 };
