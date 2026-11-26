@@ -77,11 +77,11 @@ describe('curriculum lessons', () => {
     }
   });
 
-  it('gives every lesson a realistic minutes estimate of 8 to 30', () => {
+  it('gives every lesson a realistic minutes estimate of 8 to 60', () => {
     for (const lesson of allLessons) {
       expect(Number.isInteger(lesson.minutes), lesson.id).toBe(true);
       expect(lesson.minutes, lesson.id).toBeGreaterThanOrEqual(8);
-      expect(lesson.minutes, lesson.id).toBeLessThanOrEqual(30);
+      expect(lesson.minutes, lesson.id).toBeLessThanOrEqual(60);
     }
   });
 

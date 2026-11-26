@@ -70,7 +70,7 @@ export const level1: Glossary = {
   server: {
     term: 'server',
     definition:
-      'A computer that provides a service, such as web pages, files or video, to other devices that ask for it.',
+      'A program that waits for requests and answers them, such as one that sends web pages. People also call the computer running it "the server".',
   },
   'access-point': {
     term: 'access point',
@@ -116,5 +116,107 @@ export const level1: Glossary = {
     term: 'packet',
     definition:
       'A small piece of data with the sender’s and receiver’s addresses on it. Large messages travel as many packets.',
+  },
+  // l1-lan-wan-man
+  pan: {
+    term: 'PAN (personal area network)',
+    definition:
+      'A very small network around one person, such as a phone joined to wireless earbuds or a smartwatch. It usually reaches no more than about 10 metres.',
+  },
+  lan: {
+    term: 'LAN (local area network)',
+    definition:
+      'A network in one place, such as a home, a school building or an office, usually run by one person or organisation. As a rule of thumb it reaches up to about 2 kilometres.',
+  },
+  man: {
+    term: 'MAN (metropolitan area network)',
+    definition:
+      'A network that covers a city or a large area, joining many sites in one place. As a rule of thumb it reaches up to about 100 kilometres.',
+  },
+  wan: {
+    term: 'WAN (wide area network)',
+    definition:
+      'A network that joins other networks over long distances, between cities or countries. It is usually built from lines and services rented from telecom companies.',
+  },
+  bluetooth: {
+    term: 'Bluetooth',
+    definition:
+      'A short-range radio link for joining nearby devices, such as a phone and earbuds. Many Bluetooth devices reach about 10 metres.',
+  },
+  tethering: {
+    term: 'tethering',
+    definition:
+      'Using your phone as the link to the internet for another device, for example a laptop joined to the phone by a USB cable.',
+  },
+  isp: {
+    term: 'ISP (internet service provider)',
+    definition:
+      'A company that sells you a connection to the internet, such as a home broadband or mobile provider.',
+  },
+  'leased-line': {
+    term: 'leased line',
+    definition:
+      'A private data line between two places that a telecom company rents to a customer, so only that customer uses it.',
+  },
+  campus: {
+    term: 'campus',
+    definition:
+      'A group of buildings on one site that belong to one organisation, such as a school, a university or a company site.',
+  },
+  'sd-wan': {
+    term: 'SD-WAN',
+    definition:
+      'Software that manages several WAN connections of an organisation from one place and chooses which connection to use for each kind of traffic.',
+  },
+  'private-address': {
+    term: 'private address',
+    definition:
+      'An IP address from a range kept for use inside networks: 10.x.x.x, 172.16.x.x to 172.31.x.x or 192.168.x.x. It is not used on the public internet.',
+  },
+  vpn: {
+    term: 'VPN (virtual private network)',
+    definition:
+      'A way to send private data across a shared network such as the internet through an encrypted tunnel, so others on the way cannot read it.',
+  },
+  // l1-topologies
+  topology: {
+    term: 'topology',
+    definition:
+      'The shape of a network: how its devices and links are arranged. The four basic shapes are bus, star, ring and mesh.',
+  },
+  'bus-topology': {
+    term: 'bus',
+    definition:
+      'A network shape in which every device taps into one shared cable, called the backbone.',
+  },
+  'star-topology': {
+    term: 'star',
+    definition:
+      'A network shape in which every device has its own cable to one central device, usually a switch.',
+  },
+  'ring-topology': {
+    term: 'ring',
+    definition:
+      'A network shape in which devices are joined in a closed loop and pass messages from neighbour to neighbour.',
+  },
+  'mesh-topology': {
+    term: 'mesh',
+    definition:
+      'A network shape in which devices are joined directly to many others, so a message can take more than one route.',
+  },
+  'partial-mesh': {
+    term: 'partial mesh',
+    definition:
+      'A mesh in which only some pairs of devices are joined directly, which costs less than joining every pair.',
+  },
+  backbone: {
+    term: 'backbone',
+    definition:
+      'The main cable of a bus, which every device on the bus taps into. Also, the fast links that join the big parts of a larger network.',
+  },
+  terminator: {
+    term: 'terminator',
+    definition:
+      'A plug at each end of a bus cable that absorbs the signal, so it does not bounce back along the cable.',
   },
 };

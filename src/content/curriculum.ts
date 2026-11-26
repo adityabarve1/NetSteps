@@ -41,9 +41,9 @@ const level1: LevelMeta = {
       title: 'LAN, WAN and MAN',
       summary:
         'Learn how networks are grouped by how far they reach, from your desk to far-apart cities, and sort everyday examples into the right group.',
-      minutes: 10,
-      built: false,
-      labIds: [],
+      minutes: 25,
+      built: true,
+      labIds: ['lab-l1-classify'],
     },
     {
       id: 'l1-topologies',
@@ -51,9 +51,9 @@ const level1: LevelMeta = {
       title: 'Topologies',
       summary:
         'See the common ways to arrange a network, then break a link or a device and watch which others can still talk.',
-      minutes: 12,
-      built: false,
-      labIds: [],
+      minutes: 25,
+      built: true,
+      labIds: ['lab-l1-star'],
     },
     {
       id: 'l1-client-server-p2p',
@@ -61,9 +61,9 @@ const level1: LevelMeta = {
       title: 'Client-server vs peer-to-peer',
       summary:
         'Compare a network where one main computer serves everyone with one where computers share with each other, and see what happens as more people join.',
-      minutes: 12,
-      built: false,
-      labIds: [],
+      minutes: 40,
+      built: true,
+      labIds: ['lab-l1-server'],
     },
     {
       id: 'l1-bandwidth-latency',

@@ -59,10 +59,11 @@ export function WhatIsShared() {
         </table>
       </div>
       <p>
-        The computers that provide a service, such as films, web pages or email,
-        are called <Term id="server">servers</Term>. A server waits for other
-        devices to ask, then sends what they asked for. A later lesson in this
-        level compares this with devices that share directly with each other.
+        The programs that provide a service, such as films, web pages or email,
+        are called <Term id="server">servers</Term>, and people also call the
+        computer running one a server. A server waits for other devices to ask,
+        then sends what they asked for. A later lesson in this level compares
+        this with devices that share directly with each other.
       </p>
 
       <h3>Worked example: one evening, one home network</h3>

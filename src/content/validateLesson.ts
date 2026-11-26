@@ -13,7 +13,7 @@ const MAX_OPTIONS = 4;
 const MIN_TAKEAWAYS = 3;
 const MAX_TAKEAWAYS = 5;
 const MIN_MINUTES = 8;
-const MAX_MINUTES = 30;
+const MAX_MINUTES = 60;
 
 // Ids the lesson page itself puts on its fixed sections. A lesson section with
 // one of these would make two elements share an id and break the contents list.
