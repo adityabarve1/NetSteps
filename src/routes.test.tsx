@@ -40,7 +40,7 @@ const routeTable: [path: string, heading: string | RegExp][] = [
   // A Level 2 lesson: no Level 1 lesson task will ever build it.
   ['/learn/level-2/l2-ethernet-and-mac-addresses', 'Lesson not found'],
   ['/privacy', 'Privacy Policy'],
-  ['/terms', 'Terms of Service'],
+  ['/terms', 'Terms of Use'],
   ['/login', 'Sign in'],
   ['/signup', 'Create your account'],
   ['/forgot-password', 'Reset your password'],

@@ -163,7 +163,7 @@ export default function Signup() {
             <label htmlFor={consentId}>
               I have read and agree to the{' '}
               <LegalLink to="/privacy">Privacy Policy</LegalLink> and the{' '}
-              <LegalLink to="/terms">Terms of Service</LegalLink>.
+              <LegalLink to="/terms">Terms of Use</LegalLink>.
             </label>
           </div>
           {fieldErrors.consent ? (
