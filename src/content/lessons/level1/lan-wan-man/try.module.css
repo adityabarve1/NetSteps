@@ -1,0 +1,97 @@
+/* The "How far does it reach?" try-it. Colours come from tokens.css only. */
+
+.tryIt p {
+  margin: 0 0 var(--space-3);
+}
+
+.title {
+  margin: 0 0 var(--space-2);
+  font-size: 1.125rem;
+}
+
+.label {
+  display: block;
+  margin-bottom: var(--space-2);
+  font-weight: 700;
+}
+
+.slider {
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  accent-color: var(--accent);
+}
+
+.slider:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.ends {
+  display: flex;
+  justify-content: space-between;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.readout {
+  margin-top: var(--space-3);
+  font-size: 1.125rem;
+}
+
+.note {
+  color: var(--text-muted);
+  font-size: 0.9375rem;
+}
+
+.verdict {
+  margin-bottom: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--border-soft);
+  border-inline-start: 6px solid var(--accent);
+  border-radius: var(--radius-md);
+  background: var(--surface-sunken);
+}
+
+/* A thicker bar for each larger group, so size shows without colour. */
+.PAN {
+  border-inline-start-width: 6px;
+}
+
+.LAN {
+  border-inline-start-width: 10px;
+}
+
+.MAN {
+  border-inline-start-width: 14px;
+}
+
+.WAN {
+  border-inline-start-width: 18px;
+}
+
+.verdict .summary,
+.verdict .example {
+  margin: 0;
+}
+
+.verdict .example {
+  margin-top: var(--space-2);
+}
+
+.badge {
+  display: inline-block;
+  padding: 0 var(--space-2);
+  border: 2px solid var(--accent);
+  border-radius: var(--radius-sm);
+  font-weight: 800;
+}
+
+.ranges {
+  margin: var(--space-3) 0 0;
+  padding-inline-start: var(--space-5);
+}
+
+.current {
+  font-weight: 700;
+}

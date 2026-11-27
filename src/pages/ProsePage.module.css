@@ -1,0 +1,7 @@
+/* Text pages (privacy, terms, profile, not found): one readable column in the
+   middle of the wide page. The page background is the shell's, edge to edge. */
+.prose {
+  width: 100%;
+  max-width: 70ch;
+  margin: 0 auto;
+}

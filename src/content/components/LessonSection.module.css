@@ -1,0 +1,11 @@
+.section {
+  margin: 0 0 var(--space-6);
+  /* A link to #id scrolls here. The header is not sticky and the table of
+     contents sits beside the text on wide screens, so nothing covers the
+     heading; this is only breathing room above it. */
+  scroll-margin-top: var(--space-4);
+}
+
+.title {
+  font-size: clamp(1.35rem, 3.5vw, 1.75rem);
+}

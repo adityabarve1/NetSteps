@@ -1,0 +1,247 @@
+/* The page fills the wide main column: the heading, the continue button and
+   the summary across the top, then the level cards in a responsive grid. */
+.page {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.top {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* One column on phones, two on medium screens, three on wide ones. */
+.levels {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-4);
+  align-items: stretch;
+}
+
+/* From two columns up, every card in the grid is as tall as the tallest one
+   (1fr rows share the largest height). Each card is a flex column, so its
+   background fills the box while its content stays at the top. On a phone the
+   cards simply stack at their own height. */
+@media (min-width: 48rem) {
+  .levels {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: 1fr;
+  }
+}
+
+@media (min-width: 90rem) {
+  .levels {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(1.75rem, 5vw, 2.25rem);
+}
+
+.intro,
+.summary,
+.note,
+.sync {
+  max-width: 65ch;
+  margin: 0;
+  color: var(--text-muted);
+}
+
+/* Empty, the live region must stay in the page (display: none would drop it
+   from the accessibility tree, and a note added later might not be announced).
+   Zero height, and a negative margin cancels the flex gap it would add. */
+.sync:empty {
+  height: 0;
+  margin-top: calc(-1 * var(--space-4));
+}
+
+.summary {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.cta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  align-self: flex-start;
+  min-height: 44px;
+  max-width: 100%;
+  padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-md);
+  background: var(--accent);
+  color: var(--accent-contrast);
+  text-decoration: none;
+}
+
+.cta:hover {
+  box-shadow: var(--shadow-lift);
+}
+
+.ctaLabel {
+  font-size: 1.125rem;
+  font-weight: 700;
+}
+
+.ctaLesson {
+  font-size: 0.9rem;
+  overflow-wrap: anywhere;
+}
+
+.level {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-4);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.levelHeader {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  align-items: center;
+  justify-content: space-between;
+}
+
+.levelText {
+  flex: 1 1 14rem;
+  min-width: 0;
+}
+
+.levelTitle {
+  margin: 0 0 var(--space-1);
+  font-size: 1.25rem;
+}
+
+.levelSummary {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+.ringSkeleton {
+  width: 4rem;
+  height: 4rem;
+  flex: none;
+  border-radius: 50%;
+  background: var(--surface-sunken);
+}
+
+.soon {
+  flex: none;
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.rows {
+  flex: 1;
+  margin: var(--space-4) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-3);
+  align-items: center;
+  min-height: 44px;
+  padding: var(--space-2) 0;
+  border-top: 1px solid var(--border-soft);
+}
+
+.rowLink,
+.rowTitleText {
+  flex: 1 1 12rem;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.rowLink {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.rowTitleText {
+  color: var(--text-muted);
+}
+
+.meta {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.status {
+  display: inline-flex;
+  gap: var(--space-1);
+  align-items: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.iconRing {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.5;
+}
+
+.iconMark {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.iconHalf {
+  fill: var(--accent);
+}
+
+.lab {
+  padding: 0 var(--space-2);
+  border: 1px solid var(--accent-2);
+  border-radius: 999px;
+  color: var(--accent-2);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.skeletonRow {
+  height: 44px;
+  margin-top: var(--space-2);
+  border-radius: var(--radius-sm);
+  background: var(--surface-sunken);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .skeletonRow,
+  .ringSkeleton {
+    animation: pulse 1.4s ease-in-out infinite;
+  }
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.5;
+  }
+}

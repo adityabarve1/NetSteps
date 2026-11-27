@@ -1,0 +1,48 @@
+.term {
+  /* A plain inline wrapper; the card below is a block inside the paragraph. */
+  overflow-wrap: anywhere;
+}
+
+/* Looks like text with a dotted underline, not like a form button. */
+.button {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
+  text-decoration: underline dotted var(--accent);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+
+.button:hover,
+.button[aria-expanded='true'] {
+  background: var(--surface-sunken);
+}
+
+/* The definition opens in the flow of the text, right below the term. It is at
+   most as wide as the text column, so it cannot push a 320px phone screen
+   sideways, which a floating box near the screen edge could. */
+.popover {
+  display: block;
+  max-width: 32rem;
+  margin: var(--space-2) 0;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--border-soft);
+  border-inline-start: 4px solid var(--accent);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  color: var(--text);
+  font-size: 0.95rem;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.popover[hidden] {
+  display: none;
+}

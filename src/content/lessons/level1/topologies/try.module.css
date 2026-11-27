@@ -1,0 +1,105 @@
+/* The "Break it" try-it. Colours come from tokens.css only. */
+
+.tryIt p {
+  margin: 0 0 var(--space-3);
+}
+
+.title {
+  margin: 0 0 var(--space-2);
+  font-size: 1.125rem;
+}
+
+.group {
+  margin: 0 0 var(--space-3);
+  padding: var(--space-2) var(--space-3) var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.legend {
+  padding: 0 var(--space-2);
+  font-weight: 700;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.radio {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 44px;
+  padding-inline-end: var(--space-3);
+  cursor: pointer;
+}
+
+.radio input {
+  width: 1.25rem;
+  height: 1.25rem;
+  accent-color: var(--accent);
+}
+
+.radio input:focus-visible,
+.toggle:focus-visible,
+.reset:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.controls {
+  margin-top: var(--space-3);
+}
+
+.toggle,
+.reset {
+  min-height: 44px;
+  padding: var(--space-1) var(--space-3);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* A pressed button says so with a heavy border, a tint and a cross as well. */
+.on {
+  border-color: var(--danger);
+  border-width: 3px;
+  background: var(--surface-sunken);
+  color: var(--danger);
+}
+
+.reset {
+  margin-bottom: var(--space-3);
+}
+
+.verdict {
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--border-soft);
+  border-inline-start: 6px solid var(--danger);
+  border-radius: var(--radius-md);
+  background: var(--surface-sunken);
+}
+
+.verdictOk {
+  border-inline-start-color: var(--accent);
+}
+
+.verdict .summary,
+.verdict .rule {
+  margin: 0;
+}
+
+.verdict .rule {
+  margin-top: var(--space-2);
+  color: var(--text-muted);
+}
+
+.badge {
+  font-weight: 800;
+}

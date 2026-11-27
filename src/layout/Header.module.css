@@ -1,0 +1,155 @@
+.header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border-soft);
+}
+
+/* Landing page: the header floats over the hero, so header and hero together
+   are one screen. The hero's own gradient shows through. */
+.overlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 5;
+  border-bottom: 0;
+  background: transparent;
+}
+
+/* Wraps instead of overflowing, so a 320px phone never scrolls sideways. */
+.inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-4);
+  max-width: calc(var(--hero-width) + 2 * var(--hero-gutter));
+  margin: 0 auto;
+  padding: var(--space-3) var(--hero-gutter);
+}
+
+.brand {
+  color: var(--text);
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.link,
+.cta,
+.signOut,
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 44px;
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-size: 1rem;
+  text-decoration: none;
+}
+
+.link,
+.signOut {
+  color: var(--text);
+}
+
+.link:hover,
+.signOut:hover {
+  background: var(--surface-sunken);
+}
+
+/* Sign out is a button that looks like a link. */
+.signOut {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.link[aria-current='page'] {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.cta,
+.cta:hover,
+.cta[aria-current='page'] {
+  background: var(--accent);
+  color: var(--accent-contrast);
+  font-weight: 600;
+}
+
+.cta:hover {
+  filter: brightness(1.08);
+}
+
+.toggle {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.toggle:hover {
+  background: var(--surface-sunken);
+}
+
+.icon {
+  flex: none;
+}
+
+/* Phones: show the icon only. The button keeps its full accessible name. */
+@media (max-width: 30rem) {
+  .toggleText {
+    display: none;
+  }
+
+  .toggle {
+    min-width: 44px;
+    padding: 0;
+  }
+
+  .link,
+  .signOut {
+    padding: 0 var(--space-2);
+  }
+}
+
+/* On a big screen the floating header's name grows with the hero. */
+.overlay .brand {
+  font-size: clamp(1.25rem, 0.9rem + 0.5vw, 1.875rem);
+}
+
+/* On a very wide screen the header grows a little with the page, so it does
+   not look tiny next to the wide content. */
+@media (min-width: 100rem) {
+  .link,
+  .cta,
+  .signOut,
+  .toggle {
+    font-size: 1.125rem;
+  }
+
+  .brand {
+    font-size: 1.5rem;
+  }
+}

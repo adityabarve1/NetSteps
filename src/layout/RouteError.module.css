@@ -1,0 +1,59 @@
+.message {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+  width: min(100%, 40rem);
+  margin: var(--space-5) auto;
+  padding: var(--space-5);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.message p {
+  margin: 0;
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(1.5rem, 4vw, 2rem);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.button,
+.linkButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: var(--space-2) var(--space-5);
+  border: 2px solid var(--accent);
+  border-radius: var(--radius-md);
+  font: inherit;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.button {
+  background: var(--accent);
+  color: var(--accent-contrast);
+}
+
+.linkButton {
+  background: transparent;
+  color: var(--text);
+}
+
+.button:hover,
+.linkButton:hover {
+  box-shadow: var(--shadow-lift);
+}

@@ -1,0 +1,261 @@
+/* Lesson page. Colors come from tokens.css only. */
+
+.page {
+  display: grid;
+  flex: 1;
+  grid-template-areas:
+    'title'
+    'hook'
+    'analogy'
+    'toc'
+    'content'
+    'rail'
+    'next';
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: repeat(7, auto);
+  align-content: start;
+  gap: var(--space-5);
+  min-width: 0;
+}
+
+.title {
+  grid-area: title;
+  margin: 0;
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
+  line-height: 1.2;
+}
+
+/* The hook: a larger lead paragraph, kept to a readable line length. */
+.hook {
+  grid-area: hook;
+  max-width: 60ch;
+  margin: 0;
+  color: var(--text);
+  font-size: clamp(1.125rem, 2.5vw, 1.375rem);
+  line-height: 1.5;
+}
+
+/* Rounded cards: the analogy, the try-it area, labs and the cheat sheet. */
+.card,
+.analogy {
+  margin: 0 0 var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  overflow-wrap: anywhere;
+}
+
+.analogy {
+  grid-area: analogy;
+  max-width: 70ch;
+  border-inline-start: 6px solid var(--accent-2);
+}
+
+.cardTitle {
+  margin: 0 0 var(--space-3);
+  font-size: 1.125rem;
+}
+
+/* Phones: one column, the table of contents is a compact row above the text.
+   Wide screens: the table of contents is a sticky side column. It sits beside
+   the text, so it can never cover a heading that a link scrolls to. */
+.tocColumn {
+  grid-area: toc;
+  min-width: 0;
+}
+
+/* Key terms: after the lesson text on narrow screens (a summary to review),
+   a sticky column on the right of wide ones. One element, placed by the grid. */
+.rail {
+  grid-area: rail;
+}
+
+.next {
+  grid-area: next;
+}
+
+/* The content column is as wide as the screen allows. Running text keeps a
+   readable line length (about 70 characters) and starts at the column's left edge,
+   the same edge the wide blocks start at; blocks
+   that are not running text (simulations, labs, practice, the quiz, cards) use
+   the whole column, so a wide monitor shows more of them, not longer lines.
+
+   How a lesson block chooses:
+   - text elements (p, ul, ol, h2, h3, pre, blockquote) and the "Go deeper"
+     block that sit directly in a section are capped at the readable measure;
+   - anything else (a div, figure or component such as a simulation) is wide;
+   - data-prose on any element caps it at the readable measure, data-wide on any
+     element lifts the cap (for example a p that holds a very wide table). */
+.content {
+  /* About 80 characters. In ch, so it grows with the fluid root type that
+     big screens get (see global.css). */
+  --measure: 80ch;
+  grid-area: content;
+  min-width: 0;
+  font-size: 1.0625rem;
+  line-height: 1.65;
+}
+
+.content section > :is(p, ul, ol, h2, h3, pre, blockquote),
+.content section > div:has(> h3 > button[aria-expanded]),
+.content [data-prose] {
+  max-width: var(--measure);
+  margin-inline: 0;
+}
+
+/* The quiz is a stack of questions: wide enough for its answers, not stretched
+   across a huge screen. */
+.quizWrap {
+  max-width: 56rem;
+  margin-inline: 0;
+}
+
+.content [data-wide] {
+  max-width: none;
+  margin-inline: 0;
+}
+
+/* Long code and preformatted text scroll inside their own box. */
+.content pre,
+.content table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.content :is(p, ul, ol) {
+  margin-block: 0 var(--space-4);
+}
+
+@media (min-width: 60rem) {
+  .page {
+    grid-template-areas:
+      'title title'
+      'hook hook'
+      'analogy analogy'
+      'toc content'
+      'toc rail'
+      'toc next';
+    grid-template-columns: 14rem minmax(0, 1fr);
+    grid-template-rows: repeat(6, auto);
+    gap: var(--space-5) var(--space-6);
+    align-items: start;
+  }
+
+  .tocColumn {
+    position: sticky;
+    top: var(--space-4);
+    max-height: calc(100vh - 2 * var(--space-4));
+    overflow-y: auto;
+  }
+}
+
+/* Big screens: table of contents | lesson | key terms. In rem, so zooming in
+   moves the breakpoint with the text. The header scrolls away, so the sticky
+   offset is a small gap. */
+@media (min-width: 92rem) {
+  .page {
+    grid-template-areas:
+      'toc title rail'
+      'toc hook rail'
+      'toc analogy rail'
+      'toc content rail'
+      'toc next rail';
+    /* The text column stops growing at 120ch and the three columns sit
+       together in the middle, so the key terms rail stays next to the text
+       instead of being pushed to the far edge of a huge screen. */
+    grid-template-columns: 16rem minmax(0, 120ch) 22rem;
+    grid-template-rows: repeat(5, auto);
+    justify-content: center;
+  }
+
+  .content {
+    --measure: 100ch;
+  }
+
+  .rail {
+    position: sticky;
+    top: var(--space-4);
+    max-height: calc(100svh - 2 * var(--space-4));
+    overflow-y: auto;
+  }
+}
+
+.safety {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--surface-sunken);
+  font-weight: 600;
+}
+
+.oneLine {
+  font-size: 1.1875rem;
+  font-weight: 700;
+}
+
+.takeaways {
+  padding-inline-start: var(--space-5);
+}
+
+.nextWrap {
+  margin: var(--space-4) 0 0;
+}
+
+.nextLink,
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: var(--space-2) var(--space-5);
+  border: 2px solid var(--accent);
+  border-radius: var(--radius-md);
+  background: var(--accent);
+  color: var(--accent-contrast);
+  font: inherit;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.nextLink {
+  font-size: 1.125rem;
+}
+
+.nextLink:hover,
+.button:hover {
+  box-shadow: var(--shadow-lift);
+}
+
+/* Loading, retry, not found and error states. */
+.message {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+  width: min(100%, 40rem);
+  margin: var(--space-5) auto;
+  padding: var(--space-5);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.message p {
+  margin: 0;
+}
+
+.messageTitle {
+  margin: 0;
+  font-size: clamp(1.5rem, 4vw, 2rem);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}

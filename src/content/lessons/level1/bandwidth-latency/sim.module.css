@@ -1,0 +1,156 @@
+/* The transfer simulation. Colours come from tokens.css only. Bandwidth is the
+   thickness of the pipe, latency the length of the road; the bar and the
+   numbers repeat both in words, so nothing depends on colour. */
+
+.svg {
+  display: block;
+  width: 100%;
+  max-width: 40rem;
+  height: auto;
+  margin-inline: auto;
+}
+
+.box {
+  fill: var(--surface-sunken);
+  stroke: var(--accent-2);
+  stroke-width: 3;
+}
+
+.boxText {
+  fill: var(--text);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.pipe {
+  fill: var(--surface-sunken);
+  stroke: var(--accent);
+  stroke-width: 3;
+}
+
+.dataLine {
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-dasharray: 3 7;
+}
+
+.road {
+  stroke: var(--text-muted);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 10 6;
+}
+
+.small {
+  fill: var(--text);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* Moving dashes hint at data in the pipe. The words carry the meaning, and the
+   dashes stop for reduced motion. */
+.flow {
+  stroke-dasharray: 8 6;
+  animation: dash-flow 900ms linear infinite;
+}
+
+@keyframes dash-flow {
+  to {
+    stroke-dashoffset: -14;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flow {
+    stroke-dasharray: 3 7;
+    animation: none;
+  }
+}
+
+.wait {
+  max-width: 40rem;
+  margin: var(--space-3) auto 0;
+}
+
+.barRow {
+  display: flex;
+  height: 1.5rem;
+  border: 2px solid var(--text);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+/* A thin sliver of delay stays visible. Delay is hatched, sending is solid. */
+.delayPart {
+  min-width: 4px;
+  background-image: repeating-linear-gradient(
+    45deg,
+    var(--accent-2),
+    var(--accent-2) 3px,
+    var(--surface) 3px,
+    var(--surface) 6px
+  );
+}
+
+.sendPart {
+  background: var(--accent);
+}
+
+.numbers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-4);
+  margin: var(--space-2) 0 0;
+  padding: 0;
+  list-style: none;
+  font-weight: 600;
+}
+
+.total {
+  font-weight: 800;
+}
+
+.keyDelay,
+.keySend {
+  display: inline-block;
+  width: 0.9rem;
+  height: 0.9rem;
+  margin-inline-end: 0.25rem;
+  border: 2px solid var(--text);
+  vertical-align: -0.1rem;
+}
+
+.keyDelay {
+  background-image: repeating-linear-gradient(
+    45deg,
+    var(--accent-2),
+    var(--accent-2) 2px,
+    var(--surface) 2px,
+    var(--surface) 4px
+  );
+}
+
+.keySend {
+  background: var(--accent);
+}
+
+.legend {
+  margin: var(--space-2) 0 0;
+  color: var(--text-muted);
+  font-size: 0.9375rem;
+  text-align: center;
+}
+
+/* On a phone the drawing is scaled down: slightly larger words keep it readable. */
+@media (max-width: 36rem) {
+  .small {
+    font-size: 16px;
+  }
+
+  .boxText {
+    font-size: 15px;
+  }
+}

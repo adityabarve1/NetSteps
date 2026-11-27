@@ -1,0 +1,40 @@
+/* Key terms. Narrow screens: a normal block at the end of the lesson. From the
+   wide breakpoint LessonPage.module.css places it in the right rail and makes
+   it sticky. Colours come from tokens only. */
+
+.rail {
+  min-width: 0;
+  padding: var(--space-4) var(--space-5);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 1rem;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.title {
+  margin: 0 0 var(--space-3);
+  font-size: 1.125rem;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin: 0;
+}
+
+.item {
+  margin: 0;
+}
+
+.term {
+  font-weight: 700;
+}
+
+.definition {
+  margin: 0;
+  color: var(--text-muted);
+}

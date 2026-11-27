@@ -1,0 +1,92 @@
+.shell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100svh;
+  min-height: 100dvh;
+  /* One soft wash across the whole shell, edge to edge, on every page. Its
+     colours are the hero's, which every text colour is already checked on. */
+  background:
+    radial-gradient(60vw 45vh at 95% 0%, var(--hero-glow-b), transparent 70%),
+    radial-gradient(55vw 45vh at 0% 100%, var(--hero-glow-a), transparent 70%),
+    var(--bg);
+}
+
+/* Main grows, so the footer is at the bottom of a short page. The column is as
+   wide as the hero's, and each page decides how to use it. */
+.main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  width: 100%;
+  max-width: calc(var(--hero-width) + 2 * var(--hero-gutter));
+  margin: 0 auto;
+  padding: var(--space-6) var(--hero-gutter);
+  overflow-wrap: anywhere;
+}
+
+/* Landing: no column and no padding, the page lays itself out. */
+.mainFull {
+  flex: 1;
+  width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.main:focus,
+.mainFull:focus {
+  outline: none;
+}
+
+/* Visible only while it has keyboard focus. */
+.skipLink {
+  position: absolute;
+  top: var(--space-2);
+  left: var(--space-2);
+  z-index: 10;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-sm);
+  background: var(--accent);
+  color: var(--accent-contrast);
+  transform: translateY(-300%);
+}
+
+.skipLink:focus {
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .skipLink {
+    transition: transform var(--transition);
+  }
+}
+
+/* A thin bar across the top while the next page loads. Decoration only (main
+   carries aria-busy). With reduced motion it is a still bar, not a moving one. */
+.pending {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 20;
+  height: 3px;
+  background: var(--gradient-accent);
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .pending {
+    transform-origin: left;
+    animation: pending-grow 2s ease-out forwards;
+  }
+}
+
+@keyframes pending-grow {
+  from {
+    transform: scaleX(0.05);
+  }
+
+  to {
+    transform: scaleX(0.85);
+  }
+}
