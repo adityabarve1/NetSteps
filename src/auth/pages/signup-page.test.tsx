@@ -56,9 +56,10 @@ describe('Signup page', () => {
     expect(
       screen.getByRole('link', { name: /privacy policy/i }),
     ).toHaveAttribute('href', '/privacy');
-    expect(
-      screen.getByRole('link', { name: /terms of service/i }),
-    ).toHaveAttribute('href', '/terms');
+    expect(screen.getByRole('link', { name: /terms of use/i })).toHaveAttribute(
+      'href',
+      '/terms',
+    );
     expect(consent()).not.toBeChecked();
   });
 
