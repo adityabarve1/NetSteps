@@ -1,10 +1,38 @@
 import { fileURLToPath } from 'node:url';
 import react from '@vitejs/plugin-react';
+import { loadEnv } from 'vite';
+import type { Plugin } from 'vite';
 import { defineConfig } from 'vitest/config';
+import { injectSiteUrl } from './scripts/html-site-url.ts';
+
+// Fills the site URL into index.html (canonical, Open Graph) at build time.
+function siteUrlHtml(): Plugin {
+  let siteUrl: string | undefined;
+  return {
+    name: 'netsteps-site-url-html',
+    configResolved(config) {
+      siteUrl = loadEnv(config.mode, config.envDir, 'VITE_').VITE_SITE_URL;
+    },
+    transformIndexHtml: (html) => injectSiteUrl(html, siteUrl),
+  };
+}
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), siteUrlHtml()],
+  build: {
+    rolldownOptions: {
+      output: {
+        // supabase-js is large and rarely changes: its own long-cached chunk
+        // keeps the app entry chunk small.
+        codeSplitting: {
+          groups: [
+            { name: 'supabase', test: /node_modules[/\\]@supabase[/\\]/ },
+          ],
+        },
+      },
+    },
+  },
   resolve: {
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
   },
